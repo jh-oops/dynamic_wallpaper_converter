@@ -4,6 +4,7 @@
 
 - 仓库：https://github.com/jh-oops/dynamic_wallpaper_converter
 - 下载（Release v1.0）：https://github.com/jh-oops/dynamic_wallpaper_converter/releases/tag/v1.0
+- **在线网页版（无需下载，点开即用）**：https://jh-oops.github.io/dynamic_wallpaper_converter/
 
 ---
 

@@ -312,8 +312,13 @@ wallpapers/
     }
   }
 
-  // 桌面处理程序（与本 HTML 放同一目录；.app 需压成 zip 才能通过链接下载）
-  const DESKTOP_APP = { mac:'动态壁纸生成器-mac.zip', win:'动态壁纸生成器-win.zip' };
+  // 桌面处理程序：优先指向 GitHub Release 绝对链接（网页托管在任意域名都能下载）
+  // 若已把 zip 与本 HTML 放在同一目录，也可通过同名相对链接直接下载
+  const RELEASE_PAGE = 'https://github.com/jh-oops/dynamic_wallpaper_converter/releases/tag/v1.0';
+  const DESKTOP_APP = {
+    mac:'动态壁纸生成器-mac.zip',
+    win:'动态壁纸生成器-win.zip'
+  };
 
   // 综合判断「浏览器处理不了、必须转码」的原因（非 H.264 / 分辨率≠1080×2400 / 体积>5M）
   function transcodeReasons(v, file, codecRes){
@@ -335,11 +340,11 @@ wallpapers/
       '<ul>'+lis+'</ul>'+
       '<div>请下载「桌面处理程序」——它自带 ffmpeg，把这个 mp4 拖进去即可一步生成合规 zip：</div>'+
       '<div class="dlrow">'+
-        '<a class="dlbtn" href="'+DESKTOP_APP.mac+'" download>⬇ macOS 版</a>'+
-        '<a class="dlbtn" href="'+DESKTOP_APP.win+'" download>⬇ Windows 版</a>'+
+        '<a class="dlbtn primary" href="'+RELEASE_PAGE+'" target="_blank" rel="noopener">⬇ 前往 GitHub Release 下载（macOS / Windows）</a>'+
       '</div>'+
-      '<div class="tip">下载后解压双击运行，浏览器会自动打开操作页；把此 mp4 拖入即可。'+
-      '（若下载按钮无效，说明程序包未与本网页放在同一目录，请向工具维护者索取。）</div>';
+      '<div class="tip">网页版无法转码（浏览器缺 H.264 编码器）。下载桌面程序后解压双击运行，把此 mp4 拖入即可一步出包。</div>'+
+      '<div class="tip small">若你已把 <code>动态壁纸生成器-mac.zip</code> / <code>动态壁纸生成器-win.zip</code> 与本网页放在同一目录，也可直接点：'+
+      '<a href="'+DESKTOP_APP.mac+'" download>macOS</a> / <a href="'+DESKTOP_APP.win+'" download>Windows</a></div>';
     el.classList.add('show');
   }
   function hideGuide(containerId){
