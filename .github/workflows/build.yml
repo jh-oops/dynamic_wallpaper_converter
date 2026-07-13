@@ -37,7 +37,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           $FFDIR = python -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(imageio_ffmpeg.__file__),'binaries'))"
-          python -m PyInstaller --noconfirm --windowed --name "动态壁纸生成器" --add-data "web_ui.html;." --add-data "$FFDIR;imageio_ffmpeg/binaries" --hidden-import app --hidden-import transcode_for_zip main_app.py
+          python -m PyInstaller --noconfirm --onefile --windowed --name "动态壁纸生成器" --add-data "web_ui.html;." --add-data "$FFDIR;imageio_ffmpeg/binaries" --hidden-import app --hidden-import transcode_for_zip main_app.py
 
       - name: 上传产物 (macOS)
         if: matrix.os == 'macos-latest'
