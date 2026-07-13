@@ -54,7 +54,7 @@
   }
   header{position:relative;overflow:hidden;padding:40px 26px 34px;border-bottom:1px solid var(--line)}
   header::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg, rgba(124,92,255,.10), rgba(33,212,180,.05))}
-  .hero{position:relative;z-index:1;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr minmax(150px,210px);gap:30px;align-items:center}
+  .hero{position:relative;z-index:1;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr minmax(112px,140px);gap:26px;align-items:center}
   .hero-copy h1{font-size:30px;margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.1;
     background:linear-gradient(120deg,#ffffff,#cdbcff 50%,#9fe9d8);
     -webkit-background-clip:text;background-clip:text;color:transparent}
@@ -141,7 +141,7 @@
   @media (max-width:640px){
     .single-layout{flex-direction:column}.drop.phone{flex:0 0 auto;width:182px;margin:0 auto}
     .hero{grid-template-columns:1fr;gap:22px}
-    .hero-phone{width:150px;margin:0 auto;transform:none}
+    .hero-phone{width:112px;margin:0 auto;transform:none}
     .hero-copy h1{font-size:25px}
   }
   /* 入场动画 */
@@ -212,9 +212,8 @@
     </div>
     <div class="row" style="margin-top:10px"><span class="hint">格式固定 JPG，自动压缩至 ≤800K；固定取视频第一帧。</span></div>
 
-    <div class="sect" style="margin-top:18px">③ manifest.json（全字段必填）</div>
+    <div class="sect" style="margin-top:18px">③ manifest.json（全字段必填；author 在下方「单个壁纸」区填写）</div>
     <div class="grid">
-      <div class="field"><label>作者 author（须与设计师账号一致，区分大小写）</label><input id="set_author" type="text" placeholder="作者名，须与设计师账号一致（区分大小写）"/></div>
       <div class="field"><label>type <span class="lock">固定 8</span></label><input id="set_type" type="number" value="8" min="0" readonly style="color:var(--muted)"/></div>
     </div>
     <div class="row" style="margin-top:12px">
@@ -237,6 +236,7 @@
         <input id="s_file" type="file" accept="video/mp4" class="hidden"/>
         <div class="grid" style="margin-top:0">
           <div class="field"><label>壁纸名称 name（英文，勿过长）</label><input id="s_name" type="text" placeholder="留空则用文件名"/></div>
+          <div class="field"><label>作者 author（须与账号一致，区分大小写）</label><input id="s_author" type="text" placeholder="须与设计师账号一致（区分大小写）"/></div>
           <div class="field"><label>描述 description（英文）</label><input id="s_desc" type="text" placeholder="用于详情页/探索页"/></div>
         </div>
         <div class="hint" style="margin-top:10px">视频需满足：1080×2400、H.264 编码、≤5M。浏览器<strong>无法转码</strong>；若源不符，本页会提示下载「桌面处理程序」（自带 ffmpeg，把 mp4 拖进去即可一步出合规包）。</div>
@@ -260,6 +260,7 @@
     <div class="filelist" id="b_list"></div>
     <div class="grid" style="margin-top:14px">
       <div class="field"><label>整包根目录名（zip 内顶层文件夹）</label><input id="b_root" type="text" placeholder="如 传音动态0713"/></div>
+      <div class="field"><label>默认作者 author（须与账号一致，区分大小写）</label><input id="b_author" type="text" placeholder="逐条覆盖里可改"/></div>
     </div>
     <div class="field" style="margin-top:14px">
       <label>逐条覆盖（可选，每行：文件名 | 作者 | 描述）</label>
@@ -493,7 +494,6 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       gStart:parseFloat($('#set_gstart').value)||0, gDur:parseFloat($('#set_gdur').value)||2,
       gLoop:$('#set_gloop').checked,
       pW:parseInt($('#set_pw').value,10)||1080, pH:parseInt($('#set_ph').value,10)||2400,
-      authorDef:$('#set_author').value.trim(),
       typeDef:parseInt($('#set_type').value,10)||8,
       idFixed:$('#set_idfixed').checked,
       dynOn:$('#set_dyn').checked
@@ -523,7 +523,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     if(!singleFile){ setStatus('请先选择 mp4 文件','warn'); return; }
     const s=sharedSettings();
     const name=sanitize($('#s_name').value||singleFile.name.replace(/\.mp4$/i,''));
-    const author=s.authorDef;
+    const author=$('#s_author').value.trim();
     const desc=$('#s_desc').value.trim();
     hideGuide('guide');
     const errs=requiredErr(name, author, desc);
@@ -558,7 +558,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         dynName=sanitize(name)+'_dynamic_preview.gif';
       }
 
-      const manifest={id,type:s.typeDef,author:s.authorDef,name,description:desc};
+      const manifest={id,type:s.typeDef,author,name,description:desc};
       const manifestStr=JSON.stringify(manifest,null,2);
       $('#manifestOut').textContent=manifestStr; $('#manifestOut').style.display='block';
 
@@ -603,6 +603,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     if(!batchFiles.length){ setStatus('请先选择/拖入 mp4 文件','warn'); return; }
     hideGuide('guideB');
     const s=sharedSettings();
+    const authorDef=$('#b_author').value.trim();
     const root=sanitize($('#b_root').value||'动态壁纸包');
     const overrides=parseOverrides($('#b_overrides').value);
     const zip=new JSZip();
@@ -615,7 +616,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       const base=sanitize(f.name.replace(/\.mp4$/i,''));
       const ov=overrides[base.toLowerCase()];
       const name=ov&&ov.name?ov.name:base;
-      const author=(ov&&ov.author)?ov.author:s.authorDef;
+      const author=(ov&&ov.author)?ov.author:authorDef;
       const desc=((ov&&ov.desc!=null)?ov.desc:'').toString().trim();
       const errs=requiredErr(name, author, desc);
       if(errs.length){ setStatus('⚠ 第 '+(i+1)+' 个「'+f.name+'」必填缺失：'+errs.join('；'),'warn'); return; }
