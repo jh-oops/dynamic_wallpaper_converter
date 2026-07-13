@@ -23,7 +23,7 @@
 
 转码规则（所有模式一致）：
     - 解码器 H.264 (libx264)
-    - 分辨率 1080×2400（保持比例补黑边，不变形）
+    - 分辨率 1080×2400（保持比例裁剪填满全屏，不变形，无黑边）
     - 大小 ≤ 5M（超限自动提高 CRF 重试）
     - 默认去除音轨（--keep-audio 保留）
 打包规则（--package）：
@@ -82,11 +82,15 @@ def list_inputs(path):
 
 
 def transcode_one(src, dst, keep_audio):
-    """转码单个文件到 H.264/1080×2400/≤5M，返回 (最终crf, 是否≤5M)。"""
+    """转码单个文件到 H.264/1080×2400/≤5M，返回 (最终crf, 是否≤5M)。
+
+    尺寸策略为「cover」：等比放大到铺满 1080×2400 后居中裁剪，
+    保证画面撑满整屏、不变形、无黑边（与缩放前比例不符时裁掉溢出部分）。
+    """
     exe = ffmpeg_exe()
     vf = (
-        f"scale={TARGET_W}:{TARGET_H}:force_original_aspect_ratio=decrease,"
-        f"pad={TARGET_W}:{TARGET_H}:(ow-iw)/2:(oh-ih)/2"
+        f"scale={TARGET_W}:{TARGET_H}:force_original_aspect_ratio=increase,"
+        f"crop={TARGET_W}:{TARGET_H}"
     )
     cmd_base = [
         exe, "-y", "-i", src,
@@ -137,8 +141,8 @@ def make_thumbnail_gif(mp4, dst_gif):
     for fps, colors in [(GIF_FPS, 256), (10, 256), (10, 128), (8, 128), (6, 128)]:
         vf = (
             f"fps={fps},"
-            f"scale={GIF_W}:{GIF_H}:force_original_aspect_ratio=decrease,"
-            f"pad={GIF_W}:{GIF_H}:(ow-iw)/2:(oh-ih)/2:color=black,"
+            f"scale={GIF_W}:{GIF_H}:force_original_aspect_ratio=increase,"
+            f"crop={GIF_W}:{GIF_H},"
             f"split[s0][s1];[s0]palettegen=stats_mode=diff:max_colors={colors}[p];"
             f"[s1][p]paletteuse=diff_mode=rectangle"
         )
@@ -173,8 +177,8 @@ def make_dynamic_preview(mp4, dst_gif):
     for fps, colors in [(GIF_FPS, 256), (10, 256), (10, 128), (8, 128), (6, 128), (5, 128)]:
         vf = (
             f"fps={fps},"
-            f"scale={DYN_W}:{DYN_H}:force_original_aspect_ratio=decrease,"
-            f"pad={DYN_W}:{DYN_H}:(ow-iw)/2:(oh-ih)/2:color=black,"
+            f"scale={DYN_W}:{DYN_H}:force_original_aspect_ratio=increase,"
+            f"crop={DYN_W}:{DYN_H},"
             f"split[s0][s1];[s0]palettegen=stats_mode=diff:max_colors={colors}[p];"
             f"[s1][p]paletteuse=diff_mode=rectangle"
         )

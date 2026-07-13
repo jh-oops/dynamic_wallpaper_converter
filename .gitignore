@@ -12,6 +12,7 @@ __pycache__/
 build/
 dist/
 *.app
+*.spec
 *.zip
 *.tar.gz
 *.dmg
