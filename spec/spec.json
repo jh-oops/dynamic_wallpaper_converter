@@ -1,0 +1,59 @@
+{
+  "spec_name": "动态壁纸规范 Live Wallpaper Specification",
+  "source": "动态壁纸规范 _ Live Wallpaper Specification.md + 官方示例 Waterlight.zip",
+  "package": {
+    "format": "zip",
+    "top_level": "单文件：资源名.zip，根层直接含 manifest.json / preview / wallpapers；批量：顶层文件夹 + 子目录",
+    "mac_note": "Mac 打包须删除隐藏文件夹(__MACOSX)，否则后台解析失败（JSZip 天然不带，已规避）"
+  },
+  "manifest": {
+    "required": true,
+    "fields": {
+      "id": {"type": "string", "desc": "UUID，唯一不重复", "generator": "https://tool.browser.qq.com/uuid"},
+      "type": {"type": "int", "value": 8, "fixed": true},
+      "author": {"type": "string", "desc": "须与设计师账号名称一致"},
+      "name": {"type": "string", "desc": "资源名称，英文，不宜过长"},
+      "description": {"type": "string", "desc": "资源描述，英文，用于详情页/探索页"}
+    }
+  },
+  "preview": {
+    "thumbnail_gif": {
+      "resolution": "400x710",
+      "format": "gif",
+      "fps": [10, 15],
+      "color_min": 128,
+      "duration_sec": 2,
+      "source": "视频前2秒",
+      "size_max": "1.5M"
+    },
+    "wallpaper_jpg": {
+      "resolution": "1080x2400",
+      "format": "jpg",
+      "source": "视频第一帧",
+      "size_max": "800K"
+    }
+  },
+  "wallpapers": {
+    "mp4": {
+      "resolution": "1080x2400",
+      "format": "mp4",
+      "size_max": "5M",
+      "decoder": "h264",
+      "filename_conflict": {
+        "md_text_says": "wallpaper.mp4",
+        "official_example_uses": "wallpapers.mp4",
+        "current_tool_uses": "wallpaper.mp4",
+        "status": "RESOLVED — 用户最终确认依规范 md 正文用 wallpaper.mp4（2026-07-13）"
+      }
+    }
+  },
+  "dynamic_preview_optional": {
+    "resolution": "540x1200",
+    "format": ["gif", "webp"],
+    "fps": [10, 15],
+    "color_min": 128,
+    "duration_sec": 2,
+    "size_max": "2M",
+    "note": "单独提供，不含在 zip 内；有动态预览图才能在探索页推荐"
+  }
+}

@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>动态壁纸 ZIP 生成器</title>
+<style>
+  :root{
+    --bg:#0e1014; --panel:#171a21; --panel2:#1f232c; --line:#2a2f3a;
+    --txt:#e6e9ef; --muted:#8b93a3; --accent:#4f8cff; --accent2:#36d399;
+    --warn:#f5a623; --err:#ff6b6b; --ok:#36d399;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+  header{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:17px;margin:0;font-weight:600}
+  header .sub{color:var(--muted);font-size:12px}
+  .badge{font-size:11px;background:#13351f;color:var(--ok);border:1px solid #1f5c38;padding:3px 9px;border-radius:20px}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 22px 60px}
+  .tabs{display:flex;gap:8px;margin-bottom:18px}
+  .tab{padding:8px 16px;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:9px;cursor:pointer;font-weight:500;transition:.15s}
+  .tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+  .card h2{margin:0 0 14px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+  .field input,.field select,.field textarea{
+    width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+    border-radius:8px;padding:9px 10px;font-size:13px;outline:none;font-family:inherit
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+  .field textarea{resize:vertical;min-height:74px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .chk{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;cursor:pointer;user-select:none}
+  .chk input{width:auto}
+  .lock{color:var(--ok);font-size:11px}
+  .drop{border:1.5px dashed var(--line);border-radius:11px;padding:26px;text-align:center;color:var(--muted);
+        cursor:pointer;transition:.15s;background:var(--panel2)}
+  .drop:hover,.drop.over{border-color:var(--accent);color:var(--txt);background:#1b2230}
+  .drop b{color:var(--accent)}
+  .btns{display:flex;gap:10px;margin-top:6px}
+  button.go{background:var(--accent);color:#fff;border:0;padding:11px 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer}
+  button.go:hover{filter:brightness(1.08)}
+  .status{margin-top:14px;padding:10px 14px;border-radius:8px;font-size:13px;background:var(--panel2);border:1px solid var(--line);min-height:20px;white-space:pre-wrap}
+  .status.ok{border-color:var(--ok);color:var(--ok)}
+  .status.warn{border-color:var(--warn);color:var(--warn)}
+  .status.err{border-color:var(--err);color:var(--err)}
+  .status.info{color:var(--txt)}
+  .preview{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+  .preview figure{margin:0}
+  .preview img{max-width:150px;border:1px solid var(--line);border-radius:8px;background:#000;display:none}
+  .preview figcaption{font-size:11px;color:var(--muted);margin-top:5px;text-align:center}
+  pre.manifest{background:#0b0d11;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:12px;color:#9fe6c4;overflow:auto;max-height:160px}
+  .hint{color:var(--muted);font-size:12px;margin-top:6px}
+  details{margin-top:14px;color:var(--muted);font-size:12px}
+  details pre{background:#0b0d11;padding:12px;border-radius:8px;border:1px solid var(--line);overflow:auto}
+  .filelist{font-size:12px;color:var(--muted);margin-top:8px;max-height:120px;overflow:auto}
+  .hidden{display:none}
+  code.k{color:var(--accent2)}
+  .sect{font-size:12px;color:var(--accent2);font-weight:600;margin:4px 0 10px;text-transform:none;letter-spacing:0}
+  .guide{margin-top:14px;padding:16px 18px;border-radius:10px;background:#2a2310;border:1px solid var(--warn);display:none}
+  .guide.show{display:block}
+  .guide h3{margin:0 0 6px;font-size:14px;color:var(--warn)}
+  .guide ul{margin:8px 0;padding-left:20px;color:var(--txt)}
+  .guide ul li{margin:2px 0}
+  .guide .dlrow{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .guide a.dlbtn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600}
+  .guide a.dlbtn:hover{filter:brightness(1.08)}
+  .guide .tip{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>动态壁纸 ZIP 生成器</h1>
+    <div class="sub">拖入 mp4 → 自动生成符合《动态壁纸规范》的 zip。合规视频（H.264 / 1080×2400 / ≤5M）纯浏览器一步出包；格式不符会自动引导用桌面程序转码。</div>
+  </div>
+  <span class="badge">已按书面规范锁定参数</span>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active" data-mode="single">单个壁纸</div>
+    <div class="tab" data-mode="batch">批量整包</div>
+  </div>
+
+  <!-- 共享输出设置 -->
+  <div class="card">
+    <h2>输出设置（已按规范预填，一般无需改）</h2>
+
+    <div class="sect">① 缩略图 thumbnail.gif（规范：400×710，10–15fps，取前2秒，颜色≥128，≤1.5M）</div>
+    <div class="grid">
+      <div class="field"><label>尺寸 (宽×高) <span class="lock">规范 400×710</span></label>
+        <div class="row"><input id="set_gw" type="number" value="400" min="1"/><span style="color:var(--muted)">×</span><input id="set_gh" type="number" value="710" min="1"/></div></div>
+      <div class="field"><label>帧率 fps（10–15）</label><input id="set_gfps" type="number" value="12" min="10" max="15"/></div>
+      <div class="field"><label>起始时间 (秒)</label><input id="set_gstart" type="number" value="0" min="0" step="0.1"/></div>
+      <div class="field"><label>时长 (秒，取前 N 秒)</label><input id="set_gdur" type="number" value="2" min="0" step="0.1"/></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label class="chk"><input id="set_gloop" type="checkbox" checked/> 无限循环</label>
+      <span class="hint">超限（&gt;1.5M）自动降到 128 色以保证合规</span>
+    </div>
+
+    <div class="sect" style="margin-top:18px">② 预览图 wallpaper.jpg（规范：1080×2400，取视频第一帧，JPG，≤800K）</div>
+    <div class="grid">
+      <div class="field"><label>尺寸 (宽×高) <span class="lock">规范 1080×2400</span></label>
+        <div class="row"><input id="set_pw" type="number" value="1080" min="1"/><span style="color:var(--muted)">×</span><input id="set_ph" type="number" value="2400" min="1"/></div></div>
+    </div>
+    <div class="row" style="margin-top:10px"><span class="hint">格式固定 JPG，自动压缩至 ≤800K；固定取视频第一帧。</span></div>
+
+    <div class="sect" style="margin-top:18px">③ manifest.json（全字段必填）</div>
+    <div class="grid">
+      <div class="field"><label>作者 author（须与设计师账号一致，区分大小写）</label><input id="set_author" type="text" placeholder="作者名，须与设计师账号一致（区分大小写）"/></div>
+      <div class="field"><label>type <span class="lock">固定 8</span></label><input id="set_type" type="number" value="8" min="0" readonly style="color:var(--muted)"/></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label class="chk"><input id="set_idfixed" type="checkbox"/> ID 按名称固定（否则每次随机 UUID，确保不重复）</label>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <label class="chk"><input id="set_dyn" type="checkbox"/> 同时导出「动态预览图」(540×1200 GIF, 探索页推荐用，单独下载，不含在 zip 内)</label>
+    </div>
+  </div>
+
+  <!-- 单个 -->
+  <div class="card" id="panel_single">
+    <h2>单个壁纸</h2>
+    <div class="drop" id="s_drop">点击或拖入 <b>1 个 mp4</b></div>
+    <input id="s_file" type="file" accept="video/mp4" class="hidden"/>
+    <div class="grid" style="margin-top:14px">
+      <div class="field"><label>壁纸名称 name（英文，勿过长）</label><input id="s_name" type="text" placeholder="留空则用文件名"/></div>
+      <div class="field"><label>描述 description（英文）</label><input id="s_desc" type="text" placeholder="用于详情页/探索页"/></div>
+    </div>
+    <div class="hint" style="margin-top:10px">视频需满足：1080×2400、H.264 编码、≤5M。浏览器<strong>无法转码</strong>；若源不符，本页会提示下载「桌面处理程序」（自带 ffmpeg，把 mp4 拖进去即可一步出合规包）。</div>
+    <div class="btns"><button class="go" id="btn_single">生成并下载 ZIP</button></div>
+    <div class="guide" id="guide"></div>
+    <div class="preview">
+      <figure><img id="prevImg" alt="preview"/><figcaption>wallpaper.jpg</figcaption></figure>
+      <figure><img id="prevGif" alt="gif"/><figcaption>thumbnail.gif</figcaption></figure>
+    </div>
+    <pre class="manifest" id="manifestOut" style="display:none"></pre>
+    <div class="status info" id="status">就绪。</div>
+  </div>
+
+  <!-- 批量 -->
+  <div class="card hidden" id="panel_batch">
+    <h2>批量整包（每个子目录均为规范合规壁纸）</h2>
+    <div class="drop" id="b_drop">点击选择 <b>文件夹</b>（webkitdirectory）或拖入多个 mp4</div>
+    <input id="b_files" type="file" accept="video/mp4" multiple class="hidden" webkitdirectory="" directory=""/>
+    <div class="filelist" id="b_list"></div>
+    <div class="grid" style="margin-top:14px">
+      <div class="field"><label>整包根目录名（zip 内顶层文件夹）</label><input id="b_root" type="text" placeholder="如 传音动态0713"/></div>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>逐条覆盖（可选，每行：文件名 | 作者 | 描述）</label>
+      <textarea id="b_overrides" placeholder="示例：&#10;Blue Cooler | designerA | Cooling fans glow pale blue.&#10;Aurora Lake | designerB | The lake mirrors the aurora."></textarea>
+      <div class="hint">“文件名”指 mp4 去后缀后的名字；不填则用默认值。</div>
+    </div>
+    <div class="btns"><button class="go" id="btn_batch">批量生成整包 ZIP</button></div>
+    <div class="guide" id="guideB"></div>
+    <div class="status info" id="statusB">就绪。</div>
+  </div>
+
+  <details>
+    <summary>zip 内部结构（与《动态壁纸规范》一致）</summary>
+    <pre><b>根层：</b>
+<code class="k">manifest.json</code>            ← 5 字段全必填（id/type/author/name/description）
+preview/
+  thumbnail.gif          ← 400×710，10–15fps，前2秒，≤1.5M
+  wallpaper.jpg          ← 1080×2400，第一帧，JPG，≤800K
+wallpapers/
+  wallpaper.mp4          ← 1080×2400，H.264，≤5M（依规范 md 正文）
+
+<b>批量整包：</b> 根目录/壁纸名/ 下同样的四件套。
+
+<b>动态预览图（可选，单独提供，不在包内）：</b>
+  540×1200，GIF/WebP，10–15fps，前2秒，≤2M —— 用于“探索”页推荐。
+
+⚠️ Mac 手动打包会带 __MACOSX 隐藏文件导致后台解析失败；本工具用 JSZip 生成，不含隐藏文件，可直接上传。</pre>
+  </details>
+</div>
+
+<script>/*__JSZIP_LIB__*/</script>
+<script>/*__GIFENC_LIB__*/</script>
+<script>
+(function(){
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const mode = { v: 'single' };
+
+  function uuidv4(){
+    if(crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=>{
+      const r=Math.random()*16|0; const v=c==='x'?r:(r&0x3|0x8); return v.toString(16);
+    });
+  }
+  function stableId(name){
+    let h=0x811c9dc5;
+    for(let i=0;i<name.length;i++){ h^=name.charCodeAt(i); h=Math.imul(h,0x01000193); h>>>=0; }
+    const bytes=[]; let x=h>>>0;
+    for(let i=0;i<16;i++){ x^=x<<13; x^=x>>>17; x^=x<<5; x>>>=0; bytes.push(x&0xff); }
+    const hex=bytes.map(b=>b.toString(16).padStart(2,'0')).join('');
+    return hex.slice(0,8)+'-'+hex.slice(8,12)+'-4'+hex.slice(13,16)+'-8'+hex.slice(16,19)+'-'+hex.slice(19,31);
+  }
+  function sanitize(s){ return (s||'untitled').replace(/[\/\\:*?"<>|]/g,'_').replace(/\s+/g,' ').trim() || 'untitled'; }
+  function setStatus(msg, kind){ const el = mode.v==='single'?$('#status'):$('#statusB'); if(el){ el.textContent=msg; el.className='status '+(kind||'info'); } }
+  function fmtKB(b){ return b>=1048576 ? (b/1048576).toFixed(2)+' MB' : Math.round(b/1024)+' KB'; }
+
+  function loadVideo(file){
+    return new Promise((res,rej)=>{
+      const v=document.createElement('video');
+      v.muted=true; v.playsInline=true; v.preload='auto';
+      v.src=URL.createObjectURL(file);
+      v.addEventListener('loadeddata', ()=>res(v), {once:true});
+      v.addEventListener('error', ()=>rej(new Error('视频加载失败：'+file.name)), {once:true});
+    });
+  }
+  function seek(v,t){
+    return new Promise(res=>{
+      const d=v.duration||0;
+      const tt=Math.min(Math.max(t,0), d>0?d:0);
+      if(Math.abs(v.currentTime-tt)<1e-3){ requestAnimationFrame(()=>res()); return; }
+      const on=()=>{ v.removeEventListener('seeked',on); res(); };
+      v.addEventListener('seeked',on);
+      v.currentTime=tt;
+    });
+  }
+
+  function captureJpg(v,W,H,time,q){
+    return seek(v,time).then(()=>{
+      const c=document.createElement('canvas'); c.width=W; c.height=H;
+      const ctx=c.getContext('2d'); ctx.drawImage(v,0,0,W,H);
+      return new Promise(res=> c.toBlob(b=>res(b), 'image/jpeg', q));
+    });
+  }
+  async function makeWallpaperJpg(v,W,H,limit){
+    const qs=[0.9,0.8,0.7,0.6,0.5,0.4];
+    for(const q of qs){
+      const b=await captureJpg(v,W,H,0,q); // 第一帧
+      if(b && b.size<=limit) return b;
+    }
+    return await captureJpg(v,W,H,0,0.4);
+  }
+
+  async function buildGif(v,opt){
+    const {start,duration,fps,W,H,loop,colors}=opt;
+    const dur=v.duration||0;
+    const seg=duration>0 ? Math.min(duration, dur>0?dur:duration) : 0;
+    let n=seg>0 ? Math.max(1, Math.round(seg*fps)) : 1;
+    n=Math.min(n,40);
+    const delay=Math.max(20, Math.round(1000/fps));
+    const gif=GIFEnc.GIFEncoder();
+    const c=document.createElement('canvas'); c.width=W; c.height=H;
+    const ctx=c.getContext('2d');
+    for(let i=0;i<n;i++){
+      const t=n===1 ? start : (seg>0 ? start+seg*(i/(n-1)) : start);
+      await seek(v,t);
+      ctx.drawImage(v,0,0,W,H);
+      const data=ctx.getImageData(0,0,W,H).data;
+      const palette=GIFEnc.quantize(data,colors);
+      const index=GIFEnc.applyPalette(data,palette);
+      gif.writeFrame(index,W,H,{palette,delay,first:i===0,repeat:(loop&&i===0)?0:undefined});
+    }
+    gif.finish();
+    return new Blob([gif.bytes()], {type:'image/gif'});
+  }
+  async function makeThumbGif(v,opt,limit){
+    let b=await buildGif(v,Object.assign({},opt,{colors:256}));
+    if(b.size>limit){ b=await buildGif(v,Object.assign({},opt,{colors:128})); }
+    return b;
+  }
+
+  // 检测 mp4 容器视频编码：扫描编码标记
+  // avcC=H.264 ; hvcC/hevC=HEVC ; vp08/09=VP8/9 ; mp4v=MPEG-4 Part2 ; AV01=AV1
+  function containsBytes(hay, needle){
+    const n=needle.length;
+    for(let i=0;i+n<=hay.length;i++){
+      let ok=true;
+      for(let j=0;j<n;j++){ if(hay[i+j]!==needle[j]){ ok=false; break; } }
+      if(ok) return true;
+    }
+    return false;
+  }
+  const CODEC_SIGS={
+    avcC:[0x61,0x76,0x63,0x43],
+    hvcC:[0x68,0x76,0x63,0x43],
+    hevC:[0x68,0x65,0x76,0x43],
+    vp09:[0x76,0x70,0x30,0x39],
+    vp08:[0x76,0x70,0x30,0x38],
+    mp4v:[0x6d,0x70,0x34,0x76],
+    AV01:[0x41,0x56,0x30,0x31]
+  };
+  const CODEC_LABEL={hvcC:'HEVC/H.265',hevC:'HEVC/H.265',vp09:'VP9',vp08:'VP8',mp4v:'MPEG-4 Part2',AV01:'AV1'};
+  async function detectCodec(file){
+    try{
+      const buf=await file.arrayBuffer();
+      const bytes=new Uint8Array(buf);
+      let h264=false; const others=[];
+      for(const k in CODEC_SIGS){
+        if(containsBytes(bytes, CODEC_SIGS[k])){
+          if(k==='avcC') h264=true; else others.push(k);
+        }
+      }
+      if(others.length){
+        const labels=others.map(k=>CODEC_LABEL[k]||k).join('、');
+        return {nonH264:labels, h264:false, uncertain:false};
+      }
+      if(h264) return {nonH264:null, h264:true, uncertain:false};
+      return {nonH264:null, h264:false, uncertain:true};
+    }catch(e){
+      return {nonH264:null, h264:false, uncertain:true, err:(e.message||e)};
+    }
+  }
+
+  // 桌面处理程序（与本 HTML 放同一目录；.app 需压成 zip 才能通过链接下载）
+  const DESKTOP_APP = { mac:'动态壁纸生成器-mac.zip', win:'动态壁纸生成器-win.zip' };
+
+  // 综合判断「浏览器处理不了、必须转码」的原因（非 H.264 / 分辨率≠1080×2400 / 体积>5M）
+  function transcodeReasons(v, file, codecRes){
+    const rs=[];
+    if(codecRes && codecRes.nonH264) rs.push('编码为 '+codecRes.nonH264+'（需转成 H.264）');
+    const w=v.videoWidth, h=v.videoHeight;
+    if(w&&h&&(w!==1080||h!==2400)) rs.push('分辨率 '+w+'×'+h+'（需转成 1080×2400）');
+    if(file.size>5*1048576) rs.push('体积 '+fmtKB(file.size)+'（需压到 ≤5M）');
+    return rs;
+  }
+  // 渲染「需转码 → 下载桌面程序」引导卡片
+  function showGuide(containerId, reasons, fileLabel){
+    const el=document.getElementById(containerId);
+    if(!el) return;
+    const lis=reasons.map(r=>'<li>'+r+'</li>').join('');
+    el.innerHTML =
+      '<h3>⚠ 此视频浏览器处理不了，需要转码</h3>'+
+      '<div>'+(fileLabel?('「'+fileLabel+'」'):'')+'不满足以下规范，浏览器无法转码（缺 H.264 编码器）：</div>'+
+      '<ul>'+lis+'</ul>'+
+      '<div>请下载「桌面处理程序」——它自带 ffmpeg，把这个 mp4 拖进去即可一步生成合规 zip：</div>'+
+      '<div class="dlrow">'+
+        '<a class="dlbtn" href="'+DESKTOP_APP.mac+'" download>⬇ macOS 版</a>'+
+        '<a class="dlbtn" href="'+DESKTOP_APP.win+'" download>⬇ Windows 版</a>'+
+      '</div>'+
+      '<div class="tip">下载后解压双击运行，浏览器会自动打开操作页；把此 mp4 拖入即可。'+
+      '（若下载按钮无效，说明程序包未与本网页放在同一目录，请向工具维护者索取。）</div>';
+    el.classList.add('show');
+  }
+  function hideGuide(containerId){
+    const el=document.getElementById(containerId);
+    if(el){ el.classList.remove('show'); el.innerHTML=''; }
+  }
+
+  function download(blob, filename){
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function showPreview(blob, elId){
+    const el=document.getElementById(elId);
+    if(el._url) URL.revokeObjectURL(el._url);
+    el._url=URL.createObjectURL(blob); el.src=el._url; el.style.display='block';
+  }
+
+  function sharedSettings(){
+    return {
+      gW:parseInt($('#set_gw').value,10)||400, gH:parseInt($('#set_gh').value,10)||710,
+      gFps:Math.min(15,Math.max(10,parseInt($('#set_gfps').value,10)||12)),
+      gStart:parseFloat($('#set_gstart').value)||0, gDur:parseFloat($('#set_gdur').value)||2,
+      gLoop:$('#set_gloop').checked,
+      pW:parseInt($('#set_pw').value,10)||1080, pH:parseInt($('#set_ph').value,10)||2400,
+      authorDef:$('#set_author').value.trim(),
+      typeDef:parseInt($('#set_type').value,10)||8,
+      idFixed:$('#set_idfixed').checked,
+      dynOn:$('#set_dyn').checked
+    };
+  }
+
+  // ---------- single ----------
+  let singleFile=null;
+  function setupDrop(dropId,inputId,onPick){
+    const drop=$(dropId), input=$(inputId);
+    drop.addEventListener('click',()=>input.click());
+    input.addEventListener('change',()=>{ if(input.files[0]) onPick(input.files[0]); });
+    ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+    ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+    drop.addEventListener('drop',e=>{ const f=e.dataTransfer.files[0]; if(f) onPick(f); });
+  }
+  setupDrop('#s_drop','#s_file',f=>{ singleFile=f; $('#s_drop').innerHTML='已选择：<b>'+f.name+'</b>'; if(!$('#s_name').value) $('#s_name').value=f.name.replace(/\.mp4$/i,''); });
+
+  function requiredErr(name, author, desc){
+    const errs=[];
+    if(!name) errs.push('名称 name 不能为空');
+    if(!author) errs.push('作者 author 不能为空（须与设计师账号一致）');
+    if(!desc) errs.push('描述 description 不能为空');
+    return errs;
+  }
+  async function generateSingle(){
+    if(!singleFile){ setStatus('请先选择 mp4 文件','warn'); return; }
+    const s=sharedSettings();
+    const name=sanitize($('#s_name').value||singleFile.name.replace(/\.mp4$/i,''));
+    const author=s.authorDef;
+    const desc=$('#s_desc').value.trim();
+    hideGuide('guide');
+    const errs=requiredErr(name, author, desc);
+    if(errs.length){ setStatus('⚠ 必填项缺失：'+errs.join('；'),'warn'); return; }
+    setStatus('正在加载视频…','info');
+    try{
+      const v=await loadVideo(singleFile);
+      const id=s.idFixed?stableId(name):uuidv4();
+
+      // 综合判断是否需要转码（非 H.264 / 分辨率≠1080×2400 / 体积>5M）→ 引导桌面程序，不出包
+      const cr=await detectCodec(singleFile);
+      const reasons=transcodeReasons(v, singleFile, cr);
+      if(reasons.length){
+        showGuide('guide', reasons, singleFile.name);
+        setStatus('✗ 该视频不符合规范，浏览器无法转码，请用桌面处理程序（见上方下载入口）。','err');
+        return;
+      }
+      if(cr.uncertain){ setStatus('⚠ 无法从容器确认编码（未找到 H.264 标记）。若源确为 H.264 可继续；否则请用桌面程序转码。','warn'); }
+
+      setStatus('生成 wallpaper.jpg（第一帧）…','info');
+      const wallBlob=await makeWallpaperJpg(v,s.pW,s.pH,800*1024);
+      showPreview(wallBlob,'prevImg');
+
+      setStatus('生成 thumbnail.gif（前2秒）…','info');
+      const gifBlob=await makeThumbGif(v,{start:s.gStart,duration:s.gDur,fps:s.gFps,W:s.gW,H:s.gH,loop:s.gLoop}, 1.5*1048576);
+      showPreview(gifBlob,'prevGif');
+
+      let dynBlob=null, dynName=null;
+      if(s.dynOn){
+        setStatus('生成动态预览图（540×1200）…','info');
+        dynBlob=await makeThumbGif(v,{start:0,duration:2,fps:s.gFps,W:540,H:1200,loop:true}, 2*1048576);
+        dynName=sanitize(name)+'_dynamic_preview.gif';
+      }
+
+      const manifest={id,type:s.typeDef,author:s.authorDef,name,description:desc};
+      const manifestStr=JSON.stringify(manifest,null,2);
+      $('#manifestOut').textContent=manifestStr; $('#manifestOut').style.display='block';
+
+      const zip=new JSZip();
+      zip.file('manifest.json',manifestStr);
+      zip.file('preview/thumbnail.gif',gifBlob);
+      zip.file('preview/wallpaper.jpg',wallBlob);
+      zip.file('wallpapers/wallpaper.mp4',singleFile);
+      setStatus('打包 ZIP…','info');
+      const content=await zip.generateAsync({type:'blob',compression:'STORE'});
+      const fn=sanitize(name)+'.zip';
+      download(content,fn);
+      if(dynBlob) download(dynBlob,dynName);
+
+      let msg='完成：已下载 '+fn+'（'+fmtKB(content.size)+'，jpg '+fmtKB(wallBlob.size)+'，gif '+fmtKB(gifBlob.size)+'）';
+      if(dynBlob) msg+='；动态预览图 '+dynName+'（'+fmtKB(dynBlob.size)+'）';
+      setStatus(msg, 'ok');
+    }catch(e){ console.error(e); setStatus('出错：'+(e.message||e),'err'); }
+  }
+  $('#btn_single').addEventListener('click',generateSingle);
+
+  // ---------- batch ----------
+  let batchFiles=[];
+  function parseOverrides(text){
+    const map={};
+    (text||'').split(/\n+/).map(l=>l.trim()).filter(Boolean).forEach(line=>{
+      const p=line.split(/\s*\|\s*/);
+      if(!p[0]) return;
+      const key=sanitize(p[0].replace(/\.mp4$/i,'')).toLowerCase();
+      map[key]={ name:sanitize(p[0].replace(/\.mp4$/i,'')), author:p[1]||undefined, desc:p[2]||'' };
+    });
+    return map;
+  }
+  setupDrop('#b_drop','#b_files',()=>{});
+  $('#b_files').addEventListener('change',()=>{ batchFiles=Array.from($('#b_files').files).filter(f=>/\.mp4$/i.test(f.name)); renderBatchList(); });
+  function renderBatchList(){
+    const el=$('#b_list');
+    el.innerHTML=batchFiles.length?('已选择 '+batchFiles.length+' 个 mp4：<br>'+batchFiles.map(f=>'· '+f.name).join('<br>')):'';
+  }
+
+  async function generateBatch(){
+    if(!batchFiles.length){ setStatus('请先选择/拖入 mp4 文件','warn'); return; }
+    hideGuide('guideB');
+    const s=sharedSettings();
+    const root=sanitize($('#b_root').value||'动态壁纸包');
+    const overrides=parseOverrides($('#b_overrides').value);
+    const zip=new JSZip();
+    const dynZip = s.dynOn ? new JSZip() : null;
+    const total=batchFiles.length;
+    let skipped=0; let done=0; const skippedNames=[];
+    setStatus('开始处理 '+total+' 个壁纸…','info');
+    for(let i=0;i<total;i++){
+      const f=batchFiles[i];
+      const base=sanitize(f.name.replace(/\.mp4$/i,''));
+      const ov=overrides[base.toLowerCase()];
+      const name=ov&&ov.name?ov.name:base;
+      const author=(ov&&ov.author)?ov.author:s.authorDef;
+      const desc=((ov&&ov.desc!=null)?ov.desc:'').toString().trim();
+      const errs=requiredErr(name, author, desc);
+      if(errs.length){ setStatus('⚠ 第 '+(i+1)+' 个「'+f.name+'」必填缺失：'+errs.join('；'),'warn'); return; }
+      const id=s.idFixed?stableId(name):uuidv4();
+      try{
+        const v=await loadVideo(f);
+        const cr=await detectCodec(f);
+        const reasons=transcodeReasons(v, f, cr);
+        if(reasons.length){ if(v.src) URL.revokeObjectURL(v.src); setStatus('✗ 第 '+(i+1)+' 个「'+f.name+'」需转码（'+reasons.join('；')+'），已跳过','warn'); skipped++; skippedNames.push(f.name); continue; }
+        if(cr.uncertain){ setStatus('⚠ 第 '+(i+1)+' 个「'+f.name+'」无法确认编码（未找到 H.264 标记），仍尝试打包','warn'); }
+        const wallBlob=await makeWallpaperJpg(v,s.pW,s.pH,800*1024);
+        const gifBlob=await makeThumbGif(v,{start:s.gStart,duration:s.gDur,fps:s.gFps,W:s.gW,H:s.gH,loop:s.gLoop},1.5*1048576);
+        const dir=root+'/'+name+'/';
+        const manifest={id,type:s.typeDef,author,name,description:desc};
+        zip.file(dir+'manifest.json',JSON.stringify(manifest,null,2));
+        zip.file(dir+'preview/thumbnail.gif',gifBlob);
+        zip.file(dir+'preview/wallpaper.jpg',wallBlob);
+        zip.file(dir+'wallpapers/wallpaper.mp4',f);
+        if(dynZip){
+          const dynBlob=await makeThumbGif(v,{start:0,duration:2,fps:s.gFps,W:540,H:1200,loop:true},2*1048576);
+          dynZip.file(sanitize(name)+'.gif',dynBlob);
+        }
+        done++;
+        setStatus('处理中 '+(i+1)+'/'+total+'：'+name,'info');
+        await new Promise(r=>setTimeout(r,0));
+        if(v.src) URL.revokeObjectURL(v.src);
+      }catch(e){ setStatus('跳过 '+name+'（'+(e.message||e)+'）','warn'); }
+    }
+    if(skipped){
+      showGuide('guideB', ['共 '+skipped+' 个视频需转码：'+skippedNames.join('、')], null);
+    }
+    if(done===0){
+      setStatus('✗ 全部 '+total+' 个视频都需转码，未生成整包。请用桌面处理程序（见上方下载入口）转码后重试。','err');
+      return;
+    }
+    setStatus('打包整包 ZIP…','info');
+    const content=await zip.generateAsync({type:'blob',compression:'STORE'});
+    const fn=root+'.zip';
+    download(content,fn);
+    if(dynZip){
+      const dcontent=await dynZip.generateAsync({type:'blob',compression:'STORE'});
+      download(dcontent, root+'_dynamic_previews.zip');
+    }
+    setStatus('完成：已下载 '+fn+'（'+fmtKB(content.size)+'，'+done+' 个壁纸'+(skipped?('，'+skipped+' 个需转码已跳过，见上方下载入口'):'')+'）'+(dynZip?('；另含动态预览包 '+root+'_dynamic_previews.zip'):''),'ok');
+  }
+  $('#btn_batch').addEventListener('click',generateBatch);
+
+  // ---------- tabs ----------
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      mode.v=t.dataset.mode;
+      $('#panel_single').classList.toggle('hidden',mode.v!=='single');
+      $('#panel_batch').classList.toggle('hidden',mode.v!=='batch');
+    });
+  });
+})();
+</script>
+</body>
+</html>

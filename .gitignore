@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv
+
+# Build artifacts
+build/
+dist/
+*.app
+*.zip
+*.tar.gz
+*.dmg
+*.exe
+
+# Generated outputs
+transcoded/
+*.log
+
+# Screenshots / clipboard images
+Clipboard_Screenshot*.png
+*.png
+
+# Project memory (local only)
+.workbuddy/memory/
