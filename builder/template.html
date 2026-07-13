@@ -6,41 +6,72 @@
 <title>动态壁纸 ZIP 生成器</title>
 <style>
   :root{
-    --bg:#0b0a14;
-    --surface:rgba(28,25,44,.66);
-    --surface-solid:#1a1729;
-    --surface2:#221e34;
-    --line:rgba(140,130,190,.16);
-    --line-strong:rgba(140,130,190,.30);
-    --ink:#ECEAF6;
-    --muted:#9b95b8;
+    --bg:#0a0912;
+    --surface:rgba(28,25,44,.62);
+    --surface-solid:#16131f;
+    --surface2:#201d30;
+    --line:rgba(148,138,196,.16);
+    --line-strong:rgba(148,138,196,.32);
+    --ink:#F1EFF8;
+    --muted:#9d97ba;
     --accent:#7C5CFF;
-    --accent-b:#9b7bff;
+    --accent-b:#a98cff;
     --accent2:#21D4B4;
+    --accent2-b:#5fe9cf;
     --warn:#FFB23E;
     --err:#FF6B8A;
     --ok:#21D4B4;
-    --radius:16px;
-    --shadow:0 18px 50px -20px rgba(0,0,0,.7);
+    --radius:18px;
+    --shadow:0 18px 50px -22px rgba(0,0,0,.75);
+    --glow:0 0 0 1px rgba(124,92,255,.25), 0 12px 40px -12px rgba(124,92,255,.45);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
-    margin:0;min-height:100vh;color:var(--ink);
+    margin:0;min-height:100vh;color:var(--ink);overflow-x:hidden;
     font:14px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC","Microsoft YaHei",ui-sans-serif,sans-serif;
-    background:
-      radial-gradient(1200px 620px at 86% -12%, rgba(124,92,255,.20), transparent 60%),
-      radial-gradient(900px 520px at -4% 4%, rgba(33,212,180,.12), transparent 55%),
-      var(--bg);
+    background:var(--bg);
   }
-  header{position:relative;overflow:hidden;padding:32px 26px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  header::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg, rgba(124,92,255,.10), rgba(33,212,180,.06))}
-  header > div,header .badge{position:relative;z-index:1}
-  header h1{font-size:25px;margin:0;font-weight:700;letter-spacing:-.02em;
-    background:linear-gradient(120deg,#ffffff,#cdbcff 55%,#9fe9d8);
+  /* 流动极光背景 */
+  body::before{
+    content:"";position:fixed;inset:-20% -10% -10% -10%;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(40% 38% at 82% 8%, rgba(124,92,255,.34), transparent 60%),
+      radial-gradient(36% 34% at 12% 14%, rgba(33,212,180,.22), transparent 60%),
+      radial-gradient(44% 40% at 60% 98%, rgba(168,90,255,.20), transparent 62%);
+    filter:blur(40px) saturate(120%);
+    animation:aurora 18s ease-in-out infinite alternate;
+  }
+  @keyframes aurora{
+    0%{transform:translate3d(0,0,0) scale(1)}
+    50%{transform:translate3d(-2%,2%,0) scale(1.06)}
+    100%{transform:translate3d(2%,-2%,0) scale(1.03)}
+  }
+  /* 细腻颗粒质感 */
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  header{position:relative;overflow:hidden;padding:40px 26px 34px;border-bottom:1px solid var(--line)}
+  header::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg, rgba(124,92,255,.10), rgba(33,212,180,.05))}
+  .hero{position:relative;z-index:1;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr minmax(150px,210px);gap:30px;align-items:center}
+  .hero-copy h1{font-size:30px;margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.1;
+    background:linear-gradient(120deg,#ffffff,#cdbcff 50%,#9fe9d8);
     -webkit-background-clip:text;background-clip:text;color:transparent}
-  header .sub{color:var(--muted);font-size:13px;max-width:700px;margin-top:7px;line-height:1.65}
-  .badge{font-size:11px;background:rgba(33,212,180,.12);color:var(--accent2);border:1px solid rgba(33,212,180,.30);padding:4px 12px;border-radius:20px;white-space:nowrap}
+  .hero-copy .sub{color:var(--muted);font-size:13.5px;max-width:640px;margin-top:12px;line-height:1.7}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .chip{font-size:11px;font-weight:600;color:var(--accent-b);background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.28);padding:5px 12px;border-radius:20px}
+  .chip.teal{color:var(--accent2-b);background:rgba(33,212,180,.12);border-color:rgba(33,212,180,.30)}
+  .badge{font-size:11px;background:rgba(33,212,180,.12);color:var(--accent2);border:1px solid rgba(33,212,180,.30);padding:4px 12px;border-radius:20px;white-space:nowrap;display:inline-block;margin-bottom:14px}
+  /* 装饰性动态壁纸手机 */
+  .hero-phone{position:relative;aspect-ratio:9/19.5;border-radius:30px;overflow:hidden;
+    border:1px solid var(--line-strong);
+    box-shadow:0 24px 60px -24px rgba(124,92,255,.7), inset 0 0 0 5px rgba(0,0,0,.35);
+    background:linear-gradient(150deg,#1a1530,#0f0c1c);
+    transform:rotate(-4deg)}
+  .hero-phone .wall{position:absolute;inset:0;background:linear-gradient(135deg,#7C5CFF,#21D4B4,#FF6B8A,#7C5CFF);background-size:300% 300%;animation:flow 9s ease infinite}
+  .hero-phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:42%;height:14px;background:#0a0814;border-radius:0 0 14px 14px;z-index:2}
+  @keyframes flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
   .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 72px}
   .tabs{display:flex;gap:8px;margin-bottom:22px}
   .tab{padding:9px 18px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:11px;cursor:pointer;font-weight:600;transition:.18s;backdrop-filter:blur(8px)}
@@ -63,13 +94,17 @@
   .drop{position:relative;border:1.5px dashed var(--line-strong);border-radius:14px;padding:26px;text-align:center;color:var(--muted);cursor:pointer;transition:.18s;background:var(--surface2)}
   .drop:hover,.drop.over{border-color:var(--accent);color:var(--ink);background:rgba(124,92,255,.10);transform:translateY(-1px)}
   .drop b{color:var(--accent-b)}
-  /* 签名元素：竖屏手机设备框（1080×2400 比例） */
-  .drop.phone{flex:0 0 210px;aspect-ratio:9/19.5;border-radius:28px;border:1.5px solid var(--line-strong);
-    background:linear-gradient(160deg, rgba(124,92,255,.24), rgba(33,212,180,.16)), var(--surface-solid);
+  /* 签名元素：竖屏手机设备框（1080×2400 比例）—— 动态壁纸预览 */
+  .drop.phone{flex:0 0 210px;aspect-ratio:9/19.5;border-radius:28px;overflow:hidden;position:relative;
+    border:1.5px solid transparent;background:
+      linear-gradient(160deg, rgba(124,92,255,.30), rgba(33,212,180,.18)), var(--surface-solid);
     display:flex;align-items:center;justify-content:center;padding:18px;
-    box-shadow:inset 0 0 0 6px rgba(0,0,0,.28), var(--shadow)}
-  .drop.phone .phone-hint{font-size:13px;line-height:1.8;color:var(--muted)}
-  .drop.phone .phone-hint b{color:var(--ink);font-size:15px}
+    box-shadow:inset 0 0 0 6px rgba(0,0,0,.28), 0 0 0 1px rgba(124,92,255,.3), 0 18px 44px -18px rgba(124,92,255,.6);
+    transition:.2s}
+  .drop.phone::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#7C5CFF,#21D4B4,#FF6B8A,#7C5CFF);background-size:300% 300%;opacity:.16;animation:flow 9s ease infinite;z-index:0}
+  .drop.phone .phone-hint{position:relative;z-index:1;font-size:13px;line-height:1.8;color:var(--ink);text-align:center;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+  .drop.phone .phone-hint b{color:#fff;font-size:15px}
+  .drop.phone:hover,.drop.phone.over{transform:translateY(-2px) scale(1.01);box-shadow:inset 0 0 0 6px rgba(0,0,0,.28), 0 0 0 1px var(--accent), 0 22px 50px -16px rgba(124,92,255,.8)}
   .btns{display:flex;gap:10px;margin-top:8px}
   button.go{background:linear-gradient(135deg,var(--accent),#9b7bff);color:#fff;border:0;padding:12px 22px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px -10px rgba(124,92,255,.75);transition:.18s}
   button.go:hover{filter:brightness(1.07);transform:translateY(-1px)}
@@ -103,16 +138,48 @@
   .guide a.dlbtn.primary{background:linear-gradient(135deg,var(--accent2),#1bb89a);box-shadow:0 8px 20px -10px rgba(33,212,180,.6)}
   .guide .tip{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7}
   .guide .tip a{color:var(--accent-b)}
-  @media (max-width:640px){.single-layout{flex-direction:column}.drop.phone{flex:0 0 auto;width:182px;margin:0 auto}}
+  @media (max-width:640px){
+    .single-layout{flex-direction:column}.drop.phone{flex:0 0 auto;width:182px;margin:0 auto}
+    .hero{grid-template-columns:1fr;gap:22px}
+    .hero-phone{width:150px;margin:0 auto;transform:none}
+    .hero-copy h1{font-size:25px}
+  }
+  /* 入场动画 */
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .card{animation:rise .5s both}
+  .card:nth-child(2){animation-delay:.06s}
+  .card:nth-child(3){animation-delay:.12s}
+  /* 主按钮流光 */
+  button.go{position:relative;overflow:hidden}
+  button.go::before{content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg)}
+  button.go:hover::before{animation:shine .7s ease}
+  @keyframes shine{from{left:-60%}to{left:120%}}
+  /* 聚焦光晕 */
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.22), 0 0 18px -4px rgba(124,92,255,.5)}
+  /* 卡片标题装饰条 */
+  .card h2{position:relative;padding-left:14px}
+  .card h2::before{content:"";position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:4px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  /* 引导卡片高亮 */
+  .guide.show{border-color:rgba(255,178,62,.55);box-shadow:0 0 0 1px rgba(255,178,62,.25),0 14px 40px -18px rgba(255,178,62,.4)}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>动态壁纸 ZIP 生成器</h1>
-    <div class="sub">拖入 mp4 → 自动生成符合《动态壁纸规范》的 zip。合规视频（H.264 / 1080×2400 / ≤5M）纯浏览器一步出包；格式不符会自动引导用桌面程序转码。</div>
+  <div class="hero">
+    <div class="hero-copy">
+      <span class="badge">已按书面规范锁定参数</span>
+      <h1>动态壁纸 ZIP 生成器</h1>
+      <div class="sub">拖入 mp4 → 自动生成符合《动态壁纸规范》的 zip。合规视频（H.264 / 1080×2400 / ≤5M）纯浏览器一步出包；格式不符会自动引导用桌面程序转码。</div>
+      <div class="chips">
+        <span class="chip">1080×2400</span>
+        <span class="chip">H.264 编码</span>
+        <span class="chip">≤5M</span>
+        <span class="chip teal">纯浏览器出包</span>
+      </div>
+    </div>
+    <div class="hero-phone"><div class="wall"></div><div class="notch"></div></div>
   </div>
-  <span class="badge">已按书面规范锁定参数</span>
 </header>
 
 <div class="wrap">
