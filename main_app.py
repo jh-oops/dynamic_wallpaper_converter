@@ -20,16 +20,16 @@ PORT = 8000
 URL = f"http://localhost:{PORT}/"
 APP_NAME = "动态壁纸 ZIP 生成器"
 
-# ── 复古像素游戏配色 ──
-C_BG = "#171727"       # 深紫蓝背景
-C_DARK = "#0f0f1a"     # 暗部
-C_PANEL = "#1e1e33"    # 面板
-C_GREEN = "#39ff14"    # 霓虹绿
-C_MAGENTA = "#ff2a6d"  # 霓虹洋红
-C_CYAN = "#05d9e8"     # 霓虹青
-C_GOLD = "#ffd700"     # 金币黄
-C_TEXT = "#e8e8ff"     # 主文字
-C_DIM = "#6c6c99"      # 暗文字
+# ── 马里奥经典调色板 ──
+C_BG = "#5c94fc"       # 天蓝背景
+C_PANEL = "#ffffff"    # 白面板
+C_RED = "#e52521"      # 马里奥红
+C_COIN = "#fbd000"     # 金币黄
+C_GREEN = "#43b047"    # 管道绿
+C_BROWN = "#8b4513"    # 砖块棕
+C_TEXT = "#111111"     # 黑字
+C_DIM = "#8a8a8a"      # 暗字
+C_BLACK = "#000000"    # 描边黑
 
 
 def server_alive():
@@ -65,7 +65,7 @@ def build_window():
     root.resizable(False, False)
     root.configure(bg=C_BG)
 
-    # 尝试使用等宽字体，若系统没有则回退
+    # 等宽字体，若系统没有则回退
     mono_fonts = ("Courier", "Menlo", "Monaco", "Consolas", "monospace")
     title_font = (mono_fonts[0], 18, "bold")
     body_font = (mono_fonts[0], 11, "bold")
@@ -76,48 +76,50 @@ def build_window():
     canvas = tk.Canvas(root, width=W, height=H, bg=C_BG, highlightthickness=0)
     canvas.pack(fill="both", expand=True)
 
-    # 1. 扫描线：横向半透明细线，模拟 CRT
+    # 1. 顶/底砖块带
+    def _brick_band(y0):
+        _pixel_rect(canvas, 0, y0, W, 12, C_BROWN)
+        for bx in range(0, W, 26):
+            canvas.create_line(bx, y0, bx, y0 + 12, fill=C_BLACK, width=2)
+        canvas.create_line(0, y0 + 6, W, y0 + 6, fill=C_BLACK, width=1)
+    _brick_band(0)
+    _brick_band(H - 12)
+
+    # 2. 扫描线
     for y in range(0, H, 4):
-        canvas.create_line(0, y, W, y, fill="#ffffff", width=1, stipple="gray25")
+        canvas.create_line(0, y, W, y, fill="#000000", width=1, stipple="gray12")
 
-    # 2. 背景面板与边框
-    _pixel_rect(canvas, 14, 14, W - 28, H - 28, C_PANEL, tags="panel")
-    # 外框霓虹绿
-    _pixel_rect(canvas, 8, 8, W - 16, 8, C_GREEN)     # 上
-    _pixel_rect(canvas, 8, H - 16, W - 16, 8, C_GREEN)  # 下
-    _pixel_rect(canvas, 8, 8, 8, H - 16, C_GREEN)    # 左
-    _pixel_rect(canvas, W - 16, 8, 8, H - 16, C_GREEN)  # 右
-    # 四角洋红装饰块
-    corners = [
-        (4, 4, 16, 8), (4, 4, 8, 16),
-        (W - 20, 4, 16, 8), (W - 12, 4, 8, 16),
-        (4, H - 12, 16, 8), (4, H - 20, 8, 16),
-        (W - 20, H - 12, 16, 8), (W - 12, H - 20, 8, 16),
-    ]
-    for cx, cy, cw, ch in corners:
-        _pixel_rect(canvas, cx, cy, cw, ch, C_MAGENTA)
+    # 3. 白色面板 + 黑边
+    _pixel_rect(canvas, 16, 20, W - 32, H - 40, C_PANEL)
+    canvas.create_rectangle(16, 20, W - 16, H - 20, outline=C_BLACK, width=4)
 
-    # 3. 标题：英文像素大标题 + 中文副标题
-    canvas.create_text(W // 2, 48, text="DYNAMIC WALLPAPER", font=title_font, fill=C_GREEN)
+    # 4. 左上金币装饰
+    canvas.create_oval(40, 40, 58, 58, fill=C_COIN, outline=C_BLACK, width=3)
+    _pixel_rect(canvas, 47, 43, 3, 12, C_BROWN)
+
+    # 5. 标题（红字带黑投影）
+    canvas.create_text(W // 2 + 2, 50, text="DYNAMIC WALLPAPER", font=title_font, fill=C_BLACK)
+    canvas.create_text(W // 2, 48, text="DYNAMIC WALLPAPER", font=title_font, fill=C_RED)
     canvas.create_text(W // 2, 76, text=APP_NAME, font=chinese_font, fill=C_TEXT)
 
-    # 4. 状态行：在线 LED + 闪烁光标
-    _pixel_rect(canvas, 62, 108, 12, 12, C_GREEN)  # 状态灯
-    canvas.create_text(82, 114, text="SERVER ONLINE", font=body_font, fill=C_GREEN, anchor="w")
-    cursor = canvas.create_text(214, 114, text="▮", font=body_font, fill=C_GREEN, anchor="w")
+    # 6. 状态行（管道绿）
+    _pixel_rect(canvas, 52, 100, 12, 12, C_GREEN)
+    canvas.create_rectangle(52, 100, 64, 112, outline=C_BLACK, width=2)
+    canvas.create_text(72, 106, text="SERVER ONLINE", font=body_font, fill=C_GREEN, anchor="w")
+    cursor = canvas.create_text(204, 106, text="▮", font=body_font, fill=C_GREEN, anchor="w")
 
-    # 5. 本地地址（可点击打开）
-    canvas.create_text(W // 2, 150, text="LOCAL URL:", font=small_font, fill=C_DIM)
-    url_text = canvas.create_text(W // 2, 170, text=URL, font=(mono_fonts[0], 11, "bold"), fill=C_CYAN)
-    url_line = canvas.create_line(110, 178, W - 110, 178, fill=C_CYAN, width=2, state="hidden")
+    # 7. 本地地址（红字，可点击）
+    canvas.create_text(W // 2, 134, text="LOCAL URL:", font=small_font, fill=C_DIM)
+    url_text = canvas.create_text(W // 2, 154, text=URL, font=(mono_fonts[0], 11, "bold"), fill=C_RED)
+    url_line = canvas.create_line(110, 164, W - 110, 164, fill=C_RED, width=2, state="hidden")
 
     def _url_enter(_):
-        canvas.itemconfig(url_text, fill="#ffffff")
+        canvas.itemconfig(url_text, fill=C_TEXT)
         canvas.itemconfig(url_line, state="normal")
         canvas.config(cursor="hand2")
 
     def _url_leave(_):
-        canvas.itemconfig(url_text, fill=C_CYAN)
+        canvas.itemconfig(url_text, fill=C_RED)
         canvas.itemconfig(url_line, state="hidden")
         canvas.config(cursor="")
 
@@ -126,46 +128,48 @@ def build_window():
         canvas.tag_bind(tag, "<Leave>", _url_leave)
         canvas.tag_bind(tag, "<Button-1>", lambda _=None: open_browser())
 
-    # 6. 像素按钮：打开网页 / 退出程序
-    def _make_button(x, y, w, h, label, hotkey, color, action, tag):
-        # 阴影
-        _pixel_rect(canvas, x + 4, y + 4, w, h, "#000000")
-        # 按钮体
-        body = _pixel_rect(canvas, x, y, w, h, color, tags=tag)
-        # 3D 高光边
-        _pixel_rect(canvas, x, y, w, 3, "#ffffff")  # 上亮边
-        _pixel_rect(canvas, x, y + h - 3, w, 3, "#000000")  # 下暗边
-        # 文字
-        txt = canvas.create_text(x + w // 2, y + h // 2 - 2, text=label, font=body_font, fill=C_DARK, tags=tag)
-        hk = canvas.create_text(x + w // 2, y + h // 2 + 12, text=hotkey, font=small_font, fill=C_DARK, tags=tag)
+    # 8. 像素按钮：打开网页 / 退出程序
+    def _make_button(x, y, w, h, label, hotkey, bg, fg, tag, action):
+        _pixel_rect(canvas, x + 4, y + 4, w, h, C_BLACK)  # 阴影
+        body = _pixel_rect(canvas, x, y, w, h, bg, tags=tag)
+        canvas.create_rectangle(x, y, x + w, y + h, outline=C_BLACK, width=3, tags=tag)
+        txt = canvas.create_text(x + w // 2, y + h // 2 - 4, text=label, font=body_font, fill=fg, tags=tag)
+        hk = canvas.create_text(x + w // 2, y + h // 2 + 12, text=hotkey, font=small_font, fill=fg, tags=tag)
 
         def _hover_in(_):
-            canvas.itemconfig(body, fill="#ffffff")
-            canvas.itemconfig(txt, fill=color)
-            canvas.itemconfig(hk, fill=color)
+            canvas.itemconfig(body, fill=fg)
+            canvas.itemconfig(txt, fill=bg)
+            canvas.itemconfig(hk, fill=bg)
 
         def _hover_out(_):
-            canvas.itemconfig(body, fill=color)
-            canvas.itemconfig(txt, fill=C_DARK)
-            canvas.itemconfig(hk, fill=C_DARK)
+            canvas.itemconfig(body, fill=bg)
+            canvas.itemconfig(txt, fill=fg)
+            canvas.itemconfig(hk, fill=fg)
 
         canvas.tag_bind(tag, "<Enter>", _hover_in)
         canvas.tag_bind(tag, "<Leave>", _hover_out)
         canvas.tag_bind(tag, "<Button-1>", lambda _=None: action())
         return body, txt
 
-    _make_button(62, 198, 130, 44, "打开网页", "PRESS A", C_GREEN, open_browser, "btn_open")
-    _make_button(W - 192, 198, 130, 44, "退出程序", "PRESS B", C_MAGENTA, lambda: (root.destroy(), os._exit(0)), "btn_quit")
+    # A：金币黄底黑字；B：管道绿底白字
+    _make_button(48, 182, 130, 44, "打开网页", "PRESS A", C_COIN, C_BLACK, "btn_open", open_browser)
+    _make_button(W - 178, 182, 130, 44, "退出程序", "PRESS B", C_GREEN, C_PANEL, "btn_quit", lambda: (root.destroy(), os._exit(0)))
 
-    # 7. 底部提示
-    canvas.create_text(W // 2, 252, text="拖入 MP4 到浏览器 → 一键生成规范 ZIP", font=hint_font, fill=C_DIM)
+    # 9. 底部提示
+    canvas.create_text(W // 2, 240, text="拖入 MP4 到浏览器 → 一键生成规范 ZIP", font=hint_font, fill=C_DIM)
 
-    # 8. 装饰：右侧像素小手机
-    px, py = 356, 110
-    for dx, dy, pw, ph in [(0, 0, 4, 32), (20, 0, 4, 32), (4, 3, 16, 2), (4, 27, 16, 2), (8, 10, 8, 12)]:
-        _pixel_rect(canvas, px + dx, py + dy, pw, ph, C_DIM)
+    # 10. 右侧：马里奥超级蘑菇（红帽+白点+米色菌柄+黑眼）
+    mx, my = 350, 92
+    _pixel_rect(canvas, mx - 10, my + 20, 26, 24, "#f7d9a0")
+    canvas.create_rectangle(mx - 10, my + 20, mx + 16, my + 44, outline=C_BLACK, width=3)
+    _pixel_rect(canvas, mx - 4, my + 28, 4, 7, C_BLACK)
+    _pixel_rect(canvas, mx + 5, my + 28, 4, 7, C_BLACK)
+    canvas.create_oval(mx - 13, my, mx + 19, my + 28, fill=C_RED, outline=C_BLACK, width=3)
+    canvas.create_oval(mx - 9, my + 8, mx - 1, my + 16, fill=C_PANEL, outline=C_BLACK, width=2)
+    canvas.create_oval(mx + 6, my + 5, mx + 14, my + 13, fill=C_PANEL, outline=C_BLACK, width=2)
+    canvas.create_oval(mx - 1, my + 2, mx + 5, my + 8, fill=C_PANEL, outline=C_BLACK, width=2)
 
-    # 9. 闪烁光标动画
+    # 11. 闪烁光标动画
     def _blink():
         if not canvas.winfo_exists():
             return
