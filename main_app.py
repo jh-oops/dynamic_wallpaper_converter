@@ -108,16 +108,18 @@ def build_window():
 
     # 5. 本地地址（可点击打开）
     canvas.create_text(W // 2, 150, text="LOCAL URL:", font=small_font, fill=C_DIM)
-    url_text = canvas.create_text(W // 2, 170, text=URL, font=(mono_fonts[0], 11, "bold"), fill=C_CYAN, cursor="hand2")
+    url_text = canvas.create_text(W // 2, 170, text=URL, font=(mono_fonts[0], 11, "bold"), fill=C_CYAN)
     url_line = canvas.create_line(110, 178, W - 110, 178, fill=C_CYAN, width=2, state="hidden")
 
     def _url_enter(_):
         canvas.itemconfig(url_text, fill="#ffffff")
         canvas.itemconfig(url_line, state="normal")
+        canvas.config(cursor="hand2")
 
     def _url_leave(_):
         canvas.itemconfig(url_text, fill=C_CYAN)
         canvas.itemconfig(url_line, state="hidden")
+        canvas.config(cursor="")
 
     for tag in (url_text, url_line):
         canvas.tag_bind(tag, "<Enter>", _url_enter)
