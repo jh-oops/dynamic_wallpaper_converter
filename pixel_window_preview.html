@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>像素控制窗口 · 马里奥配色预览</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #2b2b2b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Courier New", Consolas, monospace;
+  }
+
+  /* ── 马里奥经典调色板 ──
+     天蓝 #5c94fc / 马里奥红 #e52521 / 金币黄 #fbd000
+     管道绿 #43b047 / 砖块棕 #8b4513 / 黑描边 #000 / 白 #fff */
+
+  .window {
+    position: relative;
+    width: 420px;
+    height: 280px;
+    background: #5c94fc;            /* 天蓝背景 */
+    border: 6px solid #000;
+    box-shadow: 8px 8px 0 rgba(0,0,0,.5);
+    overflow: hidden;
+    image-rendering: pixelated;
+  }
+
+  /* 顶部砖块带 */
+  .bricks {
+    position: absolute;
+    left: 0; right: 0; top: 0; height: 12px;
+    background:
+      repeating-linear-gradient(90deg, #8b4513 0 24px, #000 24px 26px, #8b4513 26px 50px);
+    z-index: 1;
+  }
+  .bricks.bottom { top: auto; bottom: 0; }
+
+  /* CRT 扫描线 */
+  .window::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,.12) 3px,
+      rgba(0,0,0,.12) 4px
+    );
+    z-index: 6;
+  }
+
+  /* 白色面板 + 黑边 */
+  .panel {
+    position: absolute;
+    left: 16px; top: 20px;
+    width: 388px; height: 240px;
+    background: #fff;
+    border: 4px solid #000;
+    z-index: 2;
+  }
+
+  .title {
+    position: absolute;
+    left: 0; right: 0; top: 40px;
+    text-align: center;
+    color: #e52521;               /* 马里奥红 */
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 #000;
+    z-index: 4;
+  }
+  .subtitle {
+    position: absolute;
+    left: 0; right: 0; top: 66px;
+    text-align: center;
+    color: #000;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 4;
+  }
+
+  /* 金币（左上角装饰） */
+  .coin {
+    position: absolute;
+    left: 40px; top: 40px;
+    width: 18px; height: 18px;
+    background: #fbd000;
+    border: 3px solid #000;
+    border-radius: 50%;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,.25);
+    z-index: 4;
+  }
+  .coin::after {
+    content: "";
+    position: absolute;
+    left: 6px; top: 3px;
+    width: 3px; height: 9px;
+    background: #b8860b;
+  }
+
+  /* 状态行 */
+  .status {
+    position: absolute;
+    left: 52px; top: 102px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 4;
+  }
+  .led {
+    width: 12px; height: 12px;
+    background: #43b047;           /* 管道绿 */
+    border: 2px solid #000;
+    box-shadow: 0 0 6px #43b047;
+  }
+  .status-text {
+    color: #43b047;
+    font-weight: 900;
+    font-size: 11px;
+  }
+  .cursor {
+    color: #43b047;
+    font-weight: 900;
+    font-size: 11px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .url-label {
+    position: absolute;
+    left: 0; right: 0; top: 134px;
+    text-align: center;
+    color: #999;
+    font-size: 9px;
+    z-index: 4;
+  }
+  .url {
+    position: absolute;
+    left: 0; right: 0; top: 152px;
+    text-align: center;
+    color: #e52521;
+    font-weight: 900;
+    font-size: 11px;
+    cursor: pointer;
+    z-index: 4;
+    text-decoration: underline;
+  }
+
+  /* 像素按钮 */
+  .btn {
+    position: absolute;
+    width: 130px; height: 44px;
+    border: 3px solid #000;
+    font-weight: 900;
+    text-align: center;
+    cursor: pointer;
+    z-index: 4;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .btn .l1 { display: block; margin-top: 6px; font-size: 14px; }
+  .btn .l2 { display: block; font-size: 9px; opacity: .85; }
+  /* A：金币黄底黑字（“行动”键）；B：管道绿底白字（“退出”键） */
+  .btn-open { left: 48px; top: 182px; background: #fbd000; color: #000; }
+  .btn-quit { left: 242px; top: 182px; background: #43b047; color: #fff; }
+
+  .hint {
+    position: absolute;
+    left: 0; right: 0; top: 240px;
+    text-align: center;
+    color: #666;
+    font-size: 10px;
+    z-index: 4;
+  }
+
+  /* 右侧：马里奥超级蘑菇 */
+  .mushroom {
+    position: absolute;
+    right: 34px; top: 92px;
+    z-index: 4;
+    width: 46px;
+  }
+  .mushroom .cap {
+    position: relative;
+    width: 46px; height: 22px;
+    background: #e52521;
+    border: 3px solid #000;
+    border-radius: 23px 23px 0 0;
+    box-sizing: border-box;
+  }
+  .mushroom .spot {
+    position: absolute;
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 50%;
+  }
+  .mushroom .s1 { width: 11px; height: 11px; left: 3px; top: 7px; }
+  .mushroom .s2 { width: 9px;  height: 9px;  right: 5px; top: 4px; }
+  .mushroom .s3 { width: 7px;  height: 7px;  left: 19px; top: 2px; }
+  .mushroom .stem {
+    position: relative;
+    width: 26px; height: 22px;
+    margin: 0 auto;
+    background: #f7d9a0;
+    border: 3px solid #000;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-sizing: border-box;
+  }
+  .mushroom .eye {
+    position: absolute; top: 7px;
+    width: 4px; height: 6px;
+    background: #000;
+  }
+  .mushroom .eye.l { left: 6px; }
+  .mushroom .eye.r { right: 6px; }
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="bricks"></div>
+    <div class="bricks bottom"></div>
+    <div class="panel"></div>
+
+    <div class="coin"></div>
+
+    <div class="title">DYNAMIC WALLPAPER</div>
+    <div class="subtitle">动态壁纸 ZIP 生成器</div>
+
+    <div class="status">
+      <div class="led"></div>
+      <div class="status-text">SERVER ONLINE</div>
+      <div class="cursor">▮</div>
+    </div>
+
+    <div class="url-label">LOCAL URL:</div>
+    <div class="url">http://localhost:8000/</div>
+
+    <div class="btn btn-open">
+      <span class="l1">打开网页</span>
+      <span class="l2">PRESS A</span>
+    </div>
+    <div class="btn btn-quit">
+      <span class="l1">退出程序</span>
+      <span class="l2">PRESS B</span>
+    </div>
+
+    <div class="hint">拖入 MP4 到浏览器 → 一键生成规范 ZIP</div>
+
+    <div class="mushroom">
+      <div class="cap">
+        <div class="spot s1"></div>
+        <div class="spot s2"></div>
+        <div class="spot s3"></div>
+      </div>
+      <div class="stem">
+        <div class="eye l"></div>
+        <div class="eye r"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
