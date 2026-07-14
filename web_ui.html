@@ -6,77 +6,137 @@
 <title>动态壁纸 ZIP 生成器</title>
 <style>
   :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --border:#2a2f3a;
-    --text:#e6e9ef; --muted:#8b93a3; --accent:#4f8cff; --accent2:#3a6fd8;
-    --ok:#3ecf8e; --warn:#f5a623; --err:#ff6b6b;
+    --bg:#0a0912;
+    --surface:rgba(28,25,44,.62);
+    --surface-solid:#16131f;
+    --surface2:#201d30;
+    --line:rgba(148,138,196,.16);
+    --line-strong:rgba(148,138,196,.32);
+    --ink:#F1EFF8;
+    --muted:#9d97ba;
+    --accent:#7C5CFF;
+    --accent-b:#a98cff;
+    --accent2:#21D4B4;
+    --accent2-b:#5fe9cf;
+    --warn:#FFB23E;
+    --err:#FF6B8A;
+    --ok:#21D4B4;
+    --radius:18px;
+    --shadow:0 18px 50px -22px rgba(0,0,0,.75);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
-    line-height:1.5;padding:32px 16px;}
-  .wrap{max-width:680px;margin:0 auto;}
-  h1{font-size:20px;margin:0 0 4px;font-weight:650}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:24px}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
-  .drop{border:1.5px dashed var(--border);border-radius:12px;padding:30px 16px;text-align:center;
-    cursor:pointer;transition:.15s;background:var(--panel2)}
-  .drop.over{border-color:var(--accent);background:#1b2436}
-  .drop .big{font-size:15px;color:var(--text)}
+  html{scroll-behavior:smooth}
+  body{margin:0;min-height:100vh;color:var(--ink);overflow-x:hidden;
+    font:14px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC","Microsoft YaHei",ui-sans-serif,sans-serif;
+    background:var(--bg);}
+  /* 流动极光背景 */
+  body::before{content:"";position:fixed;inset:-20% -10% -10% -10%;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(40% 38% at 82% 8%, rgba(124,92,255,.34), transparent 60%),
+      radial-gradient(36% 34% at 12% 14%, rgba(33,212,180,.22), transparent 60%),
+      radial-gradient(44% 40% at 60% 98%, rgba(168,90,255,.20), transparent 62%);
+    filter:blur(40px) saturate(120%);
+    animation:aurora 18s ease-in-out infinite alternate;}
+  @keyframes aurora{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-2%,2%,0) scale(1.06)}100%{transform:translate3d(2%,-2%,0) scale(1.03)}}
+  /* 细腻颗粒质感 */
+  body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  header{position:relative;overflow:hidden;padding:36px 26px 30px;border-bottom:1px solid var(--line)}
+  header::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg, rgba(124,92,255,.10), rgba(33,212,180,.05))}
+  .hero{position:relative;z-index:1;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr minmax(112px,140px);gap:26px;align-items:center}
+  .hero-copy h1{font-size:30px;margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.1;
+    background:linear-gradient(120deg,#ffffff,#cdbcff 50%,#9fe9d8);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-copy .sub{color:var(--muted);font-size:13.5px;max-width:640px;margin-top:12px;line-height:1.7}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .chip{font-size:11px;font-weight:600;color:var(--accent-b);background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.28);padding:5px 12px;border-radius:20px}
+  .chip.teal{color:var(--accent2-b);background:rgba(33,212,180,.12);border-color:rgba(33,212,180,.30)}
+  .badge{font-size:11px;background:rgba(33,212,180,.12);color:var(--accent2);border:1px solid rgba(33,212,180,.30);padding:4px 12px;border-radius:20px;white-space:nowrap;display:inline-block;margin-bottom:14px}
+  /* 装饰性动态壁纸手机 */
+  .hero-phone{position:relative;aspect-ratio:9/19.5;border-radius:30px;overflow:hidden;
+    border:1px solid var(--line-strong);
+    box-shadow:0 24px 60px -24px rgba(124,92,255,.7), inset 0 0 0 5px rgba(0,0,0,.35);
+    background:linear-gradient(150deg,#1a1530,#0f0c1c);transform:rotate(-4deg)}
+  .hero-phone .wall{position:absolute;inset:0;background:linear-gradient(135deg,#7C5CFF,#21D4B4,#FF6B8A,#7C5CFF);background-size:300% 300%;animation:flow 9s ease infinite}
+  .hero-phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:42%;height:14px;background:#0a0814;border-radius:0 0 14px 14px;z-index:2}
+  @keyframes flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 22px 72px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:18px;backdrop-filter:blur(12px);box-shadow:var(--shadow);animation:rise .5s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .card h2{margin:0 0 16px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+  .field input{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
+    border-radius:9px;padding:10px 11px;font-size:13px;outline:none;font-family:inherit;transition:.15s}
+  .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.18)}
+  .chk{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;cursor:pointer;user-select:none;margin-top:10px}
+  .chk input{width:auto;accent-color:var(--accent)}
+  .drop{position:relative;border:1.5px dashed var(--line-strong);border-radius:14px;padding:30px 16px;text-align:center;color:var(--muted);cursor:pointer;transition:.18s;background:var(--surface2);margin-bottom:18px}
+  .drop:hover,.drop.over{border-color:var(--accent);color:var(--ink);background:rgba(124,92,255,.10);transform:translateY(-1px)}
+  .drop .big{font-size:15px;color:var(--ink)}
   .drop .small{font-size:12px;color:var(--muted);margin-top:6px}
-  .fname{margin-top:12px;font-size:13px;color:var(--accent)}
-  label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
-  input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--border);
-    color:var(--text);border-radius:8px;padding:10px 12px;font-size:14px;outline:none}
-  input[type=text]:focus{border-color:var(--accent)}
-  .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin-top:12px;cursor:pointer}
-  .chk input{width:16px;height:16px;accent-color:var(--accent)}
-  .btn{width:100%;margin-top:20px;background:var(--accent);color:#fff;border:0;border-radius:10px;
-    padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:.15s}
-  .btn:hover{background:var(--accent2)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .status{margin-top:16px;font-size:13px;padding:12px 14px;border-radius:8px;display:none;white-space:pre-wrap;word-break:break-all}
-  .status.info{display:block;background:#15212f;color:var(--accent);border:1px solid #21384f}
-  .status.ok{display:block;background:#102019;color:var(--ok);border:1px solid #1c3a2c}
-  .status.err{display:block;background:#2a1518;color:var(--err);border:1px solid #4a2329}
-  .status.warn{display:block;background:#2a2310;color:var(--warn);border:1px solid #4a3c1c}
-  .spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;
-    border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+  .fname{margin-top:12px;font-size:13px;color:var(--accent-b)}
+  .hint{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.6}
+  .btns{display:flex;gap:10px;margin-top:18px}
+  button.go{background:linear-gradient(135deg,var(--accent),#9b7bff);color:#fff;border:0;padding:13px 24px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px -10px rgba(124,92,255,.75);transition:.18s}
+  button.go:hover{filter:brightness(1.07);transform:translateY(-1px)}
+  button.go:active{transform:translateY(0)}
+  button.go:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
   @keyframes sp{to{transform:rotate(360deg)}}
+  .status{margin-top:16px;padding:12px 14px;border-radius:10px;font-size:13px;background:var(--surface2);border:1px solid var(--line);min-height:20px;white-space:pre-wrap;word-break:break-all}
+  .status.ok{border-color:rgba(33,212,180,.4);color:var(--ok);background:rgba(33,212,180,.08)}
+  .status.warn{border-color:rgba(255,178,62,.4);color:var(--warn);background:rgba(255,178,62,.08)}
+  .status.err{border-color:rgba(255,107,138,.4);color:var(--err);background:rgba(255,107,138,.08)}
+  .status.info{color:var(--ink)}
   .dl{margin-top:12px}
-  .dl a{display:inline-block;background:var(--panel2);border:1px solid var(--border);color:var(--text);
-    text-decoration:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-right:8px}
-  .dl a:hover{border-color:var(--accent);color:var(--accent)}
-  .hint{font-size:11px;color:var(--muted);margin-top:6px}
-  code{background:var(--panel2);padding:1px 5px;border-radius:4px;font-size:12px}
+  .dl a{display:inline-block;background:var(--surface2);border:1px solid var(--line);color:var(--ink);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-right:8px;transition:.15s}
+  .dl a:hover{border-color:var(--accent);color:var(--accent-b)}
+  @media (max-width:640px){.hero{grid-template-columns:1fr}.hero-phone{width:112px;margin:0 auto;transform:none}.wrap{padding:22px 14px 60px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>动态壁纸 ZIP 生成器</h1>
-  <div class="sub">拖入 mp4，一键生成符合后台规范的动态壁纸 zip（含转码 H.264 / 抽帧 / 缩略图 / manifest）</div>
+<header>
+  <div class="hero">
+    <div class="hero-copy">
+      <span class="badge">已按书面规范锁定参数</span>
+      <h1>动态壁纸 ZIP 生成器</h1>
+      <div class="sub">拖入 mp4 → 自动转码并打包成符合《动态壁纸规范》的 zip（H.264 / 1080×2400 / ≤5M，铺满全屏无黑边）。</div>
+      <div class="chips">
+        <span class="chip">1080×2400</span>
+        <span class="chip teal">H.264 编码</span>
+        <span class="chip">≤5M</span>
+        <span class="chip teal">铺满无黑边</span>
+      </div>
+    </div>
+    <div class="hero-phone"><div class="wall"></div><div class="notch"></div></div>
+  </div>
+</header>
 
-  <div class="panel">
+<div class="wrap">
+  <div class="card">
+    <h2>① 上传视频并填写信息</h2>
+
     <div class="drop" id="drop">
       <div class="big">拖入 mp4 到这里，或点击选择</div>
-      <div class="small">支持任意来源：非 H.264 / 分辨率不对会自动转码处理</div>
+      <div class="small">支持任意来源：非 H.264 / 分辨率不对会自动转码处理，铺满全屏</div>
     </div>
     <input type="file" id="file" accept="video/mp4,.mp4" hidden>
     <div class="fname" id="fname" style="display:none"></div>
 
-    <label>壁纸名称 name（英文，下载的 zip 以此命名）</label>
-    <input type="text" id="name" placeholder="留空则自动取文件名">
+    <div class="grid">
+      <div class="field"><label>壁纸名称 name（英文，下载的 zip 以此命名）</label><input type="text" id="name" placeholder="留空则自动取文件名"></div>
+      <div class="field"><label>作者 author（须与设计师账号一致，区分大小写）</label><input type="text" id="author" placeholder="例如 JohnDoe"></div>
+    </div>
 
-    <label>作者 author（须与设计师账号一致，区分大小写）</label>
-    <input type="text" id="author" placeholder="例如 JohnDoe">
-
-    <label>描述 description</label>
-    <input type="text" id="desc" placeholder="例如 A calm blue live wallpaper.">
+    <div class="field"><label>描述 description</label><input type="text" id="desc" placeholder="例如 A calm blue live wallpaper."></div>
 
     <label class="chk"><input type="checkbox" id="idfixed"> ID 按名称固定（否则每次随机 UUID，确保不重复）</label>
     <label class="chk"><input type="checkbox" id="dyn"> 额外生成动态预览图（540×1200，可选附件，不进包）</label>
     <div class="hint">动态预览图为探索页推荐用，规范上限 ≤2M；复杂视频可能超限并告警。</div>
 
-    <button class="btn" id="go">生成并下载 ZIP</button>
+    <div class="btns"><button class="go" id="go">生成并下载 ZIP</button></div>
 
     <div class="status" id="status"></div>
     <div class="dl" id="dl"></div>
