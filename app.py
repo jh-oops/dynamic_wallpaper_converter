@@ -15,6 +15,7 @@ manifest / 打包，可选动态预览图）通过一个网页前端暴露出来
 若 flask 缺失，脚本会尝试自动 pip 安装。
 """
 import base64
+import json
 import os
 import shutil
 import sys
@@ -32,9 +33,11 @@ except ImportError:
     from flask import Flask, request, jsonify
 
 import transcode_for_zip as tz
+import tag_matcher as tm
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 HTML_PATH = os.path.join(HERE, "web_ui.html")
+LIBRARY_PATH = os.path.join(HERE, "tags_library.json")
 PORT = 8000
 
 app = Flask(__name__)
@@ -88,6 +91,82 @@ def package():
         "dyn_b64": base64.b64encode(res["dyn_bytes"]).decode("ascii") if res["dyn_bytes"] else None,
         "report": res["report"],
     })
+
+
+@app.route("/api/tags/library", methods=["GET"])
+def get_library():
+    """返回当前标签库（分类 + 标签）。"""
+    return jsonify(tm.load_library(LIBRARY_PATH))
+
+
+@app.route("/api/tags/library", methods=["PUT"])
+def put_library():
+    """保存标签库。简单校验必须包含 categories 与 tags 数组。"""
+    data = request.get_json(force=True, silent=True) or {}
+    if not isinstance(data.get("categories"), list) or not isinstance(data.get("tags"), list):
+        return jsonify(error="标签库必须包含 categories 和 tags 数组"), 400
+    try:
+        with open(LIBRARY_PATH, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return jsonify(ok=True)
+    except Exception as e:
+        return jsonify(error=f"保存失败：{e}"), 500
+
+
+@app.route("/api/analyze", methods=["POST"])
+def analyze():
+    """上传文件，返回建议的 category + tags（仅基于文件名做离线规则匹配）。"""
+    f = request.files.get("file")
+    if not f or not f.filename:
+        return jsonify(error="请上传文件"), 400
+    lib = tm.load_library(LIBRARY_PATH)
+    res = tm.suggest(f.filename, lib, top_n=5)
+    return jsonify(res)
+
+
+@app.route("/api/crop", methods=["POST"])
+def crop():
+    """上传 mp4，按指定目标尺寸和模式裁剪后返回 mp4（base64）。"""
+    f = request.files.get("file")
+    if not f or not f.filename:
+        return jsonify(error="请上传 mp4 文件"), 400
+
+    try:
+        target_w = int(request.form.get("target_w", 1080))
+        target_h = int(request.form.get("target_h", 2400))
+    except ValueError:
+        return jsonify(error="target_w / target_h 必须是整数"), 400
+    if target_w < 1 or target_h < 1:
+        return jsonify(error="目标尺寸必须大于 0"), 400
+
+    mode = request.form.get("mode", "cover")
+    if mode not in ("cover", "contain"):
+        return jsonify(error='mode 只能是 "cover" 或 "contain"'), 400
+    keep_audio = request.form.get("keep_audio") == "1"
+
+    tmp = tempfile.mkdtemp(prefix="wp_crop_")
+    src = os.path.join(tmp, os.path.basename(f.filename))
+    dst = os.path.join(tmp, "cropped.mp4")
+    f.save(src)
+    try:
+        crf, within = tz.transcode_one(src, dst, keep_audio, target_w, target_h, mode)
+        with open(dst, "rb") as fh:
+            mp4_bytes = fh.read()
+        base = os.path.splitext(os.path.basename(f.filename))[0]
+        return jsonify({
+            "ok": True,
+            "mp4_name": f"{base}_{target_w}x{target_h}_{mode}.mp4",
+            "mp4_b64": base64.b64encode(mp4_bytes).decode("ascii"),
+            "target_w": target_w,
+            "target_h": target_h,
+            "mode": mode,
+            "crf": crf,
+            "within_limit": within,
+        })
+    except Exception as e:
+        return jsonify(error=f"裁剪失败：{e}"), 500
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 if __name__ == "__main__":

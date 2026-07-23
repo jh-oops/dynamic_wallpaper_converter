@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>动态壁纸 ZIP 生成器</title>
+<title>主题资源工具平台</title>
 <style>
   :root{
     --bg:#0a0912;
@@ -29,7 +29,6 @@
   body{margin:0;min-height:100vh;color:var(--ink);overflow-x:hidden;
     font:14px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC","Microsoft YaHei",ui-sans-serif,sans-serif;
     background:var(--bg);}
-  /* 流动极光背景 */
   body::before{content:"";position:fixed;inset:-20% -10% -10% -10%;z-index:-2;pointer-events:none;
     background:
       radial-gradient(40% 38% at 82% 8%, rgba(124,92,255,.34), transparent 60%),
@@ -38,21 +37,19 @@
     filter:blur(40px) saturate(120%);
     animation:aurora 18s ease-in-out infinite alternate;}
   @keyframes aurora{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-2%,2%,0) scale(1.06)}100%{transform:translate3d(2%,-2%,0) scale(1.03)}}
-  /* 细腻颗粒质感 */
   body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-  header{position:relative;overflow:hidden;padding:36px 26px 30px;border-bottom:1px solid var(--line)}
+  header{position:relative;overflow:hidden;padding:36px 26px 22px;border-bottom:1px solid var(--line)}
   header::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg, rgba(124,92,255,.10), rgba(33,212,180,.05))}
   .hero{position:relative;z-index:1;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr minmax(112px,140px);gap:26px;align-items:center}
-  .hero-copy h1{font-size:30px;margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.1;
+  .hero-copy h1{font-size:28px;margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.1;
     background:linear-gradient(120deg,#ffffff,#cdbcff 50%,#9fe9d8);
     -webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero-copy .sub{color:var(--muted);font-size:13.5px;max-width:640px;margin-top:12px;line-height:1.7}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .hero-copy .sub{color:var(--muted);font-size:13px;max-width:640px;margin-top:10px;line-height:1.7}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
   .chip{font-size:11px;font-weight:600;color:var(--accent-b);background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.28);padding:5px 12px;border-radius:20px}
   .chip.teal{color:var(--accent2-b);background:rgba(33,212,180,.12);border-color:rgba(33,212,180,.30)}
   .badge{font-size:11px;background:rgba(33,212,180,.12);color:var(--accent2);border:1px solid rgba(33,212,180,.30);padding:4px 12px;border-radius:20px;white-space:nowrap;display:inline-block;margin-bottom:14px}
-  /* 装饰性动态壁纸手机 */
   .hero-phone{position:relative;aspect-ratio:9/19.5;border-radius:30px;overflow:hidden;
     border:1px solid var(--line-strong);
     box-shadow:0 24px 60px -24px rgba(124,92,255,.7), inset 0 0 0 5px rgba(0,0,0,.35);
@@ -60,16 +57,22 @@
   .hero-phone .wall{position:absolute;inset:0;background:linear-gradient(135deg,#7C5CFF,#21D4B4,#FF6B8A,#7C5CFF);background-size:300% 300%;animation:flow 9s ease infinite}
   .hero-phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:42%;height:14px;background:#0a0814;border-radius:0 0 14px 14px;z-index:2}
   @keyframes flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-  .wrap{max-width:760px;margin:0 auto;padding:28px 22px 72px}
+
+  /* 标签页 */
+  .tabs{max-width:760px;margin:0 auto;padding:18px 22px 0;display:flex;gap:8px;flex-wrap:wrap}
+  .tab{cursor:pointer;padding:10px 16px;border-radius:10px;background:transparent;border:1px solid transparent;color:var(--muted);font-size:13px;font-weight:600;transition:.15s}
+  .tab:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+  .tab.active{color:var(--ink);background:var(--surface);border-color:var(--line-strong)}
+  .wrap{max-width:760px;margin:0 auto;padding:18px 22px 72px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:18px;backdrop-filter:blur(12px);box-shadow:var(--shadow);animation:rise .5s ease both}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   .card h2{margin:0 0 16px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
   .field{margin-bottom:14px}
   .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
-  .field input{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
+  .field input, .field select{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
     border-radius:9px;padding:10px 11px;font-size:13px;outline:none;font-family:inherit;transition:.15s}
-  .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.18)}
+  .field input:focus, .field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.18)}
   .chk{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;cursor:pointer;user-select:none;margin-top:10px}
   .chk input{width:auto;accent-color:var(--accent)}
   .drop{position:relative;border:1.5px dashed var(--line-strong);border-radius:14px;padding:30px 16px;text-align:center;color:var(--muted);cursor:pointer;transition:.18s;background:var(--surface2);margin-bottom:18px}
@@ -78,11 +81,13 @@
   .drop .small{font-size:12px;color:var(--muted);margin-top:6px}
   .fname{margin-top:12px;font-size:13px;color:var(--accent-b)}
   .hint{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.6}
-  .btns{display:flex;gap:10px;margin-top:18px}
+  .btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
   button.go{background:linear-gradient(135deg,var(--accent),#9b7bff);color:#fff;border:0;padding:13px 24px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px -10px rgba(124,92,255,.75);transition:.18s}
   button.go:hover{filter:brightness(1.07);transform:translateY(-1px)}
   button.go:active{transform:translateY(0)}
   button.go:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+  button.secondary{background:var(--surface2);border:1px solid var(--line);color:var(--ink);padding:11px 18px;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+  button.secondary:hover{border-color:var(--accent);color:var(--accent-b)}
   .spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
   @keyframes sp{to{transform:rotate(360deg)}}
   .status{margin-top:16px;padding:12px 14px;border-radius:10px;font-size:13px;background:var(--surface2);border:1px solid var(--line);min-height:20px;white-space:pre-wrap;word-break:break-all}
@@ -93,37 +98,59 @@
   .dl{margin-top:12px}
   .dl a{display:inline-block;background:var(--surface2);border:1px solid var(--line);color:var(--ink);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-right:8px;transition:.15s}
   .dl a:hover{border-color:var(--accent);color:var(--accent-b)}
-  @media (max-width:640px){.hero{grid-template-columns:1fr}.hero-phone{width:112px;margin:0 auto;transform:none}.wrap{padding:22px 14px 60px}}
+
+  /* 标签模块 */
+  .tag-group{margin-top:14px}
+  .tag-group-title{font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+  .tag-list{display:flex;flex-wrap:wrap;gap:8px}
+  .tag-pill{cursor:pointer;padding:7px 12px;border-radius:20px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);font-size:12px;transition:.15s;user-select:none}
+  .tag-pill:hover{border-color:var(--accent);color:var(--ink)}
+  .tag-pill.selected{background:rgba(124,92,255,.18);border-color:var(--accent);color:var(--ink)}
+  .tag-count{margin-left:6px;font-size:11px;opacity:.8}
+  .cat-select{width:100%;max-width:320px}
+  .panel{display:none}
+  .panel.active{display:block}
+  .lib-editor{width:100%;min-height:260px;background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:12px;color:var(--ink);font:12px/1.5 monospace;resize:vertical}
+  @media (max-width:640px){.hero{grid-template-columns:1fr}.hero-phone{width:112px;margin:0 auto;transform:none}.wrap{padding:14px 14px 60px}.tabs{padding:14px 14px 0}}
 </style>
 </head>
 <body>
 <header>
   <div class="hero">
     <div class="hero-copy">
-      <span class="badge">已按书面规范锁定参数</span>
-      <h1>动态壁纸 ZIP 生成器</h1>
-      <div class="sub">拖入 mp4 → 自动转码并打包成符合《动态壁纸规范》的 zip（H.264 / 1080×2400 / ≤5M，铺满全屏无黑边）。</div>
+      <span class="badge">主题资源工具平台</span>
+      <h1>动态壁纸 · 尺寸裁剪 · 标签识别</h1>
+      <div class="sub">三个独立模块整合在同一页面：按规范打包动态壁纸、把视频裁剪到任意尺寸、基于你的标签库做定向分类/标签识别。</div>
       <div class="chips">
-        <span class="chip">1080×2400</span>
-        <span class="chip teal">H.264 编码</span>
-        <span class="chip">≤5M</span>
-        <span class="chip teal">铺满无黑边</span>
+        <span class="chip">H.264 转码</span>
+        <span class="chip teal">1080×2400</span>
+        <span class="chip">任意尺寸裁剪</span>
+        <span class="chip teal">定向标签匹配</span>
       </div>
     </div>
     <div class="hero-phone"><div class="wall"></div><div class="notch"></div></div>
   </div>
 </header>
 
+<div class="tabs">
+  <div class="tab active" data-tab="pack">动态壁纸打包</div>
+  <div class="tab" data-tab="crop">尺寸裁剪</div>
+  <div class="tab" data-tab="tags">分类标签识别</div>
+</div>
+
 <div class="wrap">
+
+<!-- ===== 模块一：动态壁纸打包 ===== -->
+<div class="panel active" id="panel-pack">
   <div class="card">
     <h2>① 上传视频并填写信息</h2>
 
-    <div class="drop" id="drop">
+    <div class="drop" id="drop-pack">
       <div class="big">拖入 mp4 到这里，或点击选择</div>
       <div class="small">支持任意来源：非 H.264 / 分辨率不对会自动转码处理，铺满全屏</div>
     </div>
-    <input type="file" id="file" accept="video/mp4,.mp4" hidden>
-    <div class="fname" id="fname" style="display:none"></div>
+    <input type="file" id="file-pack" accept="video/mp4,.mp4" hidden>
+    <div class="fname" id="fname-pack" style="display:none"></div>
 
     <div class="grid">
       <div class="field"><label>壁纸名称 name（英文，下载的 zip 以此命名）</label><input type="text" id="name" placeholder="留空则自动取文件名"></div>
@@ -136,86 +163,309 @@
     <label class="chk"><input type="checkbox" id="dyn"> 额外生成动态预览图（540×1200，可选附件，不进包）</label>
     <div class="hint">动态预览图为探索页推荐用，规范上限 ≤2M；复杂视频可能超限并告警。</div>
 
-    <div class="btns"><button class="go" id="go">生成并下载 ZIP</button></div>
+    <div class="btns"><button class="go" id="go-pack">生成并下载 ZIP</button></div>
 
-    <div class="status" id="status"></div>
-    <div class="dl" id="dl"></div>
+    <div class="status" id="status-pack"></div>
+    <div class="dl" id="dl-pack"></div>
   </div>
+</div>
+
+<!-- ===== 模块二：尺寸裁剪 ===== -->
+<div class="panel" id="panel-crop">
+  <div class="card">
+    <h2>上传视频并选择目标尺寸</h2>
+    <div class="drop" id="drop-crop">
+      <div class="big">拖入 mp4 到这里，或点击选择</div>
+      <div class="small">仅做尺寸裁剪/缩放，不打包进动态壁纸 zip</div>
+    </div>
+    <input type="file" id="file-crop" accept="video/mp4,.mp4" hidden>
+    <div class="fname" id="fname-crop" style="display:none"></div>
+
+    <div class="grid">
+      <div class="field"><label>尺寸预设</label>
+        <select id="preset-crop">
+          <option value="custom" data-w="" data-h="">自定义</option>
+          <option value="1080x2400" data-w="1080" data-h="2400" selected>1080 × 2400（动态壁纸）</option>
+          <option value="1170x2532" data-w="1170" data-h="2532">1170 × 2532（iPhone 14/15）</option>
+          <option value="1179x2556" data-w="1179" data-h="2556">1179 × 2556（iPhone 15 Pro）</option>
+          <option value="1284x2778" data-w="1284" data-h="2778">1284 × 2778（iPhone 14 Pro Max）</option>
+          <option value="1290x2796" data-w="1290" data-h="2796">1290 × 2796（iPhone 15 Pro Max）</option>
+          <option value="720x1280" data-w="720" data-h="1280">720 × 1280</option>
+          <option value="1080x1920" data-w="1080" data-h="1920">1080 × 1920</option>
+          <option value="1920x1080" data-w="1920" data-h="1080">1920 × 1080（横屏）</option>
+        </select>
+      </div>
+      <div class="field"><label>裁剪模式</label>
+        <select id="mode-crop">
+          <option value="cover" selected>Cover：铺满目标尺寸，按画面比例裁剪（无黑边）</option>
+          <option value="contain">Contain：完整保留画面，不足处黑边填充</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="field"><label>目标宽度 px</label><input type="number" id="w-crop" value="1080" min="1"></div>
+      <div class="field"><label>目标高度 px</label><input type="number" id="h-crop" value="2400" min="1"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="audio-crop"> 保留音轨（默认去除）</label>
+
+    <div class="btns"><button class="go" id="go-crop">裁剪并下载 MP4</button></div>
+    <div class="status" id="status-crop"></div>
+    <div class="dl" id="dl-crop"></div>
+  </div>
+</div>
+
+<!-- ===== 模块三：分类标签识别 ===== -->
+<div class="panel" id="panel-tags">
+  <div class="card">
+    <h2>上传文件并识别分类/标签</h2>
+    <div class="drop" id="drop-tags">
+      <div class="big">拖入文件（mp4/图片均可，目前按文件名离线规则匹配）</div>
+      <div class="small">引擎会按文件名关键词命中你的标签库，给出建议；你可在下方修改。</div>
+    </div>
+    <input type="file" id="file-tags" hidden>
+    <div class="fname" id="fname-tags" style="display:none"></div>
+    <div class="btns"><button class="go" id="go-tags">识别标签</button></div>
+
+    <div id="tags-result" style="display:none">
+      <div class="field" style="margin-top:20px"><label>分类（单选）</label>
+        <select id="cat-select" class="cat-select"></select>
+      </div>
+      <div id="tags-groups"></div>
+      <div class="hint" id="tag-count-hint">建议 3–5 个标签；点击标签即可选中/取消。</div>
+      <div class="btns">
+        <button class="go" id="export-tags">导出标签表（CSV + JSON）</button>
+        <button class="secondary" id="reset-tags">重置建议</button>
+      </div>
+    </div>
+    <div class="status" id="status-tags"></div>
+  </div>
+
+  <div class="card">
+    <h2>标签库管理</h2>
+    <div class="hint">下方是你的 tags_library.json。可直接编辑分类与标签、关键词，保存后立即生效。</div>
+    <textarea id="lib-editor" class="lib-editor"></textarea>
+    <div class="btns"><button class="go" id="save-lib">保存标签库</button><button class="secondary" id="reload-lib">重新加载</button></div>
+    <div class="status" id="status-lib"></div>
+  </div>
+</div>
+
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
-const drop = $('drop'), fileInput = $('file');
-let picked = null;
-
-drop.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', e => { if (e.target.files[0]) setFile(e.target.files[0]); });
-['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
-['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) setFile(f); });
-
-function setFile(f){
-  picked = f;
-  $('fname').style.display = 'block';
-  $('fname').textContent = '已选择：' + f.name;
-  if (!$('name').value) $('name').value = f.name.replace(/\.mp4$/i, '');
-}
-
-function setStatus(msg, type){
-  const el = $('status');
+function setStatus(id, msg, type){
+  const el = $(id);
   el.className = 'status ' + (type || 'info');
   el.innerHTML = msg;
 }
 function b64toBlob(b64, type){
   const bin = atob(b64);
-  const len = bin.length;
-  const arr = new Uint8Array(len);
-  for (let i=0;i<len;i++) arr[i] = bin.charCodeAt(i);
+  const arr = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
   return new Blob([arr], {type});
 }
-function download(blob, name){
+function downloadBlob(blob, name){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = name;
   document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
+function downloadText(text, name, type){
+  downloadBlob(new Blob([text], {type}), name);
+}
 
-$('go').addEventListener('click', async () => {
-  if (!picked){ setStatus('请先选择 mp4 文件', 'warn'); return; }
-  const btn = $('go');
-  btn.disabled = true;
-  setStatus('<span class="spin"></span>处理中…（转码 + 抽帧 + 缩略图 + 打包，请稍候）', 'info');
-  $('dl').innerHTML = '';
+// ===== 标签页切换 =====
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    $('panel-' + t.dataset.tab).classList.add('active');
+  });
+});
 
+// ===== 公共：文件拖拽 =====
+function bindDrop(dropId, inputId, fnameId, onPick){
+  const drop = $(dropId), input = $(inputId);
+  drop.addEventListener('click', () => input.click());
+  input.addEventListener('change', e => { if (e.target.files[0]) onPick(e.target.files[0]); });
+  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) onPick(f); });
+}
+function showFname(fnameId, f){ $(fnameId).style.display='block'; $(fnameId).textContent='已选择：'+f.name; }
+
+// ===== 模块一：动态壁纸打包 =====
+let packFile = null;
+bindDrop('drop-pack','file-pack','fname-pack', f => { packFile=f; showFname('fname-pack',f); if(!$('name').value) $('name').value=f.name.replace(/\.mp4$/i,''); });
+$('go-pack').addEventListener('click', async () => {
+  if (!packFile){ setStatus('status-pack','请先选择 mp4 文件','warn'); return; }
+  const btn = $('go-pack'); btn.disabled = true;
+  setStatus('status-pack','<span class="spin"></span>处理中…（转码 + 抽帧 + 缩略图 + 打包，请稍候）','info');
+  $('dl-pack').innerHTML = '';
   const fd = new FormData();
-  fd.append('file', picked);
+  fd.append('file', packFile);
   fd.append('name', $('name').value);
   fd.append('author', $('author').value);
   fd.append('description', $('desc').value);
   fd.append('id_fixed', $('idfixed').checked ? '1' : '0');
   fd.append('dynamic', $('dyn').checked ? '1' : '0');
-
   try{
     const r = await fetch('/api/package', { method:'POST', body: fd });
     const data = await r.json();
-    if (!r.ok){
-      setStatus('✗ ' + (data.error || '处理失败'), 'err');
-      return;
-    }
-    download(b64toBlob(data.zip_b64, 'application/zip'), data.zip_name);
+    if (!r.ok){ setStatus('status-pack','✗ ' + (data.error || '处理失败'),'err'); return; }
+    downloadBlob(b64toBlob(data.zip_b64,'application/zip'), data.zip_name);
     let dl = `<a href="#" id="dlzip">⬇ ${data.zip_name}</a>`;
     if (data.dyn_b64) dl += `<a href="#" id="dldyn">⬇ ${data.dyn_name}</a>`;
-    $('dl').innerHTML = dl;
-    $('dlzip').onclick = e => { e.preventDefault(); download(b64toBlob(data.zip_b64,'application/zip'), data.zip_name); };
-    if (data.dyn_b64) $('dldyn').onclick = e => { e.preventDefault(); download(b64toBlob(data.dyn_b64,'image/gif'), data.dyn_name); };
-    setStatus('✓ 完成：' + data.zip_name + ' 已下载\n' + data.report, 'ok');
-  }catch(err){
-    setStatus('✗ 请求失败：' + err.message, 'err');
-  }finally{
-    btn.disabled = false;
-  }
+    $('dl-pack').innerHTML = dl;
+    $('dlzip').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.zip_b64,'application/zip'), data.zip_name); };
+    if (data.dyn_b64) $('dldyn').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.dyn_b64,'image/gif'), data.dyn_name); };
+    setStatus('status-pack','✓ 完成：' + data.zip_name + ' 已下载\n' + data.report,'ok');
+  }catch(err){ setStatus('status-pack','✗ 请求失败：'+err.message,'err'); }
+  finally{ btn.disabled = false; }
 });
+
+// ===== 模块二：尺寸裁剪 =====
+let cropFile = null;
+bindDrop('drop-crop','file-crop','fname-crop', f => { cropFile=f; showFname('fname-crop',f); });
+$('preset-crop').addEventListener('change', e => {
+  const opt = e.target.selectedOptions[0];
+  if (opt.dataset.w){ $('w-crop').value=opt.dataset.w; $('h-crop').value=opt.dataset.h; }
+});
+$('go-crop').addEventListener('click', async () => {
+  if (!cropFile){ setStatus('status-crop','请先选择 mp4 文件','warn'); return; }
+  const btn = $('go-crop'); btn.disabled = true;
+  setStatus('status-crop','<span class="spin"></span>裁剪转码中…','info');
+  $('dl-crop').innerHTML = '';
+  const fd = new FormData();
+  fd.append('file', cropFile);
+  fd.append('target_w', $('w-crop').value);
+  fd.append('target_h', $('h-crop').value);
+  fd.append('mode', $('mode-crop').value);
+  fd.append('keep_audio', $('audio-crop').checked ? '1' : '0');
+  try{
+    const r = await fetch('/api/crop', { method:'POST', body: fd });
+    const data = await r.json();
+    if (!r.ok){ setStatus('status-crop','✗ ' + (data.error || '处理失败'),'err'); return; }
+    downloadBlob(b64toBlob(data.mp4_b64,'video/mp4'), data.mp4_name);
+    $('dl-crop').innerHTML = `<a href="#" id="dlcrop">⬇ ${data.mp4_name}</a>`;
+    $('dlcrop').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.mp4_b64,'video/mp4'), data.mp4_name); };
+    setStatus('status-crop',`✓ 完成：${data.mp4_name} 已下载（${data.target_w}×${data.target_h} / ${data.mode} / crf=${data.crf}${data.within_limit?'':' ⚠>5M'}）`,'ok');
+  }catch(err){ setStatus('status-crop','✗ 请求失败：'+err.message,'err'); }
+  finally{ btn.disabled = false; }
+});
+
+// ===== 模块三：分类标签识别 =====
+let tagFile = null, tagLibrary = null, suggestedTags = [];
+
+async function loadLibrary(){
+  try{
+    const r = await fetch('/api/tags/library');
+    tagLibrary = await r.json();
+    $('lib-editor').value = JSON.stringify(tagLibrary, null, 2);
+    renderCategoryOptions();
+  }catch(err){ setStatus('status-lib','✗ 加载标签库失败：'+err.message,'err'); }
+}
+
+function renderCategoryOptions(){
+  const sel = $('cat-select');
+  sel.innerHTML = tagLibrary.categories.map(c => `<option value="${c.name}">${c.name_zh} (${c.name}) [${c.group}]</option>`).join('');
+}
+
+function renderTagGroups(selectedNames=[]){
+  const box = $('tags-groups');
+  box.innerHTML = '';
+  const groups = {};
+  tagLibrary.tags.forEach(t => { (groups[t.group] = groups[t.group] || []).push(t); });
+  for (const [g, tags] of Object.entries(groups)){
+    const div = document.createElement('div'); div.className='tag-group';
+    const title = document.createElement('div'); title.className='tag-group-title'; title.textContent=g; div.appendChild(title);
+    const list = document.createElement('div'); list.className='tag-list';
+    tags.forEach(t => {
+      const pill = document.createElement('span'); pill.className='tag-pill';
+      pill.dataset.name = t.name;
+      pill.textContent = t.name_zh ? `${t.name_zh} · ${t.name}` : t.name;
+      if (selectedNames.includes(t.name)) pill.classList.add('selected');
+      pill.addEventListener('click', () => {
+        pill.classList.toggle('selected');
+        updateTagCount();
+      });
+      list.appendChild(pill);
+    });
+    div.appendChild(list); box.appendChild(div);
+  }
+  updateTagCount();
+}
+
+function getSelectedTags(){
+  return Array.from(document.querySelectorAll('.tag-pill.selected')).map(el => el.dataset.name);
+}
+
+function updateTagCount(){
+  const n = document.querySelectorAll('.tag-pill.selected').length;
+  const hint = $('tag-count-hint');
+  if (n === 0) hint.textContent = '建议 3–5 个标签；点击标签即可选中/取消。';
+  else hint.textContent = `已选 ${n} 个标签${n < 3 ? '（建议再选几个）' : n > 5 ? '（建议控制在 3–5 个）' : '（数量合适）'}`;
+}
+
+bindDrop('drop-tags','file-tags','fname-tags', f => { tagFile=f; showFname('fname-tags',f); });
+
+$('go-tags').addEventListener('click', async () => {
+  if (!tagFile){ setStatus('status-tags','请先选择文件','warn'); return; }
+  setStatus('status-tags','<span class="spin"></span>正在识别…','info');
+  const fd = new FormData(); fd.append('file', tagFile);
+  try{
+    const r = await fetch('/api/analyze', { method:'POST', body: fd });
+    const data = await r.json();
+    if (!r.ok){ setStatus('status-tags','✗ ' + (data.error || '识别失败'),'err'); return; }
+    $('tags-result').style.display='block';
+    renderCategoryOptions();
+    $('cat-select').value = data.category.name || tagLibrary.categories[0].name;
+    suggestedTags = data.tags.map(t => t.name);
+    renderTagGroups(suggestedTags);
+    setStatus('status-tags',`✓ 识别完成：分类 ${data.category.name_zh || data.category.name}，建议标签 ${data.tags.length} 个`,'ok');
+  }catch(err){ setStatus('status-tags','✗ 请求失败：'+err.message,'err'); }
+});
+
+$('reset-tags').addEventListener('click', () => { if (tagFile) $('go-tags').click(); });
+
+$('export-tags').addEventListener('click', () => {
+  if (!tagFile) return;
+  const catOpt = $('cat-select').selectedOptions[0];
+  const catName = catOpt ? catOpt.value : '';
+  const catZh = tagLibrary.categories.find(c => c.name === catName)?.name_zh || '';
+  const tags = getSelectedTags();
+  const record = {
+    filename: tagFile.name,
+    category: catName,
+    category_zh: catZh,
+    tags: tags,
+    exported_at: new Date().toISOString()
+  };
+  // CSV
+  const csv = `filename,category,category_zh,tags\n"${tagFile.name}","${catName}","${catZh}","${tags.join(',')}"`;
+  downloadText(csv, tagFile.name.replace(/\.[^.]+$/,'') + '_tags.csv', 'text/csv;charset=utf-8');
+  downloadText(JSON.stringify(record, null, 2), tagFile.name.replace(/\.[^.]+$/,'') + '_tags.json', 'application/json');
+  setStatus('status-tags','✓ 标签表已导出（CSV + JSON）','ok');
+});
+
+$('save-lib').addEventListener('click', async () => {
+  try{
+    const data = JSON.parse($('lib-editor').value);
+    const r = await fetch('/api/tags/library', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    const res = await r.json();
+    if (!r.ok){ setStatus('status-lib','✗ 保存失败：' + (res.error || '未知错误'),'err'); return; }
+    tagLibrary = data;
+    renderCategoryOptions();
+    setStatus('status-lib','✓ 标签库已保存并生效','ok');
+  }catch(err){ setStatus('status-lib','✗ JSON 格式错误：'+err.message,'err'); }
+});
+
+$('reload-lib').addEventListener('click', loadLibrary);
+
+// 初始化
+loadLibrary();
 </script>
 </body>
 </html>

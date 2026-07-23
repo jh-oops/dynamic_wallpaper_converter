@@ -1,0 +1,870 @@
+{
+  "categories": [
+    {
+      "description": "可爱、萌系、治愈、轻松活泼风格",
+      "description_en": "Cute, adorable, cozy, and cheerful wallpaper styles.",
+      "group": "Style",
+      "keywords": [
+        "cute",
+        "adorable",
+        "cozy",
+        "cheerful",
+        "lovely",
+        "kawaii",
+        "萌",
+        "可爱",
+        "治愈",
+        "轻松",
+        "活泼"
+      ],
+      "name": "Cute",
+      "name_zh": "可爱"
+    },
+    {
+      "description": "简约、留白、扁平、现代、ins设计风格",
+      "description_en": "Minimal, clean, flat, and modern wallpaper styles.",
+      "group": "Style",
+      "keywords": [
+        "minimal",
+        "minimalist",
+        "clean",
+        "flat",
+        "simple",
+        "简约",
+        "极简",
+        "留白",
+        "扁平",
+        "ins"
+      ],
+      "name": "Minimal",
+      "name_zh": "简约"
+    },
+    {
+      "description": "现代、都市、商务、成熟、高级设计风格",
+      "description_en": "Modern, urban, professional, sophisticated, and premium wallpaper styles.",
+      "group": "Style",
+      "keywords": [
+        "modern",
+        "urban",
+        "professional",
+        "sophisticated",
+        "premium",
+        "mature",
+        "现代",
+        "都市",
+        "商务",
+        "成熟",
+        "高级"
+      ],
+      "name": "Modern",
+      "name_zh": "现代"
+    },
+    {
+      "description": "时尚、潮流、街头、酷炫、流行元素风格；动态壁纸中表现为炫酷、科技、霓虹、能量、动感视觉",
+      "description_en": "Fashionable, trendy, street-style, stylish, cool, dynamic, futuristic, neon, and high-impact live wallpaper styles.",
+      "group": "Style",
+      "keywords": [
+        "fashion",
+        "cool",
+        "trendy",
+        "street",
+        "stylish",
+        "dynamic",
+        "futuristic",
+        "neon",
+        "high-impact",
+        "时尚",
+        "潮流",
+        "街头",
+        "酷炫",
+        "流行",
+        "科技",
+        "霓虹",
+        "能量",
+        "动感"
+      ],
+      "name": "Fashion/Cool",
+      "name_zh": "时尚/酷炫"
+    },
+    {
+      "description": "插画、绘画、抽象艺术、创意艺术风格",
+      "description_en": "Illustration, painting, abstract, and creative wallpaper styles.",
+      "group": "Style",
+      "keywords": [
+        "artistic",
+        "art",
+        "illustration",
+        "painting",
+        "abstract",
+        "creative",
+        "艺术",
+        "插画",
+        "绘画",
+        "抽象",
+        "创意"
+      ],
+      "name": "Artistic",
+      "name_zh": "艺术"
+    },
+    {
+      "description": "卡通、漫画、动画等非写实视觉风格",
+      "description_en": "Non-realistic wallpaper styles inspired by cartoons, comics, and animation.",
+      "group": "Style",
+      "keywords": [
+        "cartoon",
+        "comic",
+        "anime",
+        "animation",
+        "卡通",
+        "漫画",
+        "动画"
+      ],
+      "name": "Cartoon",
+      "name_zh": "卡通"
+    },
+    {
+      "description": "美式、港式、法式、千禧复古感，褪色做旧、胶卷颗粒、高饱和撞色等设计风格",
+      "description_en": "American retro, Hong Kong-style retro, French retro, Y2K millennial vibes, faded vintage finish, film grain, and high-saturation clashing colors.",
+      "group": "Style",
+      "keywords": [
+        "retro",
+        "vintage",
+        "y2k",
+        "millennial",
+        "film grain",
+        "faded",
+        "classic",
+        "复古",
+        "港式",
+        "法式",
+        "千禧",
+        "做旧",
+        "胶卷",
+        "颗粒"
+      ],
+      "name": "Retro",
+      "name_zh": "复古"
+    },
+    {
+      "description": "节日、纪念日、庆典等内容",
+      "description_en": "Wallpapers featuring holidays, festivals, and seasonal celebrations.",
+      "group": "Topic",
+      "keywords": [
+        "festival",
+        "holiday",
+        "celebration",
+        "anniversary",
+        "seasonal",
+        "节日",
+        "纪念日",
+        "庆典",
+        "圣诞",
+        "春节",
+        "新年",
+        "万圣"
+      ],
+      "name": "Festival",
+      "name_zh": "节日"
+    },
+    {
+      "description": "游戏相关内容、游戏 IP",
+      "description_en": "Wallpapers featuring games, gaming culture, or game-inspired content.",
+      "group": "Topic",
+      "keywords": [
+        "game",
+        "gaming",
+        "esports",
+        "game ip",
+        "游戏",
+        "电竞"
+      ],
+      "name": "Games",
+      "name_zh": "游戏"
+    },
+    {
+      "description": "动漫角色、游戏角色、IP角色、虚拟人物",
+      "description_en": "Wallpapers featuring anime, game, IP, or fictional characters.",
+      "group": "Topic",
+      "keywords": [
+        "character",
+        "anime character",
+        "game character",
+        "ip",
+        "fictional",
+        "角色",
+        "动漫角色",
+        "游戏角色",
+        "虚拟人物"
+      ],
+      "name": "Characters",
+      "name_zh": "角色"
+    },
+    {
+      "description": "体育运动、赛事、运动元素",
+      "description_en": "Wallpapers featuring sports, competitions, or athletic elements.",
+      "group": "Topic",
+      "keywords": [
+        "sport",
+        "sports",
+        "competition",
+        "athletic",
+        "运动",
+        "体育",
+        "赛事",
+        "篮球",
+        "足球",
+        "跑步"
+      ],
+      "name": "Sports",
+      "name_zh": "运动"
+    },
+    {
+      "description": "自然景观、城市景观或建筑场景",
+      "description_en": "Wallpapers featuring natural scenery, cityscapes, or architectural landscapes.",
+      "group": "Topic",
+      "keywords": [
+        "landscape",
+        "scenery",
+        "nature",
+        "cityscape",
+        "architecture",
+        "风景",
+        "景观",
+        "自然",
+        "城市",
+        "建筑"
+      ],
+      "name": "Landscapes",
+      "name_zh": "风景"
+    },
+    {
+      "description": "宠物、野生动物及其他动物",
+      "description_en": "Wallpapers featuring pets, wildlife, or other animals.",
+      "group": "Topic",
+      "keywords": [
+        "animal",
+        "pet",
+        "wildlife",
+        "cat",
+        "dog",
+        "bird",
+        "动物",
+        "宠物",
+        "野生动物"
+      ],
+      "name": "Animals",
+      "name_zh": "动物"
+    },
+    {
+      "description": "宇宙、星空、科幻、天文元素",
+      "description_en": "Wallpapers featuring outer space, stars, astronomy, or sci-fi elements.",
+      "group": "Topic",
+      "keywords": [
+        "space",
+        "universe",
+        "galaxy",
+        "star",
+        "astronomy",
+        "sci-fi",
+        "宇宙",
+        "星空",
+        "科幻",
+        "天文",
+        "银河"
+      ],
+      "name": "Space",
+      "name_zh": "宇宙"
+    }
+  ],
+  "note": "分类与标签库：category 单选，tags 多选 3-5 个。keywords 用于文件名规则匹配（中英混合，大小写不敏感）。",
+  "tags": [
+    {
+      "group": "Design",
+      "keywords": [
+        "neon",
+        "霓虹",
+        "荧光"
+      ],
+      "name": "Neon",
+      "name_zh": "霓虹"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "oil painting",
+        "oil",
+        "painting",
+        "油画"
+      ],
+      "name": "Oil Painting",
+      "name_zh": "油画"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "dimensional",
+        "3d",
+        "立体",
+        "三维"
+      ],
+      "name": "Dimensional",
+      "name_zh": "立体"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "abstract",
+        "抽象"
+      ],
+      "name": "Abstract",
+      "name_zh": "抽象"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "ukiyo-e",
+        "ukiyoe",
+        "浮世绘"
+      ],
+      "name": "Ukiyo-e",
+      "name_zh": "浮世绘"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "metallic",
+        "metal",
+        "金属",
+        "质感"
+      ],
+      "name": "Metallic",
+      "name_zh": "金属"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "photography",
+        "photo",
+        "摄影",
+        "实拍"
+      ],
+      "name": "Photography",
+      "name_zh": "摄影"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "graffiti",
+        "涂鸦"
+      ],
+      "name": "Graffiti",
+      "name_zh": "涂鸦"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "sketch",
+        "素描",
+        "线稿"
+      ],
+      "name": "Sketch",
+      "name_zh": "素描"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "illustration",
+        "illustrated",
+        "插画"
+      ],
+      "name": "Illustration",
+      "name_zh": "插画"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "cartoon",
+        "卡通",
+        "漫画"
+      ],
+      "name": "Cartoon",
+      "name_zh": "卡通"
+    },
+    {
+      "group": "Design",
+      "keywords": [
+        "digital",
+        "数字"
+      ],
+      "name": "Digital (Wallpaper)",
+      "name_zh": "数字"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "happy",
+        "joy",
+        "快乐",
+        "开心"
+      ],
+      "name": "Happy",
+      "name_zh": "快乐"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "calm",
+        "peaceful",
+        "平静",
+        "安宁"
+      ],
+      "name": "Calm",
+      "name_zh": "平静"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "relax",
+        "relaxed",
+        "放松",
+        "舒缓"
+      ],
+      "name": "Relax",
+      "name_zh": "放松"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "healing",
+        "heal",
+        "治愈",
+        "疗愈"
+      ],
+      "name": "Healing",
+      "name_zh": "治愈"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "romantic",
+        "romance",
+        "浪漫"
+      ],
+      "name": "Romantic",
+      "name_zh": "浪漫"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "warm",
+        "warmth",
+        "温暖",
+        "温馨"
+      ],
+      "name": "Warm",
+      "name_zh": "温暖"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "excited",
+        "exciting",
+        "兴奋",
+        "激动"
+      ],
+      "name": "Excited",
+      "name_zh": "兴奋"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "inspirational",
+        "inspire",
+        "励志",
+        "鼓舞"
+      ],
+      "name": "Inspirational",
+      "name_zh": "励志"
+    },
+    {
+      "group": "Emotion",
+      "keywords": [
+        "love",
+        "romantic",
+        "爱",
+        "爱情"
+      ],
+      "name": "Love",
+      "name_zh": "爱"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "gradient",
+        "渐变"
+      ],
+      "name": "Gradient",
+      "name_zh": "渐变"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "colorful",
+        "多彩",
+        "缤纷"
+      ],
+      "name": "Colorful",
+      "name_zh": "多彩"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "silver",
+        "银色",
+        "银"
+      ],
+      "name": "Silver",
+      "name_zh": "银色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "gold",
+        "golden",
+        "金色",
+        "金"
+      ],
+      "name": "Gold",
+      "name_zh": "金色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "brown",
+        "棕色",
+        "褐"
+      ],
+      "name": "Brown",
+      "name_zh": "棕色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "pink",
+        "粉色",
+        "粉"
+      ],
+      "name": "Pink",
+      "name_zh": "粉色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "yellow",
+        "黄色",
+        "黄"
+      ],
+      "name": "Yellow",
+      "name_zh": "黄色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "orange",
+        "橙色",
+        "橙"
+      ],
+      "name": "Orange",
+      "name_zh": "橙色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "red",
+        "红色",
+        "红"
+      ],
+      "name": "Red",
+      "name_zh": "红色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "green",
+        "绿色",
+        "绿"
+      ],
+      "name": "Green",
+      "name_zh": "绿色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "purple",
+        "紫色",
+        "紫"
+      ],
+      "name": "Purple",
+      "name_zh": "紫色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "blue",
+        "蓝色",
+        "蓝"
+      ],
+      "name": "Blue",
+      "name_zh": "蓝色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "gray",
+        "grey",
+        "灰色",
+        "灰"
+      ],
+      "name": "Gray",
+      "name_zh": "灰色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "white",
+        "白色",
+        "白"
+      ],
+      "name": "White",
+      "name_zh": "白色"
+    },
+    {
+      "group": "Color",
+      "keywords": [
+        "black",
+        "黑色",
+        "黑"
+      ],
+      "name": "Black",
+      "name_zh": "黑色"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "character",
+        "characters",
+        "角色"
+      ],
+      "name": "Characters",
+      "name_zh": "角色"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "anime",
+        "动漫",
+        "二次元"
+      ],
+      "name": "Anime",
+      "name_zh": "动漫"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "movie",
+        "movies",
+        "tv",
+        "film",
+        "影视",
+        "电影",
+        "电视剧"
+      ],
+      "name": "Movies & TV",
+      "name_zh": "影视"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "game",
+        "games",
+        "游戏"
+      ],
+      "name": "Games",
+      "name_zh": "游戏"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "festival",
+        "holiday",
+        "节日"
+      ],
+      "name": "Festival",
+      "name_zh": "节日"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "sport",
+        "sports",
+        "运动"
+      ],
+      "name": "Sports",
+      "name_zh": "运动"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "nature",
+        "自然",
+        "森林",
+        "山川"
+      ],
+      "name": "Nature",
+      "name_zh": "自然"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "cityscape",
+        "city",
+        "城市",
+        "都市"
+      ],
+      "name": "Cityscape",
+      "name_zh": "城市"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "animal",
+        "animals",
+        "动物"
+      ],
+      "name": "Animals",
+      "name_zh": "动物"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "plant",
+        "plants",
+        "植物",
+        "花",
+        "树"
+      ],
+      "name": "Plants",
+      "name_zh": "植物"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "food",
+        "食物",
+        "美食"
+      ],
+      "name": "Food",
+      "name_zh": "食物"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "vehicle",
+        "vehicles",
+        "car",
+        "bike",
+        "交通工具",
+        "汽车",
+        "摩托车"
+      ],
+      "name": "Vehicles",
+      "name_zh": "交通工具"
+    },
+    {
+      "group": "Content",
+      "keywords": [
+        "lifestyle",
+        "生活",
+        "日常"
+      ],
+      "name": "Lifestyle",
+      "name_zh": "生活方式"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "cute",
+        "可爱"
+      ],
+      "name": "Cute",
+      "name_zh": "可爱"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "modern",
+        "现代"
+      ],
+      "name": "Modern",
+      "name_zh": "现代"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "minimal",
+        "简约"
+      ],
+      "name": "Minimal",
+      "name_zh": "简约"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "artistic",
+        "艺术"
+      ],
+      "name": "Artistic",
+      "name_zh": "艺术"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "cool",
+        "酷炫",
+        "酷"
+      ],
+      "name": "Cool",
+      "name_zh": "酷炫"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "retro",
+        "复古"
+      ],
+      "name": "Retro",
+      "name_zh": "复古"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "traditional",
+        "传统",
+        "中式"
+      ],
+      "name": "Traditional",
+      "name_zh": "传统"
+    },
+    {
+      "group": "Style",
+      "keywords": [
+        "funny",
+        "搞笑",
+        "趣味"
+      ],
+      "name": "Funny",
+      "name_zh": "搞笑"
+    }
+  ],
+  "version": "1.0"
+}

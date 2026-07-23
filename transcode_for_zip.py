@@ -81,17 +81,27 @@ def list_inputs(path):
     return [path]
 
 
-def transcode_one(src, dst, keep_audio):
-    """转码单个文件到 H.264/1080×2400/≤5M，返回 (最终crf, 是否≤5M)。
+def transcode_one(src, dst, keep_audio=False,
+                  target_w=TARGET_W, target_h=TARGET_H, mode="cover"):
+    """转码单个文件到 H.264 / 目标尺寸 / ≤5M，返回 (最终crf, 是否≤5M)。
 
-    尺寸策略为「cover」：等比放大到铺满 1080×2400 后居中裁剪，
-    保证画面撑满整屏、不变形、无黑边（与缩放前比例不符时裁掉溢出部分）。
+    参数：
+        target_w/target_h: 输出分辨率，默认 1080×2400（动态壁纸规范）。
+        mode: "cover" 等比放大铺满后居中裁剪（无黑边）；
+              "contain" 等比缩放到完整画面后黑边填充（保持全画面）。
     """
     exe = ffmpeg_exe()
-    vf = (
-        f"scale={TARGET_W}:{TARGET_H}:force_original_aspect_ratio=increase,"
-        f"crop={TARGET_W}:{TARGET_H}"
-    )
+    w, h = target_w, target_h
+    if mode == "cover":
+        vf = (
+            f"scale={w}:{h}:force_original_aspect_ratio=increase,"
+            f"crop={w}:{h}"
+        )
+    else:
+        vf = (
+            f"scale={w}:{h}:force_original_aspect_ratio=decrease,"
+            f"pad={w}:{h}:(ow-iw)/2:(oh-ih)/2"
+        )
     cmd_base = [
         exe, "-y", "-i", src,
         "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p",
