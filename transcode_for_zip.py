@@ -117,6 +117,34 @@ def transcode_one(src, dst, keep_audio=False,
     return CRF_STEPS[-1], False
 
 
+def crop_image(src, dst, target_w, target_h, mode="cover", quality=92):
+    """用 Pillow 把静态图片裁剪/缩放到目标尺寸（支持 cover/contain），输出 JPEG。
+
+    cover   : 等比放大铺满后居中裁剪（无黑边，可能裁掉溢出部分）。
+    contain : 等比缩放到完整画面后黑边填充（保持全画面）。
+    返回输出文件路径。适用于壁纸静态图（JPG/PNG/WebP/BMP/GIF 等）。
+    """
+    img = Image.open(src)
+    sw, sh = img.size
+    if mode == "cover":
+        scale = max(target_w / sw, target_h / sh)
+        nw, nh = int(round(sw * scale)), int(round(sh * scale))
+        img = img.resize((nw, nh), Image.LANCZOS)
+        left = (nw - target_w) // 2
+        top = (nh - target_h) // 2
+        out = img.crop((left, top, left + target_w, top + target_h))
+    else:  # contain
+        scale = min(target_w / sw, target_h / sh)
+        nw, nh = int(round(sw * scale)), int(round(sh * scale))
+        img = img.resize((nw, nh), Image.LANCZOS)
+        bg = Image.new("RGB", (target_w, target_h), (0, 0, 0))
+        bg.paste(img, ((target_w - nw) // 2, (target_h - nh) // 2))
+        out = bg
+    out = out.convert("RGB")
+    out.save(dst, "JPEG", quality=quality, optimize=True)
+    return dst
+
+
 def make_first_frame_jpg(mp4, dst_jpg):
     """抽第一帧为 JPG，缩放/压缩到 1080×2400、≤800K。返回最终字节数。"""
     exe = ffmpeg_exe()

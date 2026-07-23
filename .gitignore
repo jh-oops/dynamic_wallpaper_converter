@@ -28,3 +28,6 @@ Clipboard_Screenshot*.png
 
 # Project memory (local only)
 .workbuddy/memory/
+
+# 视觉识别本地配置（可能含 API key，勿提交）
+vision_config.json
