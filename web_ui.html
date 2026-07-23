@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>主题资源工具平台</title>
+<title>壁纸资源工具</title>
 <style>
   :root{
     --bg:#0a0912;
@@ -108,6 +108,20 @@
   .tag-pill.selected{background:rgba(124,92,255,.18);border-color:var(--accent);color:var(--ink)}
   .tag-count{margin-left:6px;font-size:11px;opacity:.8}
   .cat-select{width:100%;max-width:320px}
+  .evi-box{margin:18px 0 4px;padding:14px 16px;background:var(--surface2);border:1px solid var(--line);border-radius:12px}
+  .evi-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+  .evi-colors{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .evi-swatch{width:26px;height:26px;border-radius:6px;border:1px solid rgba(255,255,255,.25);display:inline-block}
+  .evi-dom{margin-left:8px;font-size:12px;color:var(--ink)}
+  .evi-metrics{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .evi-metric{font-size:11px;padding:4px 10px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+  .src-badge{font-size:9px;margin-left:6px;padding:1px 5px;border-radius:8px;vertical-align:middle;opacity:.85}
+  .src-badge.src-image{background:#7c5cff;color:#fff}
+  .src-badge.src-filename{background:#43b047;color:#fff}
+  .src-badge.src-both{background:linear-gradient(90deg,#7c5cff 0 50%,#43b047 50% 100%);color:#fff}
+  .tag-pill.tag-src-image{border-color:#7c5cff}
+  .tag-pill.tag-src-filename{border-color:#43b047}
+  .tag-pill.tag-src-both{border-color:#7c5cff}
   .panel{display:none}
   .panel.active{display:block}
   .lib-editor{width:100%;min-height:260px;background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:12px;color:var(--ink);font:12px/1.5 monospace;resize:vertical}
@@ -118,7 +132,7 @@
 <header>
   <div class="hero">
     <div class="hero-copy">
-      <span class="badge">主题资源工具平台</span>
+      <span class="badge">壁纸资源工具</span>
       <h1>动态壁纸 · 尺寸裁剪 · 标签识别</h1>
       <div class="sub">三个独立模块整合在同一页面：按规范打包动态壁纸、把视频裁剪到任意尺寸、基于你的标签库做定向分类/标签识别。</div>
       <div class="chips">
@@ -173,12 +187,12 @@
 <!-- ===== 模块二：尺寸裁剪 ===== -->
 <div class="panel" id="panel-crop">
   <div class="card">
-    <h2>上传视频并选择目标尺寸</h2>
+    <h2>上传图片/视频并选择目标尺寸</h2>
     <div class="drop" id="drop-crop">
-      <div class="big">拖入 mp4 到这里，或点击选择</div>
-      <div class="small">仅做尺寸裁剪/缩放，不打包进动态壁纸 zip</div>
+      <div class="big">拖入图片或视频到这里，或点击选择</div>
+      <div class="small">支持静态图片（JPG / PNG / WebP 等）与视频 MP4；仅做尺寸裁剪/缩放，不打包进动态壁纸 zip</div>
     </div>
-    <input type="file" id="file-crop" accept="video/mp4,.mp4" hidden>
+    <input type="file" id="file-crop" accept="image/*,video/mp4,.mp4" hidden>
     <div class="fname" id="fname-crop" style="display:none"></div>
 
     <div class="grid">
@@ -206,9 +220,9 @@
       <div class="field"><label>目标宽度 px</label><input type="number" id="w-crop" value="1080" min="1"></div>
       <div class="field"><label>目标高度 px</label><input type="number" id="h-crop" value="2400" min="1"></div>
     </div>
-    <label class="chk"><input type="checkbox" id="audio-crop"> 保留音轨（默认去除）</label>
+    <span id="audio-row-crop"><label class="chk"><input type="checkbox" id="audio-crop"> 保留音轨（默认去除，仅视频有效）</label></span>
 
-    <div class="btns"><button class="go" id="go-crop">裁剪并下载 MP4</button></div>
+    <div class="btns"><button class="go" id="go-crop">裁剪并下载</button></div>
     <div class="status" id="status-crop"></div>
     <div class="dl" id="dl-crop"></div>
   </div>
@@ -219,14 +233,19 @@
   <div class="card">
     <h2>上传文件并识别分类/标签</h2>
     <div class="drop" id="drop-tags">
-      <div class="big">拖入文件（mp4/图片均可，目前按文件名离线规则匹配）</div>
-      <div class="small">引擎会按文件名关键词命中你的标签库，给出建议；你可在下方修改。</div>
+      <div class="big">拖入图片或视频（mp4 / jpg / png / webp 等）</div>
+      <div class="small">引擎会“读图理解”——分析主色、亮度、饱和度、细节密度，结合文件名命中你的标签库；你可在下方修改。</div>
     </div>
-    <input type="file" id="file-tags" hidden>
+    <input type="file" id="file-tags" accept="image/*,video/mp4,.mp4" hidden>
     <div class="fname" id="fname-tags" style="display:none"></div>
     <div class="btns"><button class="go" id="go-tags">识别标签</button></div>
 
     <div id="tags-result" style="display:none">
+      <div id="evi-box" class="evi-box" style="display:none">
+        <div class="evi-title">识别依据（图像特征）</div>
+        <div id="evi-colors" class="evi-colors"></div>
+        <div id="evi-metrics" class="evi-metrics"></div>
+      </div>
       <div class="field" style="margin-top:20px"><label>分类（单选）</label>
         <select id="cat-select" class="cat-select"></select>
       </div>
@@ -328,13 +347,17 @@ $('go-pack').addEventListener('click', async () => {
 
 // ===== 模块二：尺寸裁剪 =====
 let cropFile = null;
-bindDrop('drop-crop','file-crop','fname-crop', f => { cropFile=f; showFname('fname-crop',f); });
+bindDrop('drop-crop','file-crop','fname-crop', f => {
+  cropFile=f; showFname('fname-crop',f);
+  const isImg = /\.(jpe?g|png|webp|bmp|gif|tiff)$/i.test(f.name);
+  $('audio-row-crop').style.display = isImg ? 'none' : '';
+});
 $('preset-crop').addEventListener('change', e => {
   const opt = e.target.selectedOptions[0];
   if (opt.dataset.w){ $('w-crop').value=opt.dataset.w; $('h-crop').value=opt.dataset.h; }
 });
 $('go-crop').addEventListener('click', async () => {
-  if (!cropFile){ setStatus('status-crop','请先选择 mp4 文件','warn'); return; }
+  if (!cropFile){ setStatus('status-crop','请先选择文件','warn'); return; }
   const btn = $('go-crop'); btn.disabled = true;
   setStatus('status-crop','<span class="spin"></span>裁剪转码中…','info');
   $('dl-crop').innerHTML = '';
@@ -348,10 +371,11 @@ $('go-crop').addEventListener('click', async () => {
     const r = await fetch('/api/crop', { method:'POST', body: fd });
     const data = await r.json();
     if (!r.ok){ setStatus('status-crop','✗ ' + (data.error || '处理失败'),'err'); return; }
-    downloadBlob(b64toBlob(data.mp4_b64,'video/mp4'), data.mp4_name);
-    $('dl-crop').innerHTML = `<a href="#" id="dlcrop">⬇ ${data.mp4_name}</a>`;
-    $('dlcrop').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.mp4_b64,'video/mp4'), data.mp4_name); };
-    setStatus('status-crop',`✓ 完成：${data.mp4_name} 已下载（${data.target_w}×${data.target_h} / ${data.mode} / crf=${data.crf}${data.within_limit?'':' ⚠>5M'}）`,'ok');
+    downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name);
+    $('dl-crop').innerHTML = `<a href="#" id="dlcrop">⬇ ${data.file_name}</a>`;
+    $('dlcrop').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name); };
+    const extra = data.kind === 'video' ? ` / crf=${data.crf}${data.within_limit?'':' ⚠>5M'}` : '';
+    setStatus('status-crop',`✓ 完成：${data.file_name} 已下载（${data.target_w}×${data.target_h} / ${data.mode}${extra}）`,'ok');
   }catch(err){ setStatus('status-crop','✗ 请求失败：'+err.message,'err'); }
   finally{ btn.disabled = false; }
 });
@@ -398,6 +422,48 @@ function renderTagGroups(selectedNames=[]){
   updateTagCount();
 }
 
+// 渲染“识别依据”：图像特征 + 每个建议标签的来源徽标
+function renderEvidence(data){
+  const box = $('evi-box');
+  const f = data.features;
+  if (!f){ box.style.display='none'; return; }
+  box.style.display='block';
+  // 主色色块
+  const colors = $('evi-colors');
+  colors.innerHTML = (f.named || []).map(d =>
+    `<span class="evi-swatch" title="${d.name} 占比 ${Math.round(d.ratio*100)}%" style="background:${d.hex}"></span>`
+  ).join('') + `<span class="evi-dom">主色 ${f.dominant.name}</span>`;
+  // 指标
+  const m = $('evi-metrics');
+  const lum = f.mean_lum, sat = Math.round(f.mean_sat*100), edge = f.edge_density, warm = f.warmth;
+  const lumTxt = lum>180?'亮':lum<80?'暗':'中';
+  const satTxt = sat>45?'鲜艳':sat<18?'低饱和':'适中';
+  const edgeTxt = edge<10?'扁平/极简':edge>40?'细节丰富':'适中';
+  const warmTxt = warm>20?'偏暖':warm<-20?'偏冷':'中性';
+  m.innerHTML = [
+    `亮度 ${lumTxt}(${Math.round(lum)})`,
+    `饱和度 ${satTxt}(${sat}%)`,
+    `细节 ${edgeTxt}(${edge})`,
+    `色调 ${warmTxt}`,
+    `色彩丰富度 ${Math.round(f.colorfulness)}`,
+  ].map(t => `<span class="evi-metric">${t}</span>`).join('');
+}
+
+// 在建议标签 pill 上标注来源（filename / image / both）
+function markTagSources(tags){
+  const byName = {};
+  tags.forEach(t => byName[t.name] = t.source);
+  document.querySelectorAll('.tag-pill').forEach(pill => {
+    const src = byName[pill.dataset.name];
+    if (!src) return;
+    pill.classList.add('tag-src-' + src);
+    const badge = document.createElement('span');
+    badge.className = 'src-badge src-' + src;
+    badge.textContent = src === 'both' ? '图+名' : src === 'image' ? '图' : '名';
+    pill.appendChild(badge);
+  });
+}
+
 function getSelectedTags(){
   return Array.from(document.querySelectorAll('.tag-pill.selected')).map(el => el.dataset.name);
 }
@@ -420,11 +486,15 @@ $('go-tags').addEventListener('click', async () => {
     const data = await r.json();
     if (!r.ok){ setStatus('status-tags','✗ ' + (data.error || '识别失败'),'err'); return; }
     $('tags-result').style.display='block';
+    renderEvidence(data);
     renderCategoryOptions();
     $('cat-select').value = data.category.name || tagLibrary.categories[0].name;
     suggestedTags = data.tags.map(t => t.name);
     renderTagGroups(suggestedTags);
-    setStatus('status-tags',`✓ 识别完成：分类 ${data.category.name_zh || data.category.name}，建议标签 ${data.tags.length} 个`,'ok');
+    markTagSources(data.tags);
+    const kindTxt = data.analyzed_kind === 'video-frame' ? '（视频首帧）' : (data.analyzed_kind === 'image' ? '（图像）' : '（仅文件名）');
+    const srcNote = data.features ? ' 已读图理解' : ' 未提取到图像特征，仅按文件名匹配';
+    setStatus('status-tags',`✓ 识别完成${kindTxt}${srcNote}：分类 ${data.category.name_zh || data.category.name}，建议标签 ${data.tags.length} 个`,'ok');
   }catch(err){ setStatus('status-tags','✗ 请求失败：'+err.message,'err'); }
 });
 

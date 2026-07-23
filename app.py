@@ -18,6 +18,7 @@ import base64
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import threading
@@ -34,6 +35,7 @@ except ImportError:
 
 import transcode_for_zip as tz
 import tag_matcher as tm
+import image_analyzer as ia
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 HTML_PATH = os.path.join(HERE, "web_ui.html")
@@ -115,21 +117,89 @@ def put_library():
 
 @app.route("/api/analyze", methods=["POST"])
 def analyze():
-    """上传文件，返回建议的 category + tags（仅基于文件名做离线规则匹配）。"""
+    """上传图片或视频，返回建议的 category + tags。
+
+    识别逻辑：基础为文件名规则匹配；若文件是图片，直接读像素分析；
+    若是视频，抽首帧后读像素分析。图像特征与文件名打分合并，
+    每个标签标注来源（filename / image / both），并附带视觉特征供前端展示“识别依据”。
+    """
     f = request.files.get("file")
     if not f or not f.filename:
         return jsonify(error="请上传文件"), 400
     lib = tm.load_library(LIBRARY_PATH)
-    res = tm.suggest(f.filename, lib, top_n=5)
+    ext = os.path.splitext(f.filename)[1].lower()
+
+    image_scores = None
+    image_cat_scores = None
+    features = None
+    analyzed_kind = None
+    tmp = None
+    try:
+        if ext in IMAGE_EXTS:
+            data = f.read()
+            analyzed_kind = "image"
+            features = ia.analyze_image_bytes(data)
+        elif ext == ".mp4":
+            tmp = tempfile.mkdtemp(prefix="wp_an_")
+            src = os.path.join(tmp, os.path.basename(f.filename))
+            f.save(src)
+            frame = os.path.join(tmp, "frame.jpg")
+            _extract_first_frame(src, frame)
+            with open(frame, "rb") as fh:
+                data = fh.read()
+            analyzed_kind = "video-frame"
+            features = ia.analyze_image_bytes(data)
+        else:
+            # 其他类型：尝试按图片解析，失败则仅用文件名
+            try:
+                data = f.read()
+                features = ia.analyze_image_bytes(data)
+                analyzed_kind = "image"
+            except Exception:
+                features = None
+        if features:
+            image_scores = ia.feature_to_tag_scores(features)
+            image_cat_scores = ia.feature_to_category_scores(features)
+    except Exception as e:
+        features = None
+        image_scores = None
+        image_cat_scores = None
+    finally:
+        if tmp:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    res = tm.suggest(f.filename, lib, top_n=5,
+                     image_scores=image_scores, image_cat_scores=image_cat_scores)
+    res["analyzed_kind"] = analyzed_kind
+    res["features"] = features
     return jsonify(res)
+
+
+IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif", ".tiff"}
+
+
+def _extract_first_frame(src, dst_jpg):
+    """用 ffmpeg 抽视频首帧为 JPG（供图像理解使用）。"""
+    exe = tz.ffmpeg_exe()
+    subprocess.run(
+        [exe, "-y", "-i", src, "-vf", "select=eq(n\\,0)", "-frames:v", "1", "-q:v", "3", dst_jpg],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True,
+    )
+    return dst_jpg
 
 
 @app.route("/api/crop", methods=["POST"])
 def crop():
-    """上传 mp4，按指定目标尺寸和模式裁剪后返回 mp4（base64）。"""
+    """上传文件，按指定目标尺寸和模式裁剪后返回结果（base64）。
+
+    支持两类输入：
+      - 静态图片（jpg/png/webp/bmp/gif/tiff）：用 Pillow 裁剪，返回 JPEG。
+      - 视频 mp4：用 ffmpeg 转码，返回 mp4。
+    mode 同 transcode_one：cover 铺满裁剪 / contain 黑边填充。
+    """
     f = request.files.get("file")
     if not f or not f.filename:
-        return jsonify(error="请上传 mp4 文件"), 400
+        return jsonify(error="请上传文件"), 400
 
     try:
         target_w = int(request.form.get("target_w", 1080))
@@ -144,19 +214,40 @@ def crop():
         return jsonify(error='mode 只能是 "cover" 或 "contain"'), 400
     keep_audio = request.form.get("keep_audio") == "1"
 
+    ext = os.path.splitext(f.filename)[1].lower()
+    is_image = ext in IMAGE_EXTS
+    base = os.path.splitext(os.path.basename(f.filename))[0]
+
     tmp = tempfile.mkdtemp(prefix="wp_crop_")
     src = os.path.join(tmp, os.path.basename(f.filename))
-    dst = os.path.join(tmp, "cropped.mp4")
     f.save(src)
     try:
+        if is_image:
+            dst = os.path.join(tmp, "cropped.jpg")
+            tz.crop_image(src, dst, target_w, target_h, mode)
+            with open(dst, "rb") as fh:
+                data_bytes = fh.read()
+            return jsonify({
+                "ok": True,
+                "kind": "image",
+                "file_name": f"{base}_{target_w}x{target_h}_{mode}.jpg",
+                "file_b64": base64.b64encode(data_bytes).decode("ascii"),
+                "mime": "image/jpeg",
+                "target_w": target_w,
+                "target_h": target_h,
+                "mode": mode,
+            })
+        # 否则按视频处理
+        dst = os.path.join(tmp, "cropped.mp4")
         crf, within = tz.transcode_one(src, dst, keep_audio, target_w, target_h, mode)
         with open(dst, "rb") as fh:
             mp4_bytes = fh.read()
-        base = os.path.splitext(os.path.basename(f.filename))[0]
         return jsonify({
             "ok": True,
-            "mp4_name": f"{base}_{target_w}x{target_h}_{mode}.mp4",
-            "mp4_b64": base64.b64encode(mp4_bytes).decode("ascii"),
+            "kind": "video",
+            "file_name": f"{base}_{target_w}x{target_h}_{mode}.mp4",
+            "file_b64": base64.b64encode(mp4_bytes).decode("ascii"),
+            "mime": "video/mp4",
             "target_w": target_w,
             "target_h": target_h,
             "mode": mode,
