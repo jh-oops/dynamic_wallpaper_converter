@@ -33,9 +33,13 @@ except ImportError:
     subprocess.run([sys.executable, "-m", "pip", "install", "flask", "-q"], check=True)
     from flask import Flask, request, jsonify
 
+import io
+
+import openpyxl
 import transcode_for_zip as tz
 import tag_matcher as tm
 import image_analyzer as ia
+import vision_ai as va
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 HTML_PATH = os.path.join(HERE, "web_ui.html")
@@ -133,12 +137,13 @@ def analyze():
     image_cat_scores = None
     features = None
     analyzed_kind = None
+    recognition_source = None
     tmp = None
     try:
         if ext in IMAGE_EXTS:
             data = f.read()
             analyzed_kind = "image"
-            features = ia.analyze_image_bytes(data)
+            image_scores, image_cat_scores, features, recognition_source = va.analyze(data, f.filename, library=lib)
         elif ext == ".mp4":
             tmp = tempfile.mkdtemp(prefix="wp_an_")
             src = os.path.join(tmp, os.path.basename(f.filename))
@@ -148,22 +153,20 @@ def analyze():
             with open(frame, "rb") as fh:
                 data = fh.read()
             analyzed_kind = "video-frame"
-            features = ia.analyze_image_bytes(data)
+            image_scores, image_cat_scores, features, recognition_source = va.analyze(data, f.filename, library=lib)
         else:
             # 其他类型：尝试按图片解析，失败则仅用文件名
             try:
                 data = f.read()
-                features = ia.analyze_image_bytes(data)
+                image_scores, image_cat_scores, features, recognition_source = va.analyze(data, f.filename, library=lib)
                 analyzed_kind = "image"
             except Exception:
                 features = None
-        if features:
-            image_scores = ia.feature_to_tag_scores(features)
-            image_cat_scores = ia.feature_to_category_scores(features)
     except Exception as e:
         features = None
         image_scores = None
         image_cat_scores = None
+        recognition_source = None
     finally:
         if tmp:
             shutil.rmtree(tmp, ignore_errors=True)
@@ -172,6 +175,7 @@ def analyze():
                      image_scores=image_scores, image_cat_scores=image_cat_scores)
     res["analyzed_kind"] = analyzed_kind
     res["features"] = features
+    res["recognition_source"] = recognition_source
     return jsonify(res)
 
 
@@ -258,6 +262,226 @@ def crop():
         return jsonify(error=f"裁剪失败：{e}"), 500
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+# ── 视觉识别后端配置 ──
+@app.route("/api/vision_config", methods=["GET"])
+def get_vision_config():
+    cfg = va.load_config()
+    # 不回传 api_key 明文，仅告知是否已配置
+    masked = dict(cfg)
+    if masked.get("api_key"):
+        masked["api_key"] = "******" if len(masked["api_key"]) > 6 else ""
+        masked["api_key_set"] = True
+    else:
+        masked["api_key_set"] = False
+    return jsonify(masked)
+
+
+@app.route("/api/vision_config", methods=["PUT"])
+def put_vision_config():
+    data = request.get_json(force=True, silent=True) or {}
+    cfg = va.load_config()
+    for k in ("backend", "base_url", "api_key", "model", "prompt"):
+        if k in data:
+            cfg[k] = data[k]
+    cfg = va.save_config(cfg)
+    return jsonify(ok=True, backend=cfg.get("backend"))
+
+
+# ── 批量静态壁纸打包 ──
+# Excel 列名（中/英别名）→ 内部键
+COLUMN_ALIASES = {
+    "designer_id": ["设计师id", "设计师ID", "设计师_id", "designer_id", "designerid", "作者id", "author_id"],
+    "name":        ["名称", "name", "壁纸名称", "文件名", "filename"],
+    "desc":        ["简介", "描述", "desc", "description", "introduce"],
+    "price":       ["定价", "价格", "price"],
+    "category":    ["分类", "category", "类型", "type"],
+    "tags":        ["标签", "tags", "tag"],
+}
+
+
+def _resolve_columns(header):
+    norm = {}
+    for i, h in enumerate(header):
+        if h is None:
+            continue
+        norm[str(h).strip().lower()] = i + 1  # 1-based 列号
+    colmap = {}
+    for key, aliases in COLUMN_ALIASES.items():
+        for a in aliases:
+            if a.lower() in norm:
+                colmap[key] = norm[a.lower()]
+                break
+    return colmap
+
+
+def _ensure_column(ws, colmap, key, header_label):
+    """若列不存在则追加，返回列号（1-based）。"""
+    if key in colmap:
+        return colmap[key]
+    max_col = ws.max_column
+    new_col = max_col + 1
+    ws.cell(1, new_col, header_label)
+    colmap[key] = new_col
+    return new_col
+
+
+def _pick_top_tags(tag_scores, lib, top_n=5):
+    if not tag_scores:
+        return []
+    known = {t["name"] for t in lib.get("tags", [])}
+    ranked = sorted(
+        ((n, s) for n, s in tag_scores.items() if n in known),
+        key=lambda kv: -kv[1],
+    )
+    return [n for n, _ in ranked[:top_n]]
+
+
+@app.route("/api/batch_package", methods=["POST"])
+def batch_package():
+    """批量静态壁纸打包：
+    上传 Excel（含 名称/简介/定价/分类，理论由用户先提供）+ 所有图片（文件名=名称）+ 设计师ID
+    → 对每张图跑识别引擎（offline 或 ai）→ 把识别标签写入 标签 列、设计师ID 写入所有行
+    → 输出 zip（更新后的 Excel + 所有图片）。
+    可选表单字段：designer_id、backend（覆盖配置，offline/ai）。
+    """
+    excel = request.files.get("excel")
+    if not excel or not excel.filename:
+        return jsonify(error="请上传 Excel 文件（.xlsx）"), 400
+    designer_id = (request.form.get("designer_id") or "").strip()
+    backend = (request.form.get("backend") or "").strip() or None
+    images = request.files.getlist("images")
+
+    try:
+        wb = openpyxl.load_workbook(io.BytesIO(excel.read()))
+    except Exception as e:
+        return jsonify(error=f"Excel 读取失败：{e}"), 400
+    ws = wb.active
+
+    header = [c.value for c in ws[1]]
+    colmap = _resolve_columns(header)
+    if "name" not in colmap:
+        return jsonify(error="Excel 缺少“名称”列（用于与图片文件名对应）"), 400
+
+    # 确保 设计师id / 标签 列存在
+    _ensure_column(ws, colmap, "designer_id", "设计师id")
+    _ensure_column(ws, colmap, "tags", "标签")
+
+    lib = tm.load_library(LIBRARY_PATH)
+    cfg = va.load_config()
+    if backend:
+        cfg = dict(cfg)
+        cfg["backend"] = backend
+
+    # 图片按“名称（去扩展名）”索引
+    img_by_base = {}
+    for im in images:
+        base = os.path.splitext(os.path.basename(im.filename))[0]
+        img_by_base[base] = im
+
+    out = tempfile.mkdtemp(prefix="wp_batch_")
+    img_dir = os.path.join(out, "images")
+    os.makedirs(img_dir, exist_ok=True)
+
+    preview = []
+    matched = 0
+    unmatched = 0
+    lib_cat_names = {c["name"] for c in lib.get("categories", [])}
+
+    for r in range(2, ws.max_row + 1):
+        name_val = ws.cell(r, colmap["name"]).value
+        if name_val is None or str(name_val).strip() == "":
+            continue
+        name = str(name_val).strip()
+
+        # 设计师 ID：填充到所有行的 设计师id 列
+        if designer_id:
+            ws.cell(r, colmap["designer_id"]).value = designer_id
+
+        base = os.path.splitext(name)[0]
+        im = img_by_base.get(base)
+        if not im:
+            # 也尝试忽略大小写/空白
+            im = img_by_base.get(base.strip())
+        if not im:
+            unmatched += 1
+            preview.append({
+                "name": name,
+                "category": _cell(ws, r, colmap.get("category")),
+                "tags": "",
+                "image_matched": False,
+                "source": None,
+            })
+            continue
+
+        # 保存原图到 images/（保留原名，确保与 名称 对应）
+        # 注意：必须先 read() 再写盘——FileStorage.save() 会消耗流，之后 read() 为空
+        data = im.read()
+        img_path = os.path.join(img_dir, os.path.basename(im.filename))
+        with open(img_path, "wb") as fh:
+            fh.write(data)
+
+        try:
+            ts, cs, feats, src = va.analyze(data, im.filename, cfg=cfg, library=lib)
+        except Exception as e:
+            ts, cs, feats, src = {}, {}, None, f"error:{e}"
+
+        tags = _pick_top_tags(ts, lib, top_n=5)
+        ws.cell(r, colmap["tags"]).value = "、".join(tags)
+
+        # 若 分类 列为空且识别给出了有效分类，则补全
+        if "category" in colmap:
+            existing = ws.cell(r, colmap["category"]).value
+            if (existing is None or str(existing).strip() == "") and cs:
+                top_cat = sorted(cs.items(), key=lambda kv: -kv[1])[0][0]
+                if top_cat in lib_cat_names:
+                    ws.cell(r, colmap["category"]).value = top_cat
+
+        matched += 1
+        preview.append({
+            "name": name,
+            "category": _cell(ws, r, colmap.get("category")),
+            "tags": "、".join(tags),
+            "image_matched": True,
+            "source": src,
+        })
+
+    # 写出 Excel
+    xlsx_path = os.path.join(out, "wallpapers.xlsx")
+    wb.save(xlsx_path)
+
+    # 打 zip
+    zip_path = os.path.join(out, "batch_wallpapers.zip")
+    import zipfile
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.write(xlsx_path, "wallpapers.xlsx")
+        for fn in os.listdir(img_dir):
+            zf.write(os.path.join(img_dir, fn), os.path.join("images", fn))
+
+    with open(zip_path, "rb") as fh:
+        zip_bytes = fh.read()
+
+    shutil.rmtree(out, ignore_errors=True)
+    return jsonify({
+        "ok": True,
+        "zip_name": "batch_wallpapers.zip",
+        "zip_b64": base64.b64encode(zip_bytes).decode("ascii"),
+        "stats": {
+            "total_rows": len(preview),
+            "matched": matched,
+            "unmatched": unmatched,
+            "backend": cfg.get("backend", "offline"),
+        },
+        "preview": preview,
+    })
+
+
+def _cell(ws, row, col):
+    if not col:
+        return ""
+    v = ws.cell(row, col).value
+    return str(v).strip() if v is not None else ""
 
 
 if __name__ == "__main__":

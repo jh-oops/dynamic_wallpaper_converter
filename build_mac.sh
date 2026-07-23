@@ -16,7 +16,7 @@ echo "== PyInstaller 打包 =="
   --add-data "web_ui.html:." \
   --add-data "tags_library.json:." \
   --add-data "$FFDIR:imageio_ffmpeg/binaries" \
-  --hidden-import app --hidden-import transcode_for_zip --hidden-import tag_matcher --hidden-import image_analyzer \
+  --hidden-import app --hidden-import transcode_for_zip --hidden-import tag_matcher --hidden-import image_analyzer --hidden-import vision_ai --hidden-import openpyxl \
   main_app.py
 
 echo "== 完成 =="

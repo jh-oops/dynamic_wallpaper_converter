@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>壁纸资源工具</title>
+<title>主题资源编辑器</title>
 <style>
   :root{
     --bg:#0a0912;
@@ -39,47 +39,49 @@
   @keyframes aurora{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-2%,2%,0) scale(1.06)}100%{transform:translate3d(2%,-2%,0) scale(1.03)}}
   body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-  header{position:relative;overflow:hidden;padding:36px 26px 22px;border-bottom:1px solid var(--line)}
-  header::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg, rgba(124,92,255,.10), rgba(33,212,180,.05))}
-  .hero{position:relative;z-index:1;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr minmax(112px,140px);gap:26px;align-items:center}
-  .hero-copy h1{font-size:28px;margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.1;
-    background:linear-gradient(120deg,#ffffff,#cdbcff 50%,#9fe9d8);
-    -webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero-copy .sub{color:var(--muted);font-size:13px;max-width:640px;margin-top:10px;line-height:1.7}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-  .chip{font-size:11px;font-weight:600;color:var(--accent-b);background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.28);padding:5px 12px;border-radius:20px}
-  .chip.teal{color:var(--accent2-b);background:rgba(33,212,180,.12);border-color:rgba(33,212,180,.30)}
-  .badge{font-size:11px;background:rgba(33,212,180,.12);color:var(--accent2);border:1px solid rgba(33,212,180,.30);padding:4px 12px;border-radius:20px;white-space:nowrap;display:inline-block;margin-bottom:14px}
-  .hero-phone{position:relative;aspect-ratio:9/19.5;border-radius:30px;overflow:hidden;
-    border:1px solid var(--line-strong);
-    box-shadow:0 24px 60px -24px rgba(124,92,255,.7), inset 0 0 0 5px rgba(0,0,0,.35);
-    background:linear-gradient(150deg,#1a1530,#0f0c1c);transform:rotate(-4deg)}
-  .hero-phone .wall{position:absolute;inset:0;background:linear-gradient(135deg,#7C5CFF,#21D4B4,#FF6B8A,#7C5CFF);background-size:300% 300%;animation:flow 9s ease infinite}
-  .hero-phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:42%;height:14px;background:#0a0814;border-radius:0 0 14px 14px;z-index:2}
-  @keyframes flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-  /* 标签页 */
-  .tabs{max-width:760px;margin:0 auto;padding:18px 22px 0;display:flex;gap:8px;flex-wrap:wrap}
-  .tab{cursor:pointer;padding:10px 16px;border-radius:10px;background:transparent;border:1px solid transparent;color:var(--muted);font-size:13px;font-weight:600;transition:.15s}
-  .tab:hover{color:var(--ink);background:rgba(255,255,255,.04)}
-  .tab.active{color:var(--ink);background:var(--surface);border-color:var(--line-strong)}
-  .wrap{max-width:760px;margin:0 auto;padding:18px 22px 72px}
+  /* 布局：左侧导航 + 主区 */
+  .layout{display:flex;min-height:100vh}
+  .sidebar{width:244px;flex-shrink:0;border-right:1px solid var(--line);padding:24px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;
+    background:linear-gradient(180deg, rgba(28,25,44,.5), rgba(10,9,18,.2));backdrop-filter:blur(10px)}
+  .logo{font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.2;
+    background:linear-gradient(120deg,#ffffff,#cdbcff 55%,#9fe9d8);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .logo-sub{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .nav{display:flex;flex-direction:column;gap:6px;margin-top:26px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:600;transition:.15s;border:1px solid transparent}
+  .nav-item:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+  .nav-item.active{color:var(--ink);background:var(--surface);border-color:var(--line-strong);box-shadow:0 8px 22px -14px rgba(124,92,255,.8)}
+  .nav-item .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;box-shadow:0 0 10px var(--accent)}
+  .nav-item.active .dot{background:var(--accent2);box-shadow:0 0 10px var(--accent2)}
+  .side-foot{margin-top:auto;padding-top:22px;font-size:10px;color:var(--muted);opacity:.7;line-height:1.6}
+
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{padding:22px 28px 8px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+  .topbar::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg, rgba(124,92,255,.08), rgba(33,212,180,.04))}
+  .topbar h1{position:relative;z-index:1;margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .topbar .sub{position:relative;z-index:1;color:var(--muted);font-size:12.5px;margin-top:6px;max-width:760px;line-height:1.6}
+
+  .wrap{max-width:820px;width:100%;margin:0;padding:22px 28px 72px}
+
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:18px;backdrop-filter:blur(12px);box-shadow:var(--shadow);animation:rise .5s ease both}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   .card h2{margin:0 0 16px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(124,92,255,.18);color:var(--accent-b);font-size:12px;font-weight:700;margin-right:8px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
   .field{margin-bottom:14px}
   .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
-  .field input, .field select{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
+  .field input, .field select, .field textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
     border-radius:9px;padding:10px 11px;font-size:13px;outline:none;font-family:inherit;transition:.15s}
-  .field input:focus, .field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.18)}
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.18)}
   .chk{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;cursor:pointer;user-select:none;margin-top:10px}
   .chk input{width:auto;accent-color:var(--accent)}
-  .drop{position:relative;border:1.5px dashed var(--line-strong);border-radius:14px;padding:30px 16px;text-align:center;color:var(--muted);cursor:pointer;transition:.18s;background:var(--surface2);margin-bottom:18px}
+  .drop{position:relative;border:1.5px dashed var(--line-strong);border-radius:14px;padding:26px 16px;text-align:center;color:var(--muted);cursor:pointer;transition:.18s;background:var(--surface2);margin-bottom:14px}
   .drop:hover,.drop.over{border-color:var(--accent);color:var(--ink);background:rgba(124,92,255,.10);transform:translateY(-1px)}
   .drop .big{font-size:15px;color:var(--ink)}
   .drop .small{font-size:12px;color:var(--muted);margin-top:6px}
-  .fname{margin-top:12px;font-size:13px;color:var(--accent-b)}
+  .fname{margin-top:10px;font-size:13px;color:var(--accent-b)}
+  .filelist{margin-top:10px;font-size:12px;color:var(--muted);max-height:120px;overflow-y:auto;background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+  .filelist div{padding:2px 0}
   .hint{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.6}
   .btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
   button.go{background:linear-gradient(135deg,var(--accent),#9b7bff);color:#fff;border:0;padding:13px 24px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px -10px rgba(124,92,255,.75);transition:.18s}
@@ -125,40 +127,55 @@
   .panel{display:none}
   .panel.active{display:block}
   .lib-editor{width:100%;min-height:260px;background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:12px;color:var(--ink);font:12px/1.5 monospace;resize:vertical}
-  @media (max-width:640px){.hero{grid-template-columns:1fr}.hero-phone{width:112px;margin:0 auto;transform:none}.wrap{padding:14px 14px 60px}.tabs{padding:14px 14px 0}}
+
+  /* 批量预览表 */
+  .ptable{width:100%;border-collapse:collapse;margin-top:12px;font-size:12.5px}
+  .ptable th,.ptable td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .ptable th{background:var(--surface2);color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:11px}
+  .ptable td .match{color:var(--ok);font-weight:600}
+  .ptable td .nomatch{color:var(--warn);font-weight:600}
+  .ptable .tags-cell{color:var(--accent-b)}
+  .ptable-wrap{max-height:380px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-top:12px}
+  .ai-fields{display:none;margin-top:12px}
+
+  @media (max-width:760px){
+    .layout{flex-direction:column}
+    .sidebar{width:100%;height:auto;position:relative;border-right:0;border-bottom:1px solid var(--line)}
+    .nav{flex-direction:row;flex-wrap:wrap;margin-top:14px}
+    .side-foot{display:none}
+    .wrap{padding:16px 14px 60px}
+    .topbar{padding:18px 16px 8px}
+  }
 </style>
 </head>
 <body>
-<header>
-  <div class="hero">
-    <div class="hero-copy">
-      <span class="badge">壁纸资源工具</span>
-      <h1>动态壁纸 · 尺寸裁剪 · 标签识别</h1>
-      <div class="sub">三个独立模块整合在同一页面：按规范打包动态壁纸、把视频裁剪到任意尺寸、基于你的标签库做定向分类/标签识别。</div>
-      <div class="chips">
-        <span class="chip">H.264 转码</span>
-        <span class="chip teal">1080×2400</span>
-        <span class="chip">任意尺寸裁剪</span>
-        <span class="chip teal">定向标签匹配</span>
-      </div>
+<div class="layout">
+  <!-- 左侧导航 -->
+  <aside class="sidebar">
+    <div class="logo">主题资源编辑器</div>
+    <div class="logo-sub">动态壁纸打包 · 尺寸裁剪 · 标签识别 · 批量静态壁纸打包</div>
+    <nav class="nav">
+      <div class="nav-item active" data-tab="pack"><span class="dot"></span>动态壁纸打包器</div>
+      <div class="nav-item" data-tab="tags"><span class="dot"></span>分类标签识别</div>
+      <div class="nav-item" data-tab="crop"><span class="dot"></span>剪裁</div>
+      <div class="nav-item" data-tab="batch"><span class="dot"></span>批量静态壁纸打包</div>
+    </nav>
+    <div class="side-foot">本地运行 · 离线优先<br>AI 视觉识别可插拔启用</div>
+  </aside>
+
+  <!-- 主区 -->
+  <div class="main">
+    <div class="topbar">
+      <h1 id="mod-title">动态壁纸打包器</h1>
+      <div class="sub" id="mod-sub">按规范打包动态壁纸：H.264 转码 / 抽帧 / 缩略图 / manifest，输出标准 ZIP。</div>
     </div>
-    <div class="hero-phone"><div class="wall"></div><div class="notch"></div></div>
-  </div>
-</header>
 
-<div class="tabs">
-  <div class="tab active" data-tab="pack">动态壁纸打包</div>
-  <div class="tab" data-tab="crop">尺寸裁剪</div>
-  <div class="tab" data-tab="tags">分类标签识别</div>
-</div>
-
-<div class="wrap">
+    <div class="wrap">
 
 <!-- ===== 模块一：动态壁纸打包 ===== -->
 <div class="panel active" id="panel-pack">
   <div class="card">
-    <h2>① 上传视频并填写信息</h2>
-
+    <h2><span class="step">1</span>上传视频并填写信息</h2>
     <div class="drop" id="drop-pack">
       <div class="big">拖入 mp4 到这里，或点击选择</div>
       <div class="small">支持任意来源：非 H.264 / 分辨率不对会自动转码处理，铺满全屏</div>
@@ -170,7 +187,6 @@
       <div class="field"><label>壁纸名称 name（英文，下载的 zip 以此命名）</label><input type="text" id="name" placeholder="留空则自动取文件名"></div>
       <div class="field"><label>作者 author（须与设计师账号一致，区分大小写）</label><input type="text" id="author" placeholder="例如 JohnDoe"></div>
     </div>
-
     <div class="field"><label>描述 description</label><input type="text" id="desc" placeholder="例如 A calm blue live wallpaper."></div>
 
     <label class="chk"><input type="checkbox" id="idfixed"> ID 按名称固定（否则每次随机 UUID，确保不重复）</label>
@@ -178,16 +194,55 @@
     <div class="hint">动态预览图为探索页推荐用，规范上限 ≤2M；复杂视频可能超限并告警。</div>
 
     <div class="btns"><button class="go" id="go-pack">生成并下载 ZIP</button></div>
-
     <div class="status" id="status-pack"></div>
     <div class="dl" id="dl-pack"></div>
   </div>
 </div>
 
-<!-- ===== 模块二：尺寸裁剪 ===== -->
+<!-- ===== 模块二：分类标签识别（单图验证） ===== -->
+<div class="panel" id="panel-tags">
+  <div class="card">
+    <h2><span class="step">2</span>上传文件并识别分类/标签</h2>
+    <div class="drop" id="drop-tags">
+      <div class="big">拖入图片或视频（mp4 / jpg / png / webp 等）</div>
+      <div class="small">引擎会“读图理解”——分析主色、亮度、饱和度、细节密度，结合文件名命中你的标签库；你可在下方修改。</div>
+    </div>
+    <input type="file" id="file-tags" accept="image/*,video/mp4,.mp4" hidden>
+    <div class="fname" id="fname-tags" style="display:none"></div>
+    <div class="btns"><button class="go" id="go-tags">识别标签</button></div>
+
+    <div id="tags-result" style="display:none">
+      <div id="evi-box" class="evi-box" style="display:none">
+        <div class="evi-title">识别依据（图像特征）</div>
+        <div id="evi-colors" class="evi-colors"></div>
+        <div id="evi-metrics" class="evi-metrics"></div>
+      </div>
+      <div class="field" style="margin-top:20px"><label>分类（单选）</label>
+        <select id="cat-select" class="cat-select"></select>
+      </div>
+      <div id="tags-groups"></div>
+      <div class="hint" id="tag-count-hint">建议 3–5 个标签；点击标签即可选中/取消。</div>
+      <div class="btns">
+        <button class="go" id="export-tags">导出标签表（CSV + JSON）</button>
+        <button class="secondary" id="reset-tags">重置建议</button>
+      </div>
+    </div>
+    <div class="status" id="status-tags"></div>
+  </div>
+
+  <div class="card">
+    <h2>标签库管理</h2>
+    <div class="hint">下方是你的 tags_library.json。可直接编辑分类与标签、关键词，保存后立即生效。</div>
+    <textarea id="lib-editor" class="lib-editor"></textarea>
+    <div class="btns"><button class="go" id="save-lib">保存标签库</button><button class="secondary" id="reload-lib">重新加载</button></div>
+    <div class="status" id="status-lib"></div>
+  </div>
+</div>
+
+<!-- ===== 模块三：尺寸裁剪 ===== -->
 <div class="panel" id="panel-crop">
   <div class="card">
-    <h2>上传图片/视频并选择目标尺寸</h2>
+    <h2><span class="step">3</span>上传图片/视频并选择目标尺寸</h2>
     <div class="drop" id="drop-crop">
       <div class="big">拖入图片或视频到这里，或点击选择</div>
       <div class="small">支持静态图片（JPG / PNG / WebP 等）与视频 MP4；仅做尺寸裁剪/缩放，不打包进动态壁纸 zip</div>
@@ -228,50 +283,80 @@
   </div>
 </div>
 
-<!-- ===== 模块三：分类标签识别 ===== -->
-<div class="panel" id="panel-tags">
+<!-- ===== 模块四：批量静态壁纸打包 ===== -->
+<div class="panel" id="panel-batch">
   <div class="card">
-    <h2>上传文件并识别分类/标签</h2>
-    <div class="drop" id="drop-tags">
-      <div class="big">拖入图片或视频（mp4 / jpg / png / webp 等）</div>
-      <div class="small">引擎会“读图理解”——分析主色、亮度、饱和度、细节密度，结合文件名命中你的标签库；你可在下方修改。</div>
+    <h2><span class="step">1</span>上传 Excel（含 名称 / 简介 / 定价 / 分类）</h2>
+    <div class="drop" id="drop-batch-xlsx">
+      <div class="big">拖入 Excel（.xlsx）到这里，或点击选择</div>
+      <div class="small">理论上初始会给你一份 Excel 已经包含：名称、简介、定价、分类</div>
     </div>
-    <input type="file" id="file-tags" accept="image/*,video/mp4,.mp4" hidden>
-    <div class="fname" id="fname-tags" style="display:none"></div>
-    <div class="btns"><button class="go" id="go-tags">识别标签</button></div>
-
-    <div id="tags-result" style="display:none">
-      <div id="evi-box" class="evi-box" style="display:none">
-        <div class="evi-title">识别依据（图像特征）</div>
-        <div id="evi-colors" class="evi-colors"></div>
-        <div id="evi-metrics" class="evi-metrics"></div>
-      </div>
-      <div class="field" style="margin-top:20px"><label>分类（单选）</label>
-        <select id="cat-select" class="cat-select"></select>
-      </div>
-      <div id="tags-groups"></div>
-      <div class="hint" id="tag-count-hint">建议 3–5 个标签；点击标签即可选中/取消。</div>
-      <div class="btns">
-        <button class="go" id="export-tags">导出标签表（CSV + JSON）</button>
-        <button class="secondary" id="reset-tags">重置建议</button>
-      </div>
-    </div>
-    <div class="status" id="status-tags"></div>
+    <input type="file" id="file-batch-xlsx" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+    <div class="fname" id="fname-batch-xlsx" style="display:none"></div>
+    <div class="hint">输出 Excel 会新增/填充两列：<b>设计师id</b>、<b>标签</b>。名称列（去扩展名）将与图片文件名完全对应。</div>
   </div>
 
   <div class="card">
-    <h2>标签库管理</h2>
-    <div class="hint">下方是你的 tags_library.json。可直接编辑分类与标签、关键词，保存后立即生效。</div>
-    <textarea id="lib-editor" class="lib-editor"></textarea>
-    <div class="btns"><button class="go" id="save-lib">保存标签库</button><button class="secondary" id="reload-lib">重新加载</button></div>
-    <div class="status" id="status-lib"></div>
+    <h2><span class="step">2</span>设计师 ID</h2>
+    <div class="field"><label>设计师 ID（将写入所有行的“设计师id”列）</label><input type="text" id="batch-designer" placeholder="例如 Designer_12345"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">3</span>上传所有图片</h2>
+    <div class="drop" id="drop-batch-img">
+      <div class="big">拖入所有壁纸图片（可多选），或点击选择</div>
+      <div class="small">图片文件名（去扩展名）需与 Excel 的“名称”列完全对应</div>
+    </div>
+    <input type="file" id="file-batch-img" accept="image/*" multiple hidden>
+    <div class="filelist" id="batch-img-list" style="display:none"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">4</span>识别引擎设置</h2>
+    <div class="field"><label>识别后端</label>
+      <select id="batch-backend">
+        <option value="offline" selected>离线像素分析（默认·零成本·无需联网）</option>
+        <option value="ai">AI 视觉识别（需配置 API）</option>
+      </select>
+    </div>
+    <div class="ai-fields" id="batch-ai-fields">
+      <div class="hint">配置仅保存在本地 vision_config.json，可在本机复用。AI 模式失败会自动回退离线。</div>
+      <div class="field"><label>API Base URL（含 /chat/completions）</label><input type="text" id="ai-base" placeholder="https://api.openai.com/v1/chat/completions"></div>
+      <div class="field"><label>API Key</label><input type="password" id="ai-key" placeholder="sk-..."></div>
+      <div class="field"><label>模型名</label><input type="text" id="ai-model" placeholder="gpt-4o-mini"></div>
+      <div class="btns"><button class="secondary" id="ai-save">保存 AI 配置</button></div>
+      <div class="status" id="status-ai"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">5</span>生成并打包</h2>
+    <div class="btns"><button class="go" id="go-batch">生成 ZIP 并预览</button></div>
+    <div class="status" id="status-batch"></div>
+    <div class="dl" id="dl-batch"></div>
+    <div class="ptable-wrap" id="batch-preview" style="display:none">
+      <table class="ptable">
+        <thead><tr><th>名称</th><th>原分类</th><th>识别标签</th><th>图片</th><th>来源</th></tr></thead>
+        <tbody id="batch-preview-body"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
+    </div>
+  </div>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
+
+const MOD_META = {
+  pack:  ["动态壁纸打包器", "按规范打包动态壁纸：H.264 转码 / 抽帧 / 缩略图 / manifest，输出标准 ZIP。"],
+  tags:  ["分类标签识别", "读图理解单张图片，验证识别引擎效果并微调你的标签库。"],
+  crop:  ["尺寸裁剪", "把图片/视频裁剪到任意目标尺寸。"],
+  batch: ["批量静态壁纸打包", "上传 Excel + 所有图片 + 设计师ID，批量识别标签并打包成 zip（Excel + 图片）。"],
+};
+
 function setStatus(id, msg, type){
   const el = $(id);
   el.className = 'status ' + (type || 'info');
@@ -294,13 +379,16 @@ function downloadText(text, name, type){
   downloadBlob(new Blob([text], {type}), name);
 }
 
-// ===== 标签页切换 =====
-document.querySelectorAll('.tab').forEach(t => {
+// ===== 标签页切换（左侧导航）=====
+document.querySelectorAll('.nav-item').forEach(t => {
   t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
-    $('panel-' + t.dataset.tab).classList.add('active');
+    $('panel-' + tab).classList.add('active');
+    $('mod-title').textContent = MOD_META[tab][0];
+    $('mod-sub').textContent = MOD_META[tab][1];
   });
 });
 
@@ -345,7 +433,135 @@ $('go-pack').addEventListener('click', async () => {
   finally{ btn.disabled = false; }
 });
 
-// ===== 模块二：尺寸裁剪 =====
+// ===== 模块二：分类标签识别 =====
+let tagFile = null, tagLibrary = null, suggestedTags = [];
+
+async function loadLibrary(){
+  try{
+    const r = await fetch('/api/tags/library');
+    tagLibrary = await r.json();
+    $('lib-editor').value = JSON.stringify(tagLibrary, null, 2);
+    renderCategoryOptions();
+  }catch(err){ setStatus('status-lib','✗ 加载标签库失败：'+err.message,'err'); }
+}
+function renderCategoryOptions(){
+  const sel = $('cat-select');
+  sel.innerHTML = tagLibrary.categories.map(c => `<option value="${c.name}">${c.name_zh} (${c.name}) [${c.group}]</option>`).join('');
+}
+function renderTagGroups(selectedNames=[]){
+  const box = $('tags-groups');
+  box.innerHTML = '';
+  const groups = {};
+  tagLibrary.tags.forEach(t => { (groups[t.group] = groups[t.group] || []).push(t); });
+  for (const [g, tags] of Object.entries(groups)){
+    const div = document.createElement('div'); div.className='tag-group';
+    const title = document.createElement('div'); title.className='tag-group-title'; title.textContent=g; div.appendChild(title);
+    const list = document.createElement('div'); list.className='tag-list';
+    tags.forEach(t => {
+      const pill = document.createElement('span'); pill.className='tag-pill';
+      pill.dataset.name = t.name;
+      pill.textContent = t.name_zh ? `${t.name_zh} · ${t.name}` : t.name;
+      if (selectedNames.includes(t.name)) pill.classList.add('selected');
+      pill.addEventListener('click', () => { pill.classList.toggle('selected'); updateTagCount(); });
+      list.appendChild(pill);
+    });
+    div.appendChild(list); box.appendChild(div);
+  }
+  updateTagCount();
+}
+function renderEvidence(data){
+  const box = $('evi-box');
+  const f = data.features;
+  if (!f){ box.style.display='none'; return; }
+  box.style.display='block';
+  const colors = $('evi-colors');
+  colors.innerHTML = (f.named || []).map(d =>
+    `<span class="evi-swatch" title="${d.name} 占比 ${Math.round(d.ratio*100)}%" style="background:${d.hex}"></span>`
+  ).join('') + `<span class="evi-dom">主色 ${f.dominant.name}</span>`;
+  const m = $('evi-metrics');
+  const lum = f.mean_lum, sat = Math.round(f.mean_sat*100), edge = f.edge_density, warm = f.warmth;
+  const lumTxt = lum>180?'亮':lum<80?'暗':'中';
+  const satTxt = sat>45?'鲜艳':sat<18?'低饱和':'适中';
+  const edgeTxt = edge<10?'扁平/极简':edge>40?'细节丰富':'适中';
+  const warmTxt = warm>20?'偏暖':warm<-20?'偏冷':'中性';
+  m.innerHTML = [
+    `亮度 ${lumTxt}(${Math.round(lum)})`,
+    `饱和度 ${satTxt}(${sat}%)`,
+    `细节 ${edgeTxt}(${edge})`,
+    `色调 ${warmTxt}`,
+    `色彩丰富度 ${Math.round(f.colorfulness)}`,
+  ].map(t => `<span class="evi-metric">${t}</span>`).join('');
+}
+function markTagSources(tags){
+  const byName = {};
+  tags.forEach(t => byName[t.name] = t.source);
+  document.querySelectorAll('.tag-pill').forEach(pill => {
+    const src = byName[pill.dataset.name];
+    if (!src) return;
+    pill.classList.add('tag-src-' + src);
+    const badge = document.createElement('span');
+    badge.className = 'src-badge src-' + src;
+    badge.textContent = src === 'both' ? '图+名' : src === 'image' ? '图' : '名';
+    pill.appendChild(badge);
+  });
+}
+function getSelectedTags(){
+  return Array.from(document.querySelectorAll('.tag-pill.selected')).map(el => el.dataset.name);
+}
+function updateTagCount(){
+  const n = document.querySelectorAll('.tag-pill.selected').length;
+  const hint = $('tag-count-hint');
+  if (n === 0) hint.textContent = '建议 3–5 个标签；点击标签即可选中/取消。';
+  else hint.textContent = `已选 ${n} 个标签${n < 3 ? '（建议再选几个）' : n > 5 ? '（建议控制在 3–5 个）' : '（数量合适）'}`;
+}
+bindDrop('drop-tags','file-tags','fname-tags', f => { tagFile=f; showFname('fname-tags',f); });
+$('go-tags').addEventListener('click', async () => {
+  if (!tagFile){ setStatus('status-tags','请先选择文件','warn'); return; }
+  setStatus('status-tags','<span class="spin"></span>正在识别…','info');
+  const fd = new FormData(); fd.append('file', tagFile);
+  try{
+    const r = await fetch('/api/analyze', { method:'POST', body: fd });
+    const data = await r.json();
+    if (!r.ok){ setStatus('status-tags','✗ ' + (data.error || '识别失败'),'err'); return; }
+    $('tags-result').style.display='block';
+    renderEvidence(data);
+    renderCategoryOptions();
+    $('cat-select').value = data.category.name || tagLibrary.categories[0].name;
+    suggestedTags = data.tags.map(t => t.name);
+    renderTagGroups(suggestedTags);
+    markTagSources(data.tags);
+    const kindTxt = data.analyzed_kind === 'video-frame' ? '（视频首帧）' : (data.analyzed_kind === 'image' ? '（图像）' : '（仅文件名）');
+    const srcTxt = data.recognition_source ? ` · 引擎:${data.recognition_source}` : '';
+    const srcNote = data.features ? ' 已读图理解' : ' 未提取到图像特征，仅按文件名匹配';
+    setStatus('status-tags',`✓ 识别完成${kindTxt}${srcNote}${srcTxt}：分类 ${data.category.name_zh || data.category.name}，建议标签 ${data.tags.length} 个`,'ok');
+  }catch(err){ setStatus('status-tags','✗ 请求失败：'+err.message,'err'); }
+});
+$('reset-tags').addEventListener('click', () => { if (tagFile) $('go-tags').click(); });
+$('export-tags').addEventListener('click', () => {
+  if (!tagFile) return;
+  const catOpt = $('cat-select').selectedOptions[0];
+  const catName = catOpt ? catOpt.value : '';
+  const catZh = tagLibrary.categories.find(c => c.name === catName)?.name_zh || '';
+  const tags = getSelectedTags();
+  const record = { filename: tagFile.name, category: catName, category_zh: catZh, tags: tags, exported_at: new Date().toISOString() };
+  const csv = `filename,category,category_zh,tags\n"${tagFile.name}","${catName}","${catZh}","${tags.join(',')}"`;
+  downloadText(csv, tagFile.name.replace(/\.[^.]+$/,'') + '_tags.csv', 'text/csv;charset=utf-8');
+  downloadText(JSON.stringify(record, null, 2), tagFile.name.replace(/\.[^.]+$/,'') + '_tags.json', 'application/json');
+  setStatus('status-tags','✓ 标签表已导出（CSV + JSON）','ok');
+});
+$('save-lib').addEventListener('click', async () => {
+  try{
+    const data = JSON.parse($('lib-editor').value);
+    const r = await fetch('/api/tags/library', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    const res = await r.json();
+    if (!r.ok){ setStatus('status-lib','✗ 保存失败：' + (res.error || '未知错误'),'err'); return; }
+    tagLibrary = data; renderCategoryOptions();
+    setStatus('status-lib','✓ 标签库已保存并生效','ok');
+  }catch(err){ setStatus('status-lib','✗ JSON 格式错误：'+err.message,'err'); }
+});
+$('reload-lib').addEventListener('click', loadLibrary);
+
+// ===== 模块三：尺寸裁剪 =====
 let cropFile = null;
 bindDrop('drop-crop','file-crop','fname-crop', f => {
   cropFile=f; showFname('fname-crop',f);
@@ -380,162 +596,98 @@ $('go-crop').addEventListener('click', async () => {
   finally{ btn.disabled = false; }
 });
 
-// ===== 模块三：分类标签识别 =====
-let tagFile = null, tagLibrary = null, suggestedTags = [];
+// ===== 模块四：批量静态壁纸打包 =====
+let batchXlsx = null, batchImages = [];
 
-async function loadLibrary(){
-  try{
-    const r = await fetch('/api/tags/library');
-    tagLibrary = await r.json();
-    $('lib-editor').value = JSON.stringify(tagLibrary, null, 2);
-    renderCategoryOptions();
-  }catch(err){ setStatus('status-lib','✗ 加载标签库失败：'+err.message,'err'); }
-}
-
-function renderCategoryOptions(){
-  const sel = $('cat-select');
-  sel.innerHTML = tagLibrary.categories.map(c => `<option value="${c.name}">${c.name_zh} (${c.name}) [${c.group}]</option>`).join('');
-}
-
-function renderTagGroups(selectedNames=[]){
-  const box = $('tags-groups');
-  box.innerHTML = '';
-  const groups = {};
-  tagLibrary.tags.forEach(t => { (groups[t.group] = groups[t.group] || []).push(t); });
-  for (const [g, tags] of Object.entries(groups)){
-    const div = document.createElement('div'); div.className='tag-group';
-    const title = document.createElement('div'); title.className='tag-group-title'; title.textContent=g; div.appendChild(title);
-    const list = document.createElement('div'); list.className='tag-list';
-    tags.forEach(t => {
-      const pill = document.createElement('span'); pill.className='tag-pill';
-      pill.dataset.name = t.name;
-      pill.textContent = t.name_zh ? `${t.name_zh} · ${t.name}` : t.name;
-      if (selectedNames.includes(t.name)) pill.classList.add('selected');
-      pill.addEventListener('click', () => {
-        pill.classList.toggle('selected');
-        updateTagCount();
-      });
-      list.appendChild(pill);
-    });
-    div.appendChild(list); box.appendChild(div);
-  }
-  updateTagCount();
-}
-
-// 渲染“识别依据”：图像特征 + 每个建议标签的来源徽标
-function renderEvidence(data){
-  const box = $('evi-box');
-  const f = data.features;
-  if (!f){ box.style.display='none'; return; }
-  box.style.display='block';
-  // 主色色块
-  const colors = $('evi-colors');
-  colors.innerHTML = (f.named || []).map(d =>
-    `<span class="evi-swatch" title="${d.name} 占比 ${Math.round(d.ratio*100)}%" style="background:${d.hex}"></span>`
-  ).join('') + `<span class="evi-dom">主色 ${f.dominant.name}</span>`;
-  // 指标
-  const m = $('evi-metrics');
-  const lum = f.mean_lum, sat = Math.round(f.mean_sat*100), edge = f.edge_density, warm = f.warmth;
-  const lumTxt = lum>180?'亮':lum<80?'暗':'中';
-  const satTxt = sat>45?'鲜艳':sat<18?'低饱和':'适中';
-  const edgeTxt = edge<10?'扁平/极简':edge>40?'细节丰富':'适中';
-  const warmTxt = warm>20?'偏暖':warm<-20?'偏冷':'中性';
-  m.innerHTML = [
-    `亮度 ${lumTxt}(${Math.round(lum)})`,
-    `饱和度 ${satTxt}(${sat}%)`,
-    `细节 ${edgeTxt}(${edge})`,
-    `色调 ${warmTxt}`,
-    `色彩丰富度 ${Math.round(f.colorfulness)}`,
-  ].map(t => `<span class="evi-metric">${t}</span>`).join('');
-}
-
-// 在建议标签 pill 上标注来源（filename / image / both）
-function markTagSources(tags){
-  const byName = {};
-  tags.forEach(t => byName[t.name] = t.source);
-  document.querySelectorAll('.tag-pill').forEach(pill => {
-    const src = byName[pill.dataset.name];
-    if (!src) return;
-    pill.classList.add('tag-src-' + src);
-    const badge = document.createElement('span');
-    badge.className = 'src-badge src-' + src;
-    badge.textContent = src === 'both' ? '图+名' : src === 'image' ? '图' : '名';
-    pill.appendChild(badge);
-  });
-}
-
-function getSelectedTags(){
-  return Array.from(document.querySelectorAll('.tag-pill.selected')).map(el => el.dataset.name);
-}
-
-function updateTagCount(){
-  const n = document.querySelectorAll('.tag-pill.selected').length;
-  const hint = $('tag-count-hint');
-  if (n === 0) hint.textContent = '建议 3–5 个标签；点击标签即可选中/取消。';
-  else hint.textContent = `已选 ${n} 个标签${n < 3 ? '（建议再选几个）' : n > 5 ? '（建议控制在 3–5 个）' : '（数量合适）'}`;
-}
-
-bindDrop('drop-tags','file-tags','fname-tags', f => { tagFile=f; showFname('fname-tags',f); });
-
-$('go-tags').addEventListener('click', async () => {
-  if (!tagFile){ setStatus('status-tags','请先选择文件','warn'); return; }
-  setStatus('status-tags','<span class="spin"></span>正在识别…','info');
-  const fd = new FormData(); fd.append('file', tagFile);
-  try{
-    const r = await fetch('/api/analyze', { method:'POST', body: fd });
-    const data = await r.json();
-    if (!r.ok){ setStatus('status-tags','✗ ' + (data.error || '识别失败'),'err'); return; }
-    $('tags-result').style.display='block';
-    renderEvidence(data);
-    renderCategoryOptions();
-    $('cat-select').value = data.category.name || tagLibrary.categories[0].name;
-    suggestedTags = data.tags.map(t => t.name);
-    renderTagGroups(suggestedTags);
-    markTagSources(data.tags);
-    const kindTxt = data.analyzed_kind === 'video-frame' ? '（视频首帧）' : (data.analyzed_kind === 'image' ? '（图像）' : '（仅文件名）');
-    const srcNote = data.features ? ' 已读图理解' : ' 未提取到图像特征，仅按文件名匹配';
-    setStatus('status-tags',`✓ 识别完成${kindTxt}${srcNote}：分类 ${data.category.name_zh || data.category.name}，建议标签 ${data.tags.length} 个`,'ok');
-  }catch(err){ setStatus('status-tags','✗ 请求失败：'+err.message,'err'); }
+bindDrop('drop-batch-xlsx','file-batch-xlsx','fname-batch-xlsx', f => { batchXlsx=f; showFname('fname-batch-xlsx',f); });
+bindDrop('drop-batch-img','file-batch-img','batch-img-list', f => { /* placeholder */ });
+// 图片为多选：自定义 change/drop 处理数组
+$('file-batch-img').addEventListener('change', e => { addBatchImages(e.target.files); });
+$('drop-batch-img').addEventListener('drop', e => {
+  e.preventDefault(); $('drop-batch-img').classList.remove('over');
+  if (e.dataTransfer.files.length) addBatchImages(e.dataTransfer.files);
 });
+function addBatchImages(fileList){
+  for (const f of fileList) batchImages.push(f);
+  renderBatchImages();
+}
+function renderBatchImages(){
+  const el = $('batch-img-list');
+  if (!batchImages.length){ el.style.display='none'; el.innerHTML=''; return; }
+  el.style.display='block';
+  el.innerHTML = batchImages.map((f,i)=>`<div>${i+1}. ${f.name}</div>`).join('');
+}
 
-$('reset-tags').addEventListener('click', () => { if (tagFile) $('go-tags').click(); });
-
-$('export-tags').addEventListener('click', () => {
-  if (!tagFile) return;
-  const catOpt = $('cat-select').selectedOptions[0];
-  const catName = catOpt ? catOpt.value : '';
-  const catZh = tagLibrary.categories.find(c => c.name === catName)?.name_zh || '';
-  const tags = getSelectedTags();
-  const record = {
-    filename: tagFile.name,
-    category: catName,
-    category_zh: catZh,
-    tags: tags,
-    exported_at: new Date().toISOString()
+// 识别后端切换
+$('batch-backend').addEventListener('change', e => {
+  $('batch-ai-fields').style.display = e.target.value === 'ai' ? 'block' : 'none';
+});
+// 加载当前视觉配置
+async function loadVisionConfig(){
+  try{
+    const r = await fetch('/api/vision_config');
+    const c = await r.json();
+    $('batch-backend').value = c.backend || 'offline';
+    $('batch-ai-fields').style.display = (c.backend === 'ai') ? 'block' : 'none';
+    if (c.base_url) $('ai-base').value = c.base_url;
+    if (c.model) $('ai-model').value = c.model;
+    if (c.api_key_set) $('ai-key').placeholder = '（已保存，留空保持不变）';
+  }catch(err){ /* 忽略 */ }
+}
+$('ai-save').addEventListener('click', async () => {
+  const payload = {
+    backend: 'ai',
+    base_url: $('ai-base').value.trim(),
+    api_key: $('ai-key').value,
+    model: $('ai-model').value.trim() || 'gpt-4o-mini',
   };
-  // CSV
-  const csv = `filename,category,category_zh,tags\n"${tagFile.name}","${catName}","${catZh}","${tags.join(',')}"`;
-  downloadText(csv, tagFile.name.replace(/\.[^.]+$/,'') + '_tags.csv', 'text/csv;charset=utf-8');
-  downloadText(JSON.stringify(record, null, 2), tagFile.name.replace(/\.[^.]+$/,'') + '_tags.json', 'application/json');
-  setStatus('status-tags','✓ 标签表已导出（CSV + JSON）','ok');
-});
-
-$('save-lib').addEventListener('click', async () => {
   try{
-    const data = JSON.parse($('lib-editor').value);
-    const r = await fetch('/api/tags/library', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    const r = await fetch('/api/vision_config', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const res = await r.json();
-    if (!r.ok){ setStatus('status-lib','✗ 保存失败：' + (res.error || '未知错误'),'err'); return; }
-    tagLibrary = data;
-    renderCategoryOptions();
-    setStatus('status-lib','✓ 标签库已保存并生效','ok');
-  }catch(err){ setStatus('status-lib','✗ JSON 格式错误：'+err.message,'err'); }
+    if (!r.ok){ setStatus('status-ai','✗ 保存失败','err'); return; }
+    setStatus('status-ai','✓ AI 配置已保存到本地 vision_config.json（下次生成将使用 AI 引擎）','ok');
+  }catch(err){ setStatus('status-ai','✗ '+err.message,'err'); }
 });
 
-$('reload-lib').addEventListener('click', loadLibrary);
+$('go-batch').addEventListener('click', async () => {
+  if (!batchXlsx){ setStatus('status-batch','请先上传 Excel','warn'); return; }
+  if (!batchImages.length){ setStatus('status-batch','请上传至少一张图片','warn'); return; }
+  const btn = $('go-batch'); btn.disabled = true;
+  setStatus('status-batch','<span class="spin"></span>正在逐张识别并打包…（图片越多越久）','info');
+  $('dl-batch').innerHTML = '';
+  const fd = new FormData();
+  fd.append('excel', batchXlsx);
+  batchImages.forEach(im => fd.append('images', im));
+  fd.append('designer_id', $('batch-designer').value.trim());
+  fd.append('backend', $('batch-backend').value);
+  try{
+    const r = await fetch('/api/batch_package', { method:'POST', body: fd });
+    const data = await r.json();
+    if (!r.ok){ setStatus('status-batch','✗ ' + (data.error || '处理失败'),'err'); return; }
+    downloadBlob(b64toBlob(data.zip_b64,'application/zip'), data.zip_name);
+    $('dl-batch').innerHTML = `<a href="#" id="dlbatch">⬇ ${data.zip_name}</a>`;
+    $('dlbatch').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.zip_b64,'application/zip'), data.zip_name); };
+    // 预览表
+    const body = $('batch-preview-body');
+    body.innerHTML = data.preview.map(p => `
+      <tr>
+        <td>${escapeHtml(p.name)}</td>
+        <td>${escapeHtml(p.category)}</td>
+        <td class="tags-cell">${escapeHtml(p.tags || '—')}</td>
+        <td>${p.image_matched ? '<span class="match">✓ 匹配</span>' : '<span class="nomatch">✗ 缺失</span>'}</td>
+        <td>${escapeHtml((p.source||'').replace('offline-fallback','回退离线'))}</td>
+      </tr>`).join('');
+    $('batch-preview').style.display = 'block';
+    const s = data.stats;
+    setStatus('status-batch',`✓ 完成：${data.zip_name} 已下载\n共 ${s.total_rows} 行 · 图片匹配 ${s.matched} · 缺失 ${s.unmatched} · 引擎 ${s.backend}`,'ok');
+  }catch(err){ setStatus('status-batch','✗ 请求失败：'+err.message,'err'); }
+  finally{ btn.disabled = false; }
+});
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 // 初始化
 loadLibrary();
+loadVisionConfig();
 </script>
 </body>
 </html>

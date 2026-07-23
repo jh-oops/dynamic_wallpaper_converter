@@ -2,3 +2,4 @@ flask
 imageio-ffmpeg
 Pillow
 pyinstaller
+openpyxl
