@@ -26,8 +26,13 @@ transcoded/
 Clipboard_Screenshot*.png
 *.png
 
+# 图标中间产物（自动生成，只保留 .icns / .ico）
+assets/app_icon.iconset/
+assets/app_icon_256.png
+
+
 # Project memory (local only)
-.workbuddy/memory/
+.workbuddy/
 
 # 视觉识别本地配置（可能含 API key，勿提交）
 vision_config.json

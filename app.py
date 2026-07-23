@@ -194,16 +194,15 @@ def _extract_first_frame(src, dst_jpg):
 
 @app.route("/api/crop", methods=["POST"])
 def crop():
-    """上传文件，按指定目标尺寸和模式裁剪后返回结果（base64）。
+    """上传静态图片，按指定目标尺寸和模式裁剪后返回 JPEG（base64）。
 
-    支持两类输入：
-      - 静态图片（jpg/png/webp/bmp/gif/tiff）：用 Pillow 裁剪，返回 JPEG。
-      - 视频 mp4：用 ffmpeg 转码，返回 mp4。
-    mode 同 transcode_one：cover 铺满裁剪 / contain 黑边填充。
+    仅支持静态图片（jpg/png/webp/bmp/gif/tiff）。
+    mode: cover（缩放铺满居中裁剪）/ crop（中心裁切）。
+    可选 max_size_kb 控制输出大小（0=不限制）。
     """
     f = request.files.get("file")
     if not f or not f.filename:
-        return jsonify(error="请上传文件"), 400
+        return jsonify(error="请上传图片"), 400
 
     try:
         target_w = int(request.form.get("target_w", 1080))
@@ -214,9 +213,8 @@ def crop():
         return jsonify(error="目标尺寸必须大于 0"), 400
 
     mode = request.form.get("mode", "cover")
-    if mode not in ("cover", "contain"):
-        return jsonify(error='mode 只能是 "cover" 或 "contain"'), 400
-    keep_audio = request.form.get("keep_audio") == "1"
+    if mode not in ("cover", "crop"):
+        return jsonify(error='mode 只能是 "cover" 或 "crop"'), 400
     try:
         max_size_kb = int(request.form.get("max_size_kb", 0) or 0)
     except ValueError:
@@ -226,54 +224,38 @@ def crop():
 
     ext = os.path.splitext(f.filename)[1].lower()
     is_image = ext in IMAGE_EXTS
+    if not is_image:
+        return jsonify(error="仅支持静态图片，请上传 JPG / PNG / WebP / GIF / BMP 等"), 400
     base = os.path.splitext(os.path.basename(f.filename))[0]
 
     tmp = tempfile.mkdtemp(prefix="wp_crop_")
     src = os.path.join(tmp, os.path.basename(f.filename))
     f.save(src)
     try:
-        if is_image:
-            dst = os.path.join(tmp, "cropped.jpg")
-            tz.crop_image(src, dst, target_w, target_h, mode)
-            # 大小限制：若超过 max_size_kb，逐步降低 JPEG 质量重试
-            within = True
-            if max_size_kb > 0:
-                limit = max_size_kb * 1024
-                q = 88
-                while os.path.getsize(dst) > limit and q >= 15:
-                    tz.crop_image(src, dst, target_w, target_h, mode, quality=q)
-                    q -= 8
-                within = os.path.getsize(dst) <= limit
-            with open(dst, "rb") as fh:
-                data_bytes = fh.read()
-            return jsonify({
-                "ok": True,
-                "kind": "image",
-                "file_name": f"{base}_{target_w}x{target_h}_{mode}.jpg",
-                "file_b64": base64.b64encode(data_bytes).decode("ascii"),
-                "mime": "image/jpeg",
-                "target_w": target_w,
-                "target_h": target_h,
-                "mode": mode,
-                "size_kb": round(len(data_bytes) / 1024, 1),
-                "max_size_kb": max_size_kb,
-                "within_limit": within,
-            })
-        # 否则按视频处理
-        dst = os.path.join(tmp, "cropped.mp4")
-        crf, within = tz.transcode_one(src, dst, keep_audio, target_w, target_h, mode)
+        dst = os.path.join(tmp, "cropped.jpg")
+        tz.crop_image(src, dst, target_w, target_h, mode)
+        # 大小限制：若超过 max_size_kb，逐步降低 JPEG 质量重试
+        within = True
+        if max_size_kb > 0:
+            limit = max_size_kb * 1024
+            q = 88
+            while os.path.getsize(dst) > limit and q >= 15:
+                tz.crop_image(src, dst, target_w, target_h, mode, quality=q)
+                q -= 8
+            within = os.path.getsize(dst) <= limit
         with open(dst, "rb") as fh:
-            mp4_bytes = fh.read()
+            data_bytes = fh.read()
         return jsonify({
             "ok": True,
-            "kind": "video",
-            "file_name": f"{base}_{target_w}x{target_h}_{mode}.mp4",
-            "file_b64": base64.b64encode(mp4_bytes).decode("ascii"),
-            "mime": "video/mp4",
+            "kind": "image",
+            "file_name": f"{base}_{target_w}x{target_h}_{mode}.jpg",
+            "file_b64": base64.b64encode(data_bytes).decode("ascii"),
+            "mime": "image/jpeg",
             "target_w": target_w,
             "target_h": target_h,
             "mode": mode,
-            "crf": crf,
+            "size_kb": round(len(data_bytes) / 1024, 1),
+            "max_size_kb": max_size_kb,
             "within_limit": within,
         })
     except Exception as e:
@@ -369,6 +351,7 @@ def batch_package():
         return jsonify(error="请上传 Excel 文件（.xlsx）"), 400
     designer_id = (request.form.get("designer_id") or "").strip()
     backend = (request.form.get("backend") or "").strip() or None
+    normalize = request.form.get("normalize") == "1"
     images = request.files.getlist("images")
 
     try:
@@ -436,6 +419,22 @@ def batch_package():
         # 保存原图到 images/（保留原名，确保与 名称 对应）
         # 注意：必须先 read() 再写盘——FileStorage.save() 会消耗流，之后 read() 为空
         data = im.read()
+        # 若启用标准化，统一裁剪为 1080x2160 cover（静态壁纸标准尺寸）
+        if normalize:
+            tmp_src = os.path.join(out, f"_norm_{r}.jpg")
+            tmp_dst = os.path.join(out, f"_norm_{r}_out.jpg")
+            with open(tmp_src, "wb") as fh:
+                fh.write(data)
+            try:
+                tz.crop_image(tmp_src, tmp_dst, 1080, 2160, "cover")
+                with open(tmp_dst, "rb") as fh:
+                    data = fh.read()
+            except Exception:
+                pass
+            finally:
+                for p in (tmp_src, tmp_dst):
+                    if os.path.exists(p):
+                        os.remove(p)
         img_path = os.path.join(img_dir, os.path.basename(im.filename))
         with open(img_path, "wb") as fh:
             fh.write(data)

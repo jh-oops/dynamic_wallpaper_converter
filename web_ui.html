@@ -281,11 +281,11 @@
   <!-- 左侧导航 -->
   <aside class="sidebar">
     <div class="logo">主题资源编辑器</div>
-    <div class="logo-sub">动态壁纸打包 · 尺寸裁剪 · 标签识别 · 批量静态壁纸打包</div>
+    <div class="logo-sub">动态壁纸打包 · 壁纸裁剪 · 标签识别 · 批量静态壁纸打包</div>
     <nav class="nav">
       <div class="nav-item active" data-tab="pack"><span class="dot"></span>动态壁纸打包器</div>
       <div class="nav-item" data-tab="tags"><span class="dot"></span>分类标签识别</div>
-      <div class="nav-item" data-tab="crop"><span class="dot"></span>剪裁</div>
+      <div class="nav-item" data-tab="crop"><span class="dot"></span>壁纸裁剪</div>
       <div class="nav-item" data-tab="batch"><span class="dot"></span>批量静态壁纸打包</div>
     </nav>
     <div class="side-foot">本地运行 · 离线优先<br>AI 视觉识别可插拔启用</div>
@@ -378,16 +378,16 @@
   </div>
 </div>
 
-<!-- ===== 模块三：尺寸裁剪 ===== -->
+<!-- ===== 模块三：壁纸裁剪 ===== -->
 <div class="panel" id="panel-crop">
   <div class="card">
-    <h2><span class="step">3</span>上传图片/视频并选择目标尺寸</h2>
+    <h2><span class="step">3</span>上传静态壁纸并选择目标尺寸</h2>
     <div class="card-body">
       <div class="drop" id="drop-crop">
-        <div class="big">拖入图片或视频到这里，或点击选择</div>
-        <div class="small">支持静态图片（JPG / PNG / WebP 等）与视频 MP4；仅做尺寸裁剪/缩放，不打包进动态壁纸 zip</div>
+        <div class="big">拖入静态壁纸图片到这里，或点击选择</div>
+        <div class="small">仅处理静态图片（JPG / PNG / WebP 等），按下方预设裁剪为壁纸/卡片尺寸</div>
       </div>
-      <input type="file" id="file-crop" accept="image/*,video/mp4,.mp4" hidden>
+      <input type="file" id="file-crop" accept="image/*" hidden>
       <div class="fname" id="fname-crop" style="display:none"></div>
 
       <div class="grid">
@@ -402,8 +402,8 @@
         </div>
         <div class="field"><label>裁剪模式</label>
           <select id="mode-crop">
-            <option value="cover" selected>Cover：铺满目标尺寸，按画面比例裁剪（无黑边）</option>
-            <option value="contain">Contain：完整保留画面，不足处黑边填充</option>
+            <option value="cover" selected>Cover：缩放铺满目标，按画面比例居中裁剪</option>
+            <option value="crop">剪裁：按目标尺寸从原图中心裁切，不拉伸画面</option>
           </select>
         </div>
       </div>
@@ -412,7 +412,6 @@
         <div class="field"><label>目标高度 px</label><input type="number" id="h-crop" value="390" min="1"></div>
         <div class="field"><label>大小限制 KB（0=不限制）</label><input type="number" id="maxkb-crop" value="300" min="0"></div>
       </div>
-      <span id="audio-row-crop"><label class="chk"><input type="checkbox" id="audio-crop"> 保留音轨（默认去除，仅视频有效）</label></span>
 
       <div class="btns"><button class="go" id="go-crop">裁剪并下载</button></div>
       <div class="status" id="status-crop"></div>
@@ -452,6 +451,7 @@
       </div>
       <input type="file" id="file-batch-img" accept="image/*" multiple hidden>
       <div class="filelist" id="batch-img-list" style="display:none"></div>
+      <label class="chk"><input type="checkbox" id="batch-normalize" checked> 输出前统一裁剪为 1080 × 2160（Cover，静态壁纸标准尺寸）</label>
     </div>
   </div>
 
@@ -507,7 +507,7 @@ if (location.protocol === 'file:'){
 const MOD_META = {
   pack:  ["动态壁纸打包器", "按规范打包动态壁纸：H.264 转码 / 抽帧 / 缩略图 / manifest，输出标准 ZIP。"],
   tags:  ["分类标签识别", "读图理解单张图片，验证识别引擎效果并微调你的标签库。"],
-  crop:  ["尺寸裁剪", "把图片/视频裁剪到任意目标尺寸。"],
+  crop:  ["壁纸裁剪", "把静态壁纸图片裁剪到标准尺寸（banner / 大卡 / 瀑布流卡 / 静态壁纸），自动压缩到限制大小。"],
   batch: ["批量静态壁纸打包", "上传 Excel + 所有图片 + 设计师ID，批量识别标签并打包成 zip（Excel + 图片）。"],
 };
 
@@ -859,8 +859,6 @@ $('lib-toggle-json').addEventListener('click', () => {
 let cropFile = null;
 bindDrop('drop-crop','file-crop','fname-crop', f => {
   cropFile=f; showFname('fname-crop',f);
-  const isImg = /\.(jpe?g|png|webp|bmp|gif|tiff)$/i.test(f.name);
-  $('audio-row-crop').style.display = isImg ? 'none' : '';
 });
 $('preset-crop').addEventListener('change', e => {
   const opt = e.target.selectedOptions[0];
@@ -868,16 +866,15 @@ $('preset-crop').addEventListener('change', e => {
   if (opt.dataset.maxkb !== undefined){ $('maxkb-crop').value=opt.dataset.maxkb; }
 });
 $('go-crop').addEventListener('click', async () => {
-  if (!cropFile){ setStatus('status-crop','请先选择文件','warn'); return; }
+  if (!cropFile){ setStatus('status-crop','请先选择图片','warn'); return; }
   const btn = $('go-crop'); btn.disabled = true;
-  setStatus('status-crop','<span class="spin"></span>裁剪转码中…','info');
+  setStatus('status-crop','<span class="spin"></span>裁剪中…','info');
   $('dl-crop').innerHTML = '';
   const fd = new FormData();
   fd.append('file', cropFile);
   fd.append('target_w', $('w-crop').value);
   fd.append('target_h', $('h-crop').value);
   fd.append('mode', $('mode-crop').value);
-  fd.append('keep_audio', $('audio-crop').checked ? '1' : '0');
   fd.append('max_size_kb', $('maxkb-crop').value || '0');
   try{
     const r = await fetch('/api/crop', { method:'POST', body: fd });
@@ -886,13 +883,8 @@ $('go-crop').addEventListener('click', async () => {
     downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name);
     $('dl-crop').innerHTML = `<a href="#" id="dlcrop">⬇ ${data.file_name}</a>`;
     $('dlcrop').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name); };
-    let extra = '';
-    if (data.kind === 'video'){
-      extra = ` / crf=${data.crf}${data.within_limit?'':' ⚠>5M'}`;
-    } else {
-      const kb = (data.size_kb ?? 0).toFixed(1);
-      extra = ` / ${kb}KB${data.within_limit ? ' ✓≤' + (data.max_size_kb||0) + 'KB' : (data.max_size_kb ? ' ⚠超出限制' : '')}`;
-    }
+    const kb = (data.size_kb ?? 0).toFixed(1);
+    const extra = ` / ${kb}KB${data.within_limit ? ' ✓≤' + (data.max_size_kb||0) + 'KB' : (data.max_size_kb ? ' ⚠超出限制' : '')}`;
     setStatus('status-crop',`✓ 完成：${data.file_name} 已下载（${data.target_w}×${data.target_h} / ${data.mode}${extra}）`,'ok');
   }catch(err){ setStatus('status-crop','✗ 请求失败：'+err.message,'err'); }
   finally{ btn.disabled = false; }
@@ -962,6 +954,7 @@ $('go-batch').addEventListener('click', async () => {
   batchImages.forEach(im => fd.append('images', im));
   fd.append('designer_id', $('batch-designer').value.trim());
   fd.append('backend', $('batch-backend').value);
+  fd.append('normalize', $('batch-normalize').checked ? '1' : '0');
   try{
     const r = await fetch('/api/batch_package', { method:'POST', body: fd });
     const data = await r.json();

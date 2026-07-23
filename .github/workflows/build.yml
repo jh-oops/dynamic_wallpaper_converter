@@ -32,6 +32,7 @@ jobs:
         run: |
           FFDIR=$(python -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(imageio_ffmpeg.__file__),'binaries'))")
           python -m PyInstaller --noconfirm --windowed --name "主题资源编辑器" \
+            --icon "assets/app_icon.icns" \
             --add-data "web_ui.html:." --add-data "tags_library.json:." --add-data "$FFDIR:imageio_ffmpeg/binaries" \
             --hidden-import app --hidden-import transcode_for_zip --hidden-import tag_matcher --hidden-import image_analyzer --hidden-import vision_ai --hidden-import openpyxl main_app.py
 
@@ -40,6 +41,7 @@ jobs:
         run: |
           $FFDIR = python -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(imageio_ffmpeg.__file__),'binaries'))"
           python -m PyInstaller --noconfirm --onefile --windowed --name "主题资源编辑器" `
+            --icon "assets/app_icon.ico" `
             --add-data "web_ui.html;." --add-data "tags_library.json;." --add-data "$FFDIR;imageio_ffmpeg/binaries" `
             --hidden-import app --hidden-import transcode_for_zip --hidden-import tag_matcher --hidden-import image_analyzer --hidden-import vision_ai --hidden-import openpyxl main_app.py
 

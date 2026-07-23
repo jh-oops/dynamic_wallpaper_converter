@@ -13,6 +13,7 @@ FFDIR=$("$PY" -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(im
 
 echo "== PyInstaller 打包 =="
 "$PY" -m PyInstaller --noconfirm --windowed --name "主题资源编辑器" \
+  --icon "assets/app_icon.icns" \
   --add-data "web_ui.html:." \
   --add-data "tags_library.json:." \
   --add-data "$FFDIR:imageio_ffmpeg/binaries" \

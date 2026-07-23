@@ -118,28 +118,34 @@ def transcode_one(src, dst, keep_audio=False,
 
 
 def crop_image(src, dst, target_w, target_h, mode="cover", quality=92):
-    """用 Pillow 把静态图片裁剪/缩放到目标尺寸（支持 cover/contain），输出 JPEG。
+    """用 Pillow 把静态图片裁剪/缩放到目标尺寸，输出 JPEG。
 
-    cover   : 等比放大铺满后居中裁剪（无黑边，可能裁掉溢出部分）。
-    contain : 等比缩放到完整画面后黑边填充（保持全画面）。
-    返回输出文件路径。适用于壁纸静态图（JPG/PNG/WebP/BMP/GIF 等）。
+    cover : 等比放大铺满后居中裁剪（无黑边，可能裁掉溢出部分）。
+    crop  : 优先按目标尺寸从原图中心裁切，不缩放；若原图不够大则等比放大铺满后居中裁剪。
     """
     img = Image.open(src)
     sw, sh = img.size
-    if mode == "cover":
+    if mode == "crop":
+        if sw >= target_w and sh >= target_h:
+            left = (sw - target_w) // 2
+            top = (sh - target_h) // 2
+            out = img.crop((left, top, left + target_w, top + target_h))
+        else:
+            scale = max(target_w / sw, target_h / sh)
+            nw, nh = int(round(sw * scale)), int(round(sh * scale))
+            img = img.resize((nw, nh), Image.LANCZOS)
+            left = (nw - target_w) // 2
+            top = (nh - target_h) // 2
+            out = img.crop((left, top, left + target_w, top + target_h))
+    elif mode == "cover":
         scale = max(target_w / sw, target_h / sh)
         nw, nh = int(round(sw * scale)), int(round(sh * scale))
         img = img.resize((nw, nh), Image.LANCZOS)
         left = (nw - target_w) // 2
         top = (nh - target_h) // 2
         out = img.crop((left, top, left + target_w, top + target_h))
-    else:  # contain
-        scale = min(target_w / sw, target_h / sh)
-        nw, nh = int(round(sw * scale)), int(round(sh * scale))
-        img = img.resize((nw, nh), Image.LANCZOS)
-        bg = Image.new("RGB", (target_w, target_h), (0, 0, 0))
-        bg.paste(img, ((target_w - nw) // 2, (target_h - nh) // 2))
-        out = bg
+    else:
+        raise ValueError(f"不支持的裁剪模式: {mode}")
     out = out.convert("RGB")
     out.save(dst, "JPEG", quality=quality, optimize=True)
     return dst
