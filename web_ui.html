@@ -393,15 +393,11 @@
       <div class="grid">
         <div class="field"><label>尺寸预设</label>
           <select id="preset-crop">
-            <option value="custom" data-w="" data-h="">自定义</option>
-            <option value="1080x2400" data-w="1080" data-h="2400" selected>1080 × 2400（动态壁纸）</option>
-            <option value="1170x2532" data-w="1170" data-h="2532">1170 × 2532（iPhone 14/15）</option>
-            <option value="1179x2556" data-w="1179" data-h="2556">1179 × 2556（iPhone 15 Pro）</option>
-            <option value="1284x2778" data-w="1284" data-h="2778">1284 × 2778（iPhone 14 Pro Max）</option>
-            <option value="1290x2796" data-w="1290" data-h="2796">1290 × 2796（iPhone 15 Pro Max）</option>
-            <option value="720x1280" data-w="720" data-h="1280">720 × 1280</option>
-            <option value="1080x1920" data-w="1080" data-h="1920">1080 × 1920</option>
-            <option value="1920x1080" data-w="1920" data-h="1080">1920 × 1080（横屏）</option>
+            <option value="custom" data-w="" data-h="" data-maxkb="">自定义</option>
+            <option value="banner" data-w="984" data-h="390" data-maxkb="300" selected>banner 984 × 390（≤300KB）</option>
+            <option value="bigcard" data-w="984" data-h="1050" data-maxkb="300">大卡 984 × 1050（≤300KB）</option>
+            <option value="waterfall" data-w="474" data-h="294" data-maxkb="300">瀑布流卡 474 × 294（≤300KB）</option>
+            <option value="wallpaper" data-w="1080" data-h="2160" data-maxkb="0">静态壁纸 1080 × 2160（不限制）</option>
           </select>
         </div>
         <div class="field"><label>裁剪模式</label>
@@ -412,8 +408,9 @@
         </div>
       </div>
       <div class="grid">
-        <div class="field"><label>目标宽度 px</label><input type="number" id="w-crop" value="1080" min="1"></div>
-        <div class="field"><label>目标高度 px</label><input type="number" id="h-crop" value="2400" min="1"></div>
+        <div class="field"><label>目标宽度 px</label><input type="number" id="w-crop" value="984" min="1"></div>
+        <div class="field"><label>目标高度 px</label><input type="number" id="h-crop" value="390" min="1"></div>
+        <div class="field"><label>大小限制 KB（0=不限制）</label><input type="number" id="maxkb-crop" value="300" min="0"></div>
       </div>
       <span id="audio-row-crop"><label class="chk"><input type="checkbox" id="audio-crop"> 保留音轨（默认去除，仅视频有效）</label></span>
 
@@ -868,6 +865,7 @@ bindDrop('drop-crop','file-crop','fname-crop', f => {
 $('preset-crop').addEventListener('change', e => {
   const opt = e.target.selectedOptions[0];
   if (opt.dataset.w){ $('w-crop').value=opt.dataset.w; $('h-crop').value=opt.dataset.h; }
+  if (opt.dataset.maxkb !== undefined){ $('maxkb-crop').value=opt.dataset.maxkb; }
 });
 $('go-crop').addEventListener('click', async () => {
   if (!cropFile){ setStatus('status-crop','请先选择文件','warn'); return; }
@@ -880,6 +878,7 @@ $('go-crop').addEventListener('click', async () => {
   fd.append('target_h', $('h-crop').value);
   fd.append('mode', $('mode-crop').value);
   fd.append('keep_audio', $('audio-crop').checked ? '1' : '0');
+  fd.append('max_size_kb', $('maxkb-crop').value || '0');
   try{
     const r = await fetch('/api/crop', { method:'POST', body: fd });
     const data = await r.json();
@@ -887,7 +886,13 @@ $('go-crop').addEventListener('click', async () => {
     downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name);
     $('dl-crop').innerHTML = `<a href="#" id="dlcrop">⬇ ${data.file_name}</a>`;
     $('dlcrop').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name); };
-    const extra = data.kind === 'video' ? ` / crf=${data.crf}${data.within_limit?'':' ⚠>5M'}` : '';
+    let extra = '';
+    if (data.kind === 'video'){
+      extra = ` / crf=${data.crf}${data.within_limit?'':' ⚠>5M'}`;
+    } else {
+      const kb = (data.size_kb ?? 0).toFixed(1);
+      extra = ` / ${kb}KB${data.within_limit ? ' ✓≤' + (data.max_size_kb||0) + 'KB' : (data.max_size_kb ? ' ⚠超出限制' : '')}`;
+    }
     setStatus('status-crop',`✓ 完成：${data.file_name} 已下载（${data.target_w}×${data.target_h} / ${data.mode}${extra}）`,'ok');
   }catch(err){ setStatus('status-crop','✗ 请求失败：'+err.message,'err'); }
   finally{ btn.disabled = false; }

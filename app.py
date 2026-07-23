@@ -217,6 +217,12 @@ def crop():
     if mode not in ("cover", "contain"):
         return jsonify(error='mode 只能是 "cover" 或 "contain"'), 400
     keep_audio = request.form.get("keep_audio") == "1"
+    try:
+        max_size_kb = int(request.form.get("max_size_kb", 0) or 0)
+    except ValueError:
+        return jsonify(error="max_size_kb 必须是整数"), 400
+    if max_size_kb < 0:
+        max_size_kb = 0
 
     ext = os.path.splitext(f.filename)[1].lower()
     is_image = ext in IMAGE_EXTS
@@ -229,6 +235,15 @@ def crop():
         if is_image:
             dst = os.path.join(tmp, "cropped.jpg")
             tz.crop_image(src, dst, target_w, target_h, mode)
+            # 大小限制：若超过 max_size_kb，逐步降低 JPEG 质量重试
+            within = True
+            if max_size_kb > 0:
+                limit = max_size_kb * 1024
+                q = 88
+                while os.path.getsize(dst) > limit and q >= 15:
+                    tz.crop_image(src, dst, target_w, target_h, mode, quality=q)
+                    q -= 8
+                within = os.path.getsize(dst) <= limit
             with open(dst, "rb") as fh:
                 data_bytes = fh.read()
             return jsonify({
@@ -240,6 +255,9 @@ def crop():
                 "target_w": target_w,
                 "target_h": target_h,
                 "mode": mode,
+                "size_kb": round(len(data_bytes) / 1024, 1),
+                "max_size_kb": max_size_kb,
+                "within_limit": within,
             })
         # 否则按视频处理
         dst = os.path.join(tmp, "cropped.mp4")
