@@ -18,7 +18,7 @@ import app as wpapp  # Flask app + 路由（/ 与 /api/package）
 
 PORT = 8000
 URL = f"http://localhost:{PORT}/"
-APP_NAME = "动态壁纸 ZIP 生成器"
+APP_NAME = "主题资源工具平台"
 
 # ── 马里奥经典调色板 ──
 C_BG = "#5c94fc"       # 天蓝背景

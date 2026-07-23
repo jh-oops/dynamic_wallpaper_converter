@@ -14,8 +14,9 @@ FFDIR=$("$PY" -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(im
 echo "== PyInstaller 打包 =="
 "$PY" -m PyInstaller --noconfirm --windowed --name "动态壁纸生成器" \
   --add-data "web_ui.html:." \
+  --add-data "tags_library.json:." \
   --add-data "$FFDIR:imageio_ffmpeg/binaries" \
-  --hidden-import app --hidden-import transcode_for_zip \
+  --hidden-import app --hidden-import transcode_for_zip --hidden-import tag_matcher \
   main_app.py
 
 echo "== 完成 =="
