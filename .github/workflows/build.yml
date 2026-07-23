@@ -31,7 +31,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           FFDIR=$(python -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(imageio_ffmpeg.__file__),'binaries'))")
-          python -m PyInstaller --noconfirm --windowed --name "动态壁纸生成器" \
+          python -m PyInstaller --noconfirm --windowed --name "主题资源编辑器" \
             --add-data "web_ui.html:." --add-data "tags_library.json:." --add-data "$FFDIR:imageio_ffmpeg/binaries" \
             --hidden-import app --hidden-import transcode_for_zip --hidden-import tag_matcher --hidden-import image_analyzer --hidden-import vision_ai --hidden-import openpyxl main_app.py
 
@@ -39,7 +39,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           $FFDIR = python -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(imageio_ffmpeg.__file__),'binaries'))"
-          python -m PyInstaller --noconfirm --onefile --windowed --name "动态壁纸生成器" `
+          python -m PyInstaller --noconfirm --onefile --windowed --name "主题资源编辑器" `
             --add-data "web_ui.html;." --add-data "tags_library.json;." --add-data "$FFDIR;imageio_ffmpeg/binaries" `
             --hidden-import app --hidden-import transcode_for_zip --hidden-import tag_matcher --hidden-import image_analyzer --hidden-import vision_ai --hidden-import openpyxl main_app.py
 
@@ -47,12 +47,12 @@ jobs:
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: 动态壁纸生成器-mac
-          path: dist/动态壁纸生成器.app
+          name: 主题资源编辑器-mac
+          path: dist/主题资源编辑器.app
 
       - name: 上传产物 (Windows)
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: 动态壁纸生成器-win
-          path: dist/动态壁纸生成器.exe
+          name: 主题资源编辑器-win
+          path: dist/主题资源编辑器.exe

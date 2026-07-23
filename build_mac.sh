@@ -12,7 +12,7 @@ echo "== 定位 ffmpeg 二进制 =="
 FFDIR=$("$PY" -c "import imageio_ffmpeg,os;print(os.path.join(os.path.dirname(imageio_ffmpeg.__file__),'binaries'))")
 
 echo "== PyInstaller 打包 =="
-"$PY" -m PyInstaller --noconfirm --windowed --name "动态壁纸生成器" \
+"$PY" -m PyInstaller --noconfirm --windowed --name "主题资源编辑器" \
   --add-data "web_ui.html:." \
   --add-data "tags_library.json:." \
   --add-data "$FFDIR:imageio_ffmpeg/binaries" \
@@ -20,14 +20,14 @@ echo "== PyInstaller 打包 =="
   main_app.py
 
 echo "== 完成 =="
-echo "产物：dist/动态壁纸生成器.app"
+echo "产物：dist/主题资源编辑器.app"
 
 echo "== 复制到 /Applications（方便通过聚焦搜索/启动台打开）=="
-rm -rf "/Applications/动态壁纸生成器.app"
-cp -R "dist/动态壁纸生成器.app" "/Applications/动态壁纸生成器.app"
-echo "已安装到：/Applications/动态壁纸生成器.app"
+rm -rf "/Applications/主题资源编辑器.app"
+cp -R "dist/主题资源编辑器.app" "/Applications/主题资源编辑器.app"
+echo "已安装到：/Applications/主题资源编辑器.app"
 
 echo ""
 echo "若双击被 Gatekeeper 拦截，可运行："
-echo "  xattr -cr \"/Applications/动态壁纸生成器.app\""
-echo "  codesign --force --deep --sign - \"/Applications/动态壁纸生成器.app\""
+echo "  xattr -cr \"/Applications/主题资源编辑器.app\""
+echo "  codesign --force --deep --sign - \"/Applications/主题资源编辑器.app\""
