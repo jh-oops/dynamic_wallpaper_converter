@@ -83,6 +83,9 @@
 
   .wrap{max-width:880px;width:100%;margin:0;padding:18px 0 72px}
 
+  .file-hint{display:none;background:var(--win-red);color:#fff;border-bottom:var(--bw) solid var(--border);padding:10px 18px;font-size:13px;font-weight:800;text-align:center}
+  .file-hint a{color:#fff;text-decoration:underline;font-weight:900}
+
   /* 窗口式卡片 */
   .card{
     background:var(--paper);border:var(--bw) solid var(--border);box-shadow:var(--sh);
@@ -273,6 +276,7 @@
 </style>
 </head>
 <body>
+<div id="file-hint" class="file-hint">⚠ 当前以本地文件模式打开，无法访问后端功能。请运行 <b>动态壁纸生成器.app</b>，或访问 <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a></div>
 <div class="layout">
   <!-- 左侧导航 -->
   <aside class="sidebar">
@@ -497,6 +501,12 @@
 <script>
 const $ = id => document.getElementById(id);
 
+// file:// 模式无法访问后端，顶部 banner 提示用户
+if (location.protocol === 'file:'){
+  const hint = $('file-hint');
+  if (hint) hint.style.display = 'block';
+}
+
 const MOD_META = {
   pack:  ["动态壁纸打包器", "按规范打包动态壁纸：H.264 转码 / 抽帧 / 缩略图 / manifest，输出标准 ZIP。"],
   tags:  ["分类标签识别", "读图理解单张图片，验证识别引擎效果并微调你的标签库。"],
@@ -584,6 +594,11 @@ $('go-pack').addEventListener('click', async () => {
 let tagFile = null, tagLibrary = null, suggestedTags = [];
 
 async function loadLibrary(){
+  if (location.protocol === 'file:'){
+    $('lib-visual').innerHTML = '';
+    setStatus('status-lib','✗ 当前是 file:// 本地文件模式，无法访问后端接口。请双击「动态壁纸生成器.app」，或在浏览器打开 http://127.0.0.1:8000/','err');
+    return;
+  }
   try{
     const r = await fetch('/api/tags/library');
     if (!r.ok) throw new Error('HTTP ' + r.status);
