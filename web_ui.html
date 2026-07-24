@@ -77,11 +77,11 @@
     background:var(--paper);border:var(--bw) solid var(--border);box-shadow:var(--sh);
     padding:16px 22px 14px;position:relative;
   }
-  .topbar::after{content:"";position:absolute;top:0;left:0;right:0;height:10px;background:var(--win-blue);border-bottom:var(--bw) solid var(--border)}
+  .topbar::after{content:"";position:absolute;top:0;left:0;right:0;height:10px;background:repeating-linear-gradient(90deg,var(--win-yellow) 0 20px,var(--win-red) 20px 40px,var(--win-blue) 40px 60px,var(--win-green) 60px 80px);border-bottom:var(--bw) solid var(--border)}
   .topbar h1{margin:14px 0 0;font-size:22px;font-weight:900;letter-spacing:.02em}
   .topbar .sub{color:var(--ink-dim);font-size:12px;font-weight:700;margin-top:6px;max-width:760px;line-height:1.6}
 
-  .wrap{max-width:880px;width:100%;margin:0;padding:18px 0 72px}
+  .wrap{max-width:880px;width:100%;margin:0 auto;padding:18px 0 72px}
 
   .file-hint{display:none;background:var(--win-red);color:#fff;border-bottom:var(--bw) solid var(--border);padding:10px 18px;font-size:13px;font-weight:800;text-align:center}
   .file-hint a{color:#fff;text-decoration:underline;font-weight:900}
@@ -105,7 +105,19 @@
   .card:nth-of-type(4n+3) h2{background:var(--win-pink)}
   .card:nth-of-type(4n+4) h2{background:var(--win-green)}
 
-  .step{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:var(--bw) solid var(--border);background:#fff;color:var(--ink);font-size:12px;font-weight:900;margin-right:6px;box-shadow:2px 2px 0 var(--shadow)}
+  .step{
+    display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+    border:var(--bw) solid var(--border);background:var(--win-blue);color:#fff;margin-right:6px;
+    box-shadow:2px 2px 0 var(--shadow);flex:0 0 auto;position:relative;top:-1px
+  }
+  .step::before{content:"";width:14px;height:14px;display:block;background-repeat:no-repeat;background-position:center;background-size:contain;image-rendering:pixelated}
+  .step[data-icon="upload"]::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%201%20L4%206%20H6%20V11%20H10%20V6%20H12%20Z%20M2%2013%20H14%20V15%20H2%20Z%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E")}
+  .step[data-icon="id"]::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Crect%20x%3D%222%22%20y%3D%224%22%20width%3D%2212%22%20height%3D%228%22%20rx%3D%221%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%226%22%20width%3D%223%22%20height%3D%223%22%20fill%3D%22%234a9fc9%22%2F%3E%3Crect%20x%3D%229%22%20y%3D%227%22%20width%3D%223%22%20height%3D%221%22%20fill%3D%22%234a9fc9%22%2F%3E%3Crect%20x%3D%229%22%20y%3D%229%22%20width%3D%222%22%20height%3D%221%22%20fill%3D%22%234a9fc9%22%2F%3E%3C%2Fsvg%3E")}
+  .step[data-icon="gear"]::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Crect%20x%3D%226%22%20y%3D%221%22%20width%3D%224%22%20height%3D%222%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%2213%22%20width%3D%224%22%20height%3D%222%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%226%22%20width%3D%222%22%20height%3D%224%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%2213%22%20y%3D%226%22%20width%3D%222%22%20height%3D%224%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%225%22%20width%3D%226%22%20height%3D%226%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E")}
+  .step[data-icon="package"]::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Crect%20x%3D%223%22%20y%3D%224%22%20width%3D%2210%22%20height%3D%229%22%20rx%3D%221%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%224%22%20width%3D%222%22%20height%3D%229%22%20fill%3D%22%234a9fc9%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%227%22%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22%234a9fc9%22%2F%3E%3C%2Fsvg%3E")}
+  .step[data-icon="video"]::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Crect%20x%3D%222%22%20y%3D%224%22%20width%3D%229%22%20height%3D%228%22%20rx%3D%221%22%20fill%3D%22%23fff%22%2F%3E%3Cpolygon%20points%3D%2213%2C5%2016%2C8%2013%2C11%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E")}
+  .step[data-icon="crop"]::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4%201%20H6%20V3%20H4%20Z%20M10%201%20H12%20V3%20H10%20Z%20M4%2013%20H6%20V15%20H4%20Z%20M10%2013%20H12%20V15%20H10%20Z%20M1%204%20H3%20V6%20H1%20Z%20M1%2010%20H3%20V12%20H1%20Z%20M13%204%20H15%20V6%20H13%20Z%20M13%2010%20H15%20V12%20H13%20Z%20M4%204%20H12%20V12%20H4%20Z%22%20fill%3D%22%23fff%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E")}
+  .step[data-icon="tag"]::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M3%203%20H9%20L13%208%20L8%2013%20L3%209%20Z%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%226%22%20r%3D%221.5%22%20fill%3D%22%234a9fc9%22%2F%3E%3C%2Fsvg%3E")}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
   .field{margin-bottom:14px}
   .field label{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim);margin-bottom:6px}
@@ -157,6 +169,27 @@
   .status.err{background:#f8d7da;border-color:var(--err);color:#66181f}
   .status.info{color:var(--ink)}
   .dl{margin-top:12px}
+  .crop-preview-row{display:flex;gap:18px;margin:14px 0;flex-wrap:wrap}
+  .crop-prev{flex:1;min-width:200px;background:var(--paper-2);border:var(--bw) solid var(--border);box-shadow:var(--sh-sm);padding:10px}
+  .crop-prev-title{font-size:12px;font-weight:900;color:var(--ink);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+  .crop-prev img{display:block;margin:0 auto;max-width:100%;max-height:260px;background:#fff;border:2px solid var(--border);object-fit:contain}
+  .crop-prev-meta{margin-top:8px;font-size:12px;font-weight:700;color:var(--ink-dim);text-align:center;min-height:16px}
+  .crop-editor-wrap{display:flex;gap:18px;margin:14px 0;align-items:flex-start;flex-wrap:wrap}
+  .crop-stage-wrap{flex:1;min-width:300px;background:var(--paper-2);border:var(--bw) solid var(--border);box-shadow:var(--sh-sm);padding:10px}
+  .crop-stage-title{font-size:12px;font-weight:900;color:var(--ink);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+  .crop-stage{position:relative;width:100%;max-width:560px;max-height:min(55vh,420px);margin:0 auto;overflow:hidden;background:#000;cursor:grab;border:2px solid var(--border);--crop-ratio:984/390;aspect-ratio:var(--crop-ratio)}
+  .crop-stage:active{cursor:grabbing}
+  .crop-stage-img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(var(--img-scale,1));transform-origin:center;max-width:none;max-height:none;user-select:none;-webkit-user-drag:none;pointer-events:none;image-rendering:auto}
+  .crop-overlay{position:absolute;inset:0;background:rgba(0,0,0,.18);pointer-events:none}
+  .crop-frame{position:absolute;left:0;top:0;right:0;bottom:0;border:3px dashed var(--win-yellow);pointer-events:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.3);z-index:2}
+  .crop-frame::before{content:'';position:absolute;inset:0;border:1px solid rgba(255,255,255,.4);pointer-events:none}
+  .crop-hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:700;padding:4px 8px;pointer-events:none;z-index:3}
+  .crop-controls{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .crop-controls label{font-size:12px;font-weight:900;color:var(--ink);white-space:nowrap}
+  .crop-controls input[type=range]{flex:1;min-width:120px}
+  .crop-prev-canvas{max-width:100%;height:auto;background:#fff;border:2px solid var(--border);display:block}
+  @media (max-width:760px){ .crop-preview-row{flex-direction:column} .crop-editor-wrap{flex-direction:column} .crop-stage-wrap,.crop-editor-wrap .crop-prev{min-width:auto;width:100%} }
+  @media (min-width:761px){ .crop-editor-wrap .crop-prev{flex:0 0 240px;max-width:260px} }
   .dl a{
     display:inline-block;background:var(--paper-2);border:var(--bw) solid var(--border);color:var(--ink);text-decoration:none;
     padding:10px 14px;font-size:13px;font-weight:800;margin-right:8px;box-shadow:var(--sh-sm);
@@ -197,59 +230,87 @@
     width:100%;min-height:260px;background:var(--paper-2);border:var(--bw) solid var(--border);padding:12px;color:var(--ink);
     font:12px/1.5 monospace;resize:vertical;box-shadow:inset 3px 3px 0 rgba(0,0,0,.08);
   }
-  .lib-visual{display:flex;flex-direction:column;gap:18px}
-  .lib-section{border:var(--bw) solid var(--border);background:var(--paper-2);box-shadow:3px 3px 0 rgba(0,0,0,.12)}
+  .lib-visual{display:flex;flex-direction:column;gap:22px}
+  .lib-section{background:var(--paper-2);border:var(--bw) solid var(--border);box-shadow:var(--sh-sm)}
   .lib-section-title{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;
-    background:var(--win-blue);color:#fff;border-bottom:var(--bw) solid var(--border);font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.04em
+    display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;
+    background:var(--win-blue);color:#fff;border-bottom:var(--bw) solid var(--border);font-weight:900;font-size:16px;text-transform:uppercase;letter-spacing:.06em;
+    cursor:pointer;user-select:none
   }
   .lib-section:nth-child(2) .lib-section-title{background:var(--win-pink);color:var(--ink)}
-  .lib-group{border-bottom:var(--bw) solid var(--border)}
-  .lib-group:last-child{border-bottom:0}
+  .lib-section-title::before{content:"▾";margin-right:6px;font-size:12px;transition:transform .15s}
+  .lib-section.collapsed .lib-section-title::before{transform:rotate(-90deg)}
+  .lib-section.collapsed .lib-section-body{display:none}
+  .lib-section-body{padding:12px;display:flex;flex-direction:column;gap:10px}
+  .lib-group{position:relative}
   .lib-group-head{
-    display:flex;align-items:center;gap:8px;padding:7px 12px;background:#fff;border-bottom:var(--bw) solid var(--border)
+    display:flex;align-items:center;gap:6px;padding:0 0 4px 8px;cursor:pointer;user-select:none
   }
   .lib-fold{
-    width:18px;height:18px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;
-    background:var(--win-blue);color:#fff;border:var(--bw) solid var(--border);font-size:11px;font-weight:900;box-shadow:2px 2px 0 rgba(0,0,0,.15)
+    width:14px;height:14px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:900;color:var(--win-blue);transition:transform .15s
   }
-  .lib-fold:hover{filter:brightness(1.05)}
-  .lib-group-name{
-    flex:1 1 auto;background:var(--paper-2);border:var(--bw) solid var(--border);padding:5px 8px;font-size:12px;font-weight:800;color:var(--ink);outline:none;text-transform:none
-  }
-  .lib-group-name:focus{background:#fff}
-  .lib-group.collapsed .lib-items{display:none}
-  .lib-fold{transition:transform .15s}
   .lib-group.collapsed .lib-fold{transform:rotate(-90deg)}
-  .lib-items{padding:10px 12px;display:flex;flex-direction:column;gap:10px;background:var(--paper)}
+  .lib-group-head::before{
+    content:"";width:8px;height:8px;background:var(--win-blue);border:var(--bw) solid var(--border);box-shadow:1px 1px 0 rgba(0,0,0,.15)
+  }
+  .lib-group:nth-of-type(4n+1) .lib-group-head::before{background:var(--win-yellow)}
+  .lib-group:nth-of-type(4n+2) .lib-group-head::before{background:var(--win-blue)}
+  .lib-group:nth-of-type(4n+3) .lib-group-head::before{background:var(--win-pink)}
+  .lib-group:nth-of-type(4n+4) .lib-group-head::before{background:var(--win-green)}
+  .lib-group-name{
+    flex:1 1 auto;background:transparent;border:0;padding:0;font-size:15px;font-weight:900;color:var(--ink);outline:none;text-transform:none;letter-spacing:.02em
+  }
+  .lib-group-name:focus{border-bottom:1px dashed var(--border)}
+  .lib-group.collapsed .lib-items{display:none}
+  .lib-items{padding:6px 0 0 20px;margin-left:7px;border-left:3px solid rgba(0,0,0,.18);display:flex;flex-direction:column;gap:8px;background:transparent}
   .lib-item{
-    display:grid;grid-template-columns:1fr 1fr 2fr auto;gap:8px;align-items:start;
-    padding:10px;background:#fff;border:var(--bw) solid var(--border);box-shadow:2px 2px 0 rgba(0,0,0,.1);
+    display:flex;flex-direction:column;gap:6px;
+    padding:10px;background:#fff;border:var(--bw) solid var(--border);box-shadow:var(--sh-sm)
+  }
+  .li-row{display:grid;grid-template-columns:auto 1fr 2fr auto;gap:10px;align-items:center}
+  .lib-item[data-type="tag"] .li-row{grid-template-columns:auto 0.9fr 1.7fr auto;gap:8px}
+  .li-row-keywords{
+    display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-top:2px
+  }
+  .li-kw-label{
+    font-size:11px;font-weight:900;color:var(--ink-dim);white-space:nowrap
   }
   .lib-item input, .lib-item textarea{
-    width:100%;background:var(--paper-2);border:var(--bw) solid var(--border);padding:6px 8px;font-size:12px;font-weight:700;color:var(--ink);outline:none
+    width:100%;background:transparent;border:0;border-bottom:1px solid rgba(0,0,0,.2);border-radius:0;
+    padding:4px 0;font-size:12px;font-weight:700;color:var(--ink);outline:none
   }
-  .lib-item textarea{min-height:44px;resize:vertical;font-family:inherit}
-  .lib-item input:focus, .lib-item textarea:focus{background:#fff}
+  .lib-item textarea{min-height:28px;resize:vertical;font-family:inherit}
+  .lib-item input:focus, .lib-item textarea:focus{background:rgba(255,255,255,.5);border-bottom-color:var(--border)}
+  .lib-item .li-name{font-weight:900}
   .lib-item .li-keywords{font-size:11px}
-  .lib-item .li-desc{grid-column:1 / -2;font-size:11px}
-  .lib-del{
-    background:var(--btn-red);color:#fff;border:var(--bw) solid var(--border);font-weight:900;font-size:11px;cursor:pointer;
-    box-shadow:2px 2px 0 var(--shadow);padding:6px 8px;text-transform:uppercase
+  .lib-item .li-keywords::placeholder{color:#7c6f5d}
+  .li-type{
+    width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+    background:var(--win-blue);color:#fff;border:var(--bw) solid var(--border);font-size:9px;font-weight:900;box-shadow:1px 1px 0 rgba(0,0,0,.15)
   }
-  .lib-del:hover{filter:brightness(1.05)}
-  .lib-del:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}
+  .lib-item[data-type="tag"] .li-type{background:var(--win-pink);color:var(--ink)}
+  .lib-del{
+    background:transparent;color:var(--ink-dim);border:0;font-weight:900;font-size:16px;cursor:pointer;
+    padding:2px 6px;line-height:1;opacity:.6
+  }
+  .lib-del:hover{opacity:1;color:var(--btn-red)}
   .lib-add{
-    background:#fff;color:var(--ink);border:var(--bw) solid var(--border);padding:5px 10px;font-size:11px;font-weight:900;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.2)
+    background:#fff;color:var(--ink);border:var(--bw) solid var(--border);padding:4px 9px;font-size:11px;font-weight:900;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.2)
   }
   .lib-add:hover{filter:brightness(1.05)}
   .lib-add:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}
-  .lib-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .lib-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
   .lib-empty{padding:14px;color:var(--ink-dim);font-size:12px;font-weight:700;text-align:center}
+  .lib-hint{padding:6px 0 10px;font-size:11px;font-weight:700;color:var(--ink-dim);background:transparent;border:0}
   @media (max-width:760px){
-    .lib-item{grid-template-columns:1fr 1fr;}
-    .lib-item .li-keywords{grid-column:1 / -1}
-    .lib-item .li-desc{grid-column:1 / -1}
+    .li-row{grid-template-columns:1fr 1fr;}
+    .li-row .li-type{grid-column:1;grid-row:1}
+    .li-row .li-name{grid-column:2;grid-row:1}
+    .li-row .li-note{grid-column:1 / -1;grid-row:2}
+    .li-row .lib-del{grid-column:1 / -1;grid-row:3;justify-self:end}
+    .li-row-keywords{grid-template-columns:1fr;grid-column:1 / -1}
+    .li-kw-label{display:none}
   }
 
   /* 批量预览表 */
@@ -281,12 +342,11 @@
   <!-- 左侧导航 -->
   <aside class="sidebar">
     <div class="logo">主题资源编辑器</div>
-    <div class="logo-sub">动态壁纸打包 · 壁纸裁剪 · 标签识别 · 批量静态壁纸打包</div>
     <nav class="nav">
-      <div class="nav-item active" data-tab="pack"><span class="dot"></span>动态壁纸打包器</div>
-      <div class="nav-item" data-tab="tags"><span class="dot"></span>分类标签识别</div>
-      <div class="nav-item" data-tab="crop"><span class="dot"></span>壁纸裁剪</div>
-      <div class="nav-item" data-tab="batch"><span class="dot"></span>批量静态壁纸打包</div>
+      <div class="nav-item active" data-tab="batch"><span class="dot"></span>批量静态壁纸打包</div>
+      <div class="nav-item" data-tab="pack"><span class="dot"></span>动态壁纸打包器</div>
+      <div class="nav-item" data-tab="crop"><span class="dot"></span>资源位物料快速剪裁</div>
+      <div class="nav-item" data-tab="tags"><span class="dot"></span>分类标签查询</div>
     </nav>
     <div class="side-foot">本地运行 · 离线优先<br>AI 视觉识别可插拔启用</div>
   </aside>
@@ -294,16 +354,87 @@
   <!-- 主区 -->
   <div class="main">
     <div class="topbar">
-      <h1 id="mod-title">动态壁纸打包器</h1>
-      <div class="sub" id="mod-sub">按规范打包动态壁纸：H.264 转码 / 抽帧 / 缩略图 / manifest，输出标准 ZIP。</div>
+      <h1 id="mod-title">批量静态壁纸打包</h1>
+      <div class="sub" id="mod-sub">上传 Excel + 所有图片 + 设计师ID，批量识别标签/质量并打包成 zip（Excel + 图片）。</div>
     </div>
 
     <div class="wrap">
 
-<!-- ===== 模块一：动态壁纸打包 ===== -->
-<div class="panel active" id="panel-pack">
+<!-- ===== 模块一：批量静态壁纸打包 ===== -->
+<div class="panel active" id="panel-batch">
   <div class="card">
-    <h2><span class="step">1</span>上传视频并填写信息</h2>
+    <h2><span class="step" data-icon="upload"></span>上传资料</h2>
+    <div class="card-body">
+      <div class="grid">
+        <div>
+          <div class="drop" id="drop-batch-xlsx">
+            <div class="big">📑 拖入 Excel（.xlsx）</div>
+            <div class="small">含：设计师id / 二级分类 / 资源价格 / 英文标题 / 英文描述 / 质量 / 标签</div>
+          </div>
+          <input type="file" id="file-batch-xlsx" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+          <div class="fname" id="fname-batch-xlsx" style="display:none"></div>
+        </div>
+        <div>
+          <div class="drop" id="drop-batch-img">
+            <div class="big">🖼 拖入所有壁纸图片</div>
+            <div class="small">可多选；文件名（去扩展名）需与 Excel 的“英文标题”列对应</div>
+          </div>
+          <input type="file" id="file-batch-img" accept="image/*" multiple hidden>
+          <div class="filelist" id="batch-img-list" style="display:none"></div>
+        </div>
+      </div>
+      <div class="hint">输出 Excel 会新增/填充：<b>设计师id</b>、<b>标签</b>、<b>质量</b>。若原表已有值则跳过覆盖。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step" data-icon="id"></span>设计师 ID</h2>
+    <div class="card-body">
+      <div class="field"><label>设计师 ID（将写入所有行的“设计师id”列）</label><input type="text" id="batch-designer" placeholder="例如 2062494077908746241"></div>
+      <label class="chk"><input type="checkbox" id="batch-normalize" checked> 输出前统一裁剪为 1080 × 2160（Cover，静态壁纸标准尺寸）</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step" data-icon="gear"></span>识别引擎设置</h2>
+    <div class="card-body">
+      <div class="field"><label>识别后端</label>
+        <select id="batch-backend">
+          <option value="offline" selected>离线像素分析（默认·零成本·无需联网）</option>
+          <option value="ai">AI 视觉识别（需配置 API）</option>
+        </select>
+      </div>
+      <div class="ai-fields" id="batch-ai-fields">
+        <div class="hint">配置仅保存在本地 vision_config.json，可在本机复用。AI 模式失败会自动回退离线。</div>
+        <div class="field"><label>API Base URL（含 /chat/completions）</label><input type="text" id="ai-base" placeholder="https://api.openai.com/v1/chat/completions"></div>
+        <div class="field"><label>API Key</label><input type="password" id="ai-key" placeholder="sk-..."></div>
+        <div class="field"><label>模型名</label><input type="text" id="ai-model" placeholder="gpt-4o-mini"></div>
+        <div class="btns"><button class="secondary" id="ai-save">保存 AI 配置</button></div>
+        <div class="status" id="status-ai"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step" data-icon="package"></span>生成并打包</h2>
+    <div class="card-body">
+      <div class="btns"><button class="go" id="go-batch">生成 ZIP 并预览</button></div>
+      <div class="status" id="status-batch"></div>
+      <div class="dl" id="dl-batch"></div>
+      <div class="ptable-wrap" id="batch-preview" style="display:none">
+        <table class="ptable" id="batch-preview-table">
+          <thead id="batch-preview-head"></thead>
+          <tbody id="batch-preview-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 模块二：动态壁纸打包 ===== -->
+<div class="panel" id="panel-pack">
+  <div class="card">
+    <h2><span class="step" data-icon="video"></span>上传视频并填写信息</h2>
     <div class="card-body">
       <div class="drop" id="drop-pack">
         <div class="big">拖入 mp4 到这里，或点击选择</div>
@@ -329,14 +460,73 @@
   </div>
 </div>
 
-<!-- ===== 模块二：分类标签识别（单图验证） ===== -->
+<!-- ===== 模块三：壁纸裁剪 ===== -->
+<div class="panel" id="panel-crop">
+  <div class="card">
+    <h2><span class="step" data-icon="crop"></span>上传并快速裁剪</h2>
+    <div class="card-body">
+      <div class="drop" id="drop-crop">
+        <div class="big">拖入静态壁纸图片到这里，或点击选择</div>
+      </div>
+      <input type="file" id="file-crop" accept="image/*" hidden>
+      <div class="fname" id="fname-crop" style="display:none"></div>
+
+      <div class="crop-editor-wrap" id="crop-editor-wrap" style="display:none">
+        <div class="crop-stage-wrap">
+          <div class="crop-stage-title">所见即所得 · 拖拽移动 · 滑块缩放</div>
+          <div class="crop-stage" id="crop-stage">
+            <img id="crop-stage-img" class="crop-stage-img" alt="原图">
+            <div class="crop-overlay"></div>
+            <div class="crop-frame"></div>
+            <div class="crop-hint">虚线框内 = 实际输出</div>
+          </div>
+          <div class="crop-controls">
+            <label>缩放 <span id="crop-scale-val">1.0</span>x</label>
+            <input type="range" id="crop-scale" min="1" max="5" step="0.05" value="1">
+            <button class="secondary" id="crop-reset-view" type="button" style="padding:6px 10px;font-size:11px">重置取景</button>
+          </div>
+          <div class="crop-prev-meta" id="crop-result-meta"></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field"><label>尺寸预设</label>
+          <select id="preset-crop">
+            <option value="custom" data-w="" data-h="" data-maxkb="">自定义</option>
+            <option value="banner" data-w="984" data-h="390" data-maxkb="300" selected>banner 984 × 390（≤300KB）</option>
+            <option value="bigcard" data-w="984" data-h="1050" data-maxkb="300">大卡 984 × 1050（≤300KB）</option>
+            <option value="waterfall" data-w="474" data-h="294" data-maxkb="300">瀑布流卡 474 × 294（≤300KB）</option>
+            <option value="wallpaper" data-w="1080" data-h="2160" data-maxkb="0">静态壁纸 1080 × 2160（不限制）</option>
+          </select>
+        </div>
+        <div class="field"><label>裁剪模式</label>
+          <select id="mode-crop">
+            <option value="cover" selected>Cover：缩放铺满目标，按画面比例居中裁剪</option>
+            <option value="crop">剪裁：按目标尺寸从原图中心裁切，不拉伸画面</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field"><label>目标宽度 px</label><input type="number" id="w-crop" value="984" min="1"></div>
+        <div class="field"><label>目标高度 px</label><input type="number" id="h-crop" value="390" min="1"></div>
+        <div class="field"><label>大小限制 KB（0=不限制）</label><input type="number" id="maxkb-crop" value="300" min="0"></div>
+      </div>
+      <div class="btns">
+        <button class="go" id="go-crop">裁剪并下载</button>
+      </div>
+      <div class="status" id="status-crop"></div>
+      <div class="dl" id="dl-crop"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 模块四：分类标签查询 ===== -->
 <div class="panel" id="panel-tags">
   <div class="card">
-    <h2><span class="step">2</span>上传文件并识别分类/标签</h2>
+    <h2><span class="step" data-icon="tag"></span>上传文件并查询分类/标签</h2>
     <div class="card-body">
       <div class="drop" id="drop-tags">
         <div class="big">拖入图片或视频（mp4 / jpg / png / webp 等）</div>
-        <div class="small">引擎会“读图理解”——分析主色、亮度、饱和度、细节密度，结合文件名命中你的标签库；你可在下方修改。</div>
       </div>
       <input type="file" id="file-tags" accept="image/*,video/mp4,.mp4" hidden>
       <div class="fname" id="fname-tags" style="display:none"></div>
@@ -363,9 +553,9 @@
   </div>
 
   <div class="card">
-    <h2>标签库管理</h2>
+    <h2>分类标签字典</h2>
     <div class="card-body">
-      <div class="hint">按“一级分组 → 二级条目”管理分类与标签。点击分组标题可折叠；修改后点“保存标签库”立即生效。</div>
+      <div class="hint">批量上传时按此处字典匹配分类与标签。点击“分类 / 标签”大标题可折叠整区；点击分组名左侧 ▾ 可折叠该组。</div>
       <div class="lib-toolbar">
         <button class="go" id="save-lib">保存标签库</button>
         <button class="secondary" id="reload-lib">重新加载</button>
@@ -374,119 +564,6 @@
       <div id="lib-visual" class="lib-visual"></div>
       <textarea id="lib-editor" class="lib-editor" style="display:none"></textarea>
       <div class="status" id="status-lib"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== 模块三：壁纸裁剪 ===== -->
-<div class="panel" id="panel-crop">
-  <div class="card">
-    <h2><span class="step">3</span>上传静态壁纸并选择目标尺寸</h2>
-    <div class="card-body">
-      <div class="drop" id="drop-crop">
-        <div class="big">拖入静态壁纸图片到这里，或点击选择</div>
-        <div class="small">仅处理静态图片（JPG / PNG / WebP 等），按下方预设裁剪为壁纸/卡片尺寸</div>
-      </div>
-      <input type="file" id="file-crop" accept="image/*" hidden>
-      <div class="fname" id="fname-crop" style="display:none"></div>
-
-      <div class="grid">
-        <div class="field"><label>尺寸预设</label>
-          <select id="preset-crop">
-            <option value="custom" data-w="" data-h="" data-maxkb="">自定义</option>
-            <option value="banner" data-w="984" data-h="390" data-maxkb="300" selected>banner 984 × 390（≤300KB）</option>
-            <option value="bigcard" data-w="984" data-h="1050" data-maxkb="300">大卡 984 × 1050（≤300KB）</option>
-            <option value="waterfall" data-w="474" data-h="294" data-maxkb="300">瀑布流卡 474 × 294（≤300KB）</option>
-            <option value="wallpaper" data-w="1080" data-h="2160" data-maxkb="0">静态壁纸 1080 × 2160（不限制）</option>
-          </select>
-        </div>
-        <div class="field"><label>裁剪模式</label>
-          <select id="mode-crop">
-            <option value="cover" selected>Cover：缩放铺满目标，按画面比例居中裁剪</option>
-            <option value="crop">剪裁：按目标尺寸从原图中心裁切，不拉伸画面</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid">
-        <div class="field"><label>目标宽度 px</label><input type="number" id="w-crop" value="984" min="1"></div>
-        <div class="field"><label>目标高度 px</label><input type="number" id="h-crop" value="390" min="1"></div>
-        <div class="field"><label>大小限制 KB（0=不限制）</label><input type="number" id="maxkb-crop" value="300" min="0"></div>
-      </div>
-
-      <div class="btns"><button class="go" id="go-crop">裁剪并下载</button></div>
-      <div class="status" id="status-crop"></div>
-      <div class="dl" id="dl-crop"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== 模块四：批量静态壁纸打包 ===== -->
-<div class="panel" id="panel-batch">
-  <div class="card">
-    <h2><span class="step">1</span>上传 Excel（含 名称 / 简介 / 定价 / 分类）</h2>
-    <div class="card-body">
-      <div class="drop" id="drop-batch-xlsx">
-        <div class="big">拖入 Excel（.xlsx）到这里，或点击选择</div>
-        <div class="small">理论上初始会给你一份 Excel 已经包含：名称、简介、定价、分类</div>
-      </div>
-      <input type="file" id="file-batch-xlsx" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
-      <div class="fname" id="fname-batch-xlsx" style="display:none"></div>
-      <div class="hint">输出 Excel 会新增/填充两列：<b>设计师id</b>、<b>标签</b>。名称列（去扩展名）将与图片文件名完全对应。</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step">2</span>设计师 ID</h2>
-    <div class="card-body">
-      <div class="field"><label>设计师 ID（将写入所有行的“设计师id”列）</label><input type="text" id="batch-designer" placeholder="例如 Designer_12345"></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step">3</span>上传所有图片</h2>
-    <div class="card-body">
-      <div class="drop" id="drop-batch-img">
-        <div class="big">拖入所有壁纸图片（可多选），或点击选择</div>
-        <div class="small">图片文件名（去扩展名）需与 Excel 的“名称”列完全对应</div>
-      </div>
-      <input type="file" id="file-batch-img" accept="image/*" multiple hidden>
-      <div class="filelist" id="batch-img-list" style="display:none"></div>
-      <label class="chk"><input type="checkbox" id="batch-normalize" checked> 输出前统一裁剪为 1080 × 2160（Cover，静态壁纸标准尺寸）</label>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step">4</span>识别引擎设置</h2>
-    <div class="card-body">
-      <div class="field"><label>识别后端</label>
-        <select id="batch-backend">
-          <option value="offline" selected>离线像素分析（默认·零成本·无需联网）</option>
-          <option value="ai">AI 视觉识别（需配置 API）</option>
-        </select>
-      </div>
-      <div class="ai-fields" id="batch-ai-fields">
-        <div class="hint">配置仅保存在本地 vision_config.json，可在本机复用。AI 模式失败会自动回退离线。</div>
-        <div class="field"><label>API Base URL（含 /chat/completions）</label><input type="text" id="ai-base" placeholder="https://api.openai.com/v1/chat/completions"></div>
-        <div class="field"><label>API Key</label><input type="password" id="ai-key" placeholder="sk-..."></div>
-        <div class="field"><label>模型名</label><input type="text" id="ai-model" placeholder="gpt-4o-mini"></div>
-        <div class="btns"><button class="secondary" id="ai-save">保存 AI 配置</button></div>
-        <div class="status" id="status-ai"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step">5</span>生成并打包</h2>
-    <div class="card-body">
-      <div class="btns"><button class="go" id="go-batch">生成 ZIP 并预览</button></div>
-      <div class="status" id="status-batch"></div>
-      <div class="dl" id="dl-batch"></div>
-      <div class="ptable-wrap" id="batch-preview" style="display:none">
-        <table class="ptable">
-          <thead><tr><th>名称</th><th>原分类</th><th>识别标签</th><th>图片</th><th>来源</th></tr></thead>
-          <tbody id="batch-preview-body"></tbody>
-        </table>
-      </div>
     </div>
   </div>
 </div>
@@ -505,10 +582,10 @@ if (location.protocol === 'file:'){
 }
 
 const MOD_META = {
+  batch: ["批量静态壁纸打包", "上传 Excel + 所有图片 + 设计师ID，批量识别标签/质量并打包成 zip（Excel + 图片）。"],
   pack:  ["动态壁纸打包器", "按规范打包动态壁纸：H.264 转码 / 抽帧 / 缩略图 / manifest，输出标准 ZIP。"],
-  tags:  ["分类标签识别", "读图理解单张图片，验证识别引擎效果并微调你的标签库。"],
-  crop:  ["壁纸裁剪", "把静态壁纸图片裁剪到标准尺寸（banner / 大卡 / 瀑布流卡 / 静态壁纸），自动压缩到限制大小。"],
-  batch: ["批量静态壁纸打包", "上传 Excel + 所有图片 + 设计师ID，批量识别标签并打包成 zip（Excel + 图片）。"],
+  crop:  ["资源位物料快速剪裁", ""],
+  tags:  ["分类标签查询", ""],
 };
 
 function setStatus(id, msg, type){
@@ -621,14 +698,20 @@ function renderLibEditor(){
         <span>分类 Categories（单选）</span>
         <button class="lib-add" data-type="category">+ 添加分类</button>
       </div>
-      ${renderGroups(catGroups, 'category')}
+      <div class="lib-section-body">
+        <div class="lib-hint">每行：英文标识 + 分类说明。第二行为关键词匹配（仅英文，无 AI 时按名称/关键词判断）。</div>
+        ${renderGroups(catGroups, 'category')}
+      </div>
     </div>
     <div class="lib-section">
       <div class="lib-section-title">
         <span>标签 Tags（多选 3-5 个）</span>
         <button class="lib-add" data-type="tag">+ 添加标签</button>
       </div>
-      ${renderGroups(tagGroups, 'tag')}
+      <div class="lib-section-body">
+        <div class="lib-hint">每行：英文标识（资源名称通常为英文，不含中文）；同行关键词仅英文，用于无 AI 时按名称/关键词匹配。</div>
+        ${renderGroups(tagGroups, 'tag')}
+      </div>
     </div>
   `;
   bindLibEditorEvents();
@@ -638,7 +721,7 @@ function renderGroups(groups, type){
   const keys = Object.keys(groups).sort();
   if (!keys.length) return '<div class="lib-empty">暂无数据</div>';
   return keys.map(g => `
-    <div class="lib-group">
+    <div class="lib-group collapsed">
       <div class="lib-group-head">
         <span class="lib-fold" title="折叠/展开">▾</span>
         <input class="lib-group-name" value="${escapeHtml(g)}" title="一级分组名（可编辑，留空则归入 Other）">
@@ -652,21 +735,51 @@ function renderGroups(groups, type){
 
 function renderLibItem(type, idx, item){
   const isCat = type === 'category';
+  const noteValue = isCat ? (item.description || '') : '';
+  const badge = isCat ? 'C' : '#';
+  const kwValue = (item.keywords||[]).join(', ');
+  if (isCat){
+    return `
+      <div class="lib-item" data-type="${type}" data-idx="${idx}">
+        <div class="li-row">
+          <span class="li-type" title="分类">${badge}</span>
+          <input class="li-name" placeholder="英文标识 name" value="${escapeHtml(item.name)}" title="英文标识，通常为英文">
+          <input class="li-note" placeholder="分类说明 description" value="${escapeHtml(noteValue)}" title="分类说明">
+          <button class="lib-del" title="删除">×</button>
+        </div>
+        <div class="li-row-keywords">
+          <span class="li-kw-label">关键词</span>
+          <input class="li-keywords" placeholder="关键词（仅英文，逗号分隔，无 AI 时按名称/关键词判断）" value="${escapeHtml(kwValue)}" title="用于文件名/图像识别匹配">
+        </div>
+      </div>
+    `;
+  }
   return `
     <div class="lib-item" data-type="${type}" data-idx="${idx}">
-      <input class="li-name" placeholder="英文名" value="${escapeHtml(item.name)}" title="name">
-      <input class="li-name-zh" placeholder="中文名" value="${escapeHtml(item.name_zh || '')}" title="name_zh">
-      <input class="li-keywords" placeholder="关键词，逗号分隔" value="${escapeHtml((item.keywords||[]).join(', '))}" title="keywords">
-      <button class="lib-del" title="删除">×</button>
-      ${isCat ? `<textarea class="li-desc" placeholder="描述（可选）">${escapeHtml(item.description || '')}</textarea>` : ''}
+      <div class="li-row">
+        <span class="li-type" title="标签">${badge}</span>
+        <input class="li-name" placeholder="英文标识 name" value="${escapeHtml(item.name)}" title="英文标识，通常为英文">
+        <input class="li-keywords" placeholder="关键词（仅英文，逗号分隔，无 AI 时按名称/关键词判断）" value="${escapeHtml(kwValue)}" title="用于文件名/图像识别匹配">
+        <button class="lib-del" title="删除">×</button>
+      </div>
     </div>
   `;
 }
 
 function bindLibEditorEvents(){
-  // 折叠/展开
-  document.querySelectorAll('.lib-fold').forEach(el => {
-    el.addEventListener('click', () => el.closest('.lib-group').classList.toggle('collapsed'));
+  // 大分类/标签区折叠
+  document.querySelectorAll('.lib-section-title').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.closest('.lib-add')) return;
+      el.closest('.lib-section').classList.toggle('collapsed');
+    });
+  });
+  // 分组折叠/展开（点击整行除分组名输入框外的区域）
+  document.querySelectorAll('.lib-group-head').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.closest('input')) return;
+      el.closest('.lib-group').classList.toggle('collapsed');
+    });
   });
   // 删除
   document.querySelectorAll('.lib-del').forEach(btn => {
@@ -700,16 +813,14 @@ function collectLibraryFromDOM(){
   document.querySelectorAll('.lib-item').forEach(item => {
     const type = item.dataset.type;
     const name = item.querySelector('.li-name').value.trim();
-    const name_zh = item.querySelector('.li-name-zh').value.trim();
+    const note = item.querySelector('.li-note').value.trim();
     const kwRaw = item.querySelector('.li-keywords').value;
     const keywords = kwRaw.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
     const groupTitle = item.closest('.lib-group')?.querySelector('.lib-group-name')?.value?.trim() || 'Other';
-    const base = {name, name_zh, group:groupTitle, keywords};
     if (type === 'category'){
-      const desc = item.querySelector('.li-desc')?.value?.trim() || '';
-      categories.push({...base, description: desc, description_en: desc});
+      categories.push({name, name_zh: note, group:groupTitle, keywords, description: note, description_en: note});
     } else {
-      tags.push(base);
+      tags.push({name, name_zh: '', group:groupTitle, keywords});
     }
   });
   return {version: tagLibrary?.version || '1.0', note: tagLibrary?.note || '', categories, tags};
@@ -857,13 +968,169 @@ $('lib-toggle-json').addEventListener('click', () => {
 
 // ===== 模块三：尺寸裁剪 =====
 let cropFile = null;
+let cropEditor = null;
+
+function initCropEditor(){
+  if (cropEditor) return cropEditor;
+  class CropEditor {
+    constructor(){
+      this.stage = $('crop-stage');
+      this.stageImg = $('crop-stage-img');
+      this.resultCanvas = $('crop-result-canvas') || null;
+      this.scaleInput = $('crop-scale');
+      this.scaleVal = $('crop-scale-val');
+      this.target_w = 984; this.target_h = 390; this.mode = 'cover';
+      this.offset_x = 0.5; this.offset_y = 0.5; this.user_scale = 1.0;
+      this.base_scale = 1; this.dragging = false; this.lastX = 0; this.lastY = 0;
+      this.imgLoaded = false;
+      this.bindEvents();
+    }
+    setImage(file){
+      if (this.stageImg.src && this.stageImg.src.startsWith('blob:')) URL.revokeObjectURL(this.stageImg.src);
+      this.stageImg.src = URL.createObjectURL(file);
+      this.stageImg.onload = () => {
+        this.imgLoaded = true;
+        this.resetView();
+        this.applyTarget();
+        $('crop-editor-wrap').style.display = 'flex';
+        this.renderResult();
+        $('crop-result-meta').textContent = `${this.stageImg.naturalWidth} × ${this.stageImg.naturalHeight} px / 原图`;
+      };
+    }
+    setTarget(w, h, mode){
+      this.target_w = parseInt(w, 10) || 984;
+      this.target_h = parseInt(h, 10) || 390;
+      this.mode = mode || 'cover';
+      this.stage.style.setProperty('--crop-ratio', `${this.target_w}/${this.target_h}`);
+      const isCrop = this.mode === 'crop';
+      this.scaleInput.disabled = isCrop;
+      this.scaleInput.title = isCrop ? 'Crop 模式下禁用缩放' : '放大原图以调整取景范围';
+      if (isCrop && this.user_scale !== 1.0){ this.user_scale = 1.0; this.scaleInput.value = 1; this.scaleVal.textContent = '1.0'; }
+      if (this.imgLoaded){
+        this.resetView();
+        this.applyTarget();
+        this.renderResult();
+      }
+    }
+    resetView(){
+      this.offset_x = 0.5; this.offset_y = 0.5;
+      if (this.mode !== 'crop'){ this.user_scale = 1.0; this.scaleInput.value = 1; this.scaleVal.textContent = '1.0'; }
+    }
+    stageRect(){
+      const r = this.stage.getBoundingClientRect();
+      const h = r.width * (this.target_h / this.target_w);
+      return {w: r.width, h: h};
+    }
+    computeBaseScale(){
+      const s = this.stageRect();
+      if (this.mode === 'crop'){
+        return s.w / this.target_w;
+      }
+      return Math.max(s.w / this.stageImg.naturalWidth, s.h / this.stageImg.naturalHeight);
+    }
+    applyTarget(){
+      this.base_scale = this.computeBaseScale();
+      const actual = this.base_scale * this.user_scale;
+      const scaled_w = this.stageImg.naturalWidth * actual;
+      const scaled_h = this.stageImg.naturalHeight * actual;
+      const s = this.stageRect();
+      this.stage.style.height = `${s.h}px`;
+      const move_w = Math.max(scaled_w - s.w, 0);
+      const move_h = Math.max(scaled_h - s.h, 0);
+      const dx = (0.5 - this.offset_x) * move_w;
+      const dy = (0.5 - this.offset_y) * move_h;
+      this.stageImg.style.width = `${this.stageImg.naturalWidth * this.base_scale}px`;
+      this.stageImg.style.height = `${this.stageImg.naturalHeight * this.base_scale}px`;
+      this.stageImg.style.setProperty('--img-scale', this.user_scale.toFixed(4));
+      this.stageImg.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${this.user_scale.toFixed(4)})`;
+    }
+    renderResult(){
+      if (!this.imgLoaded) return;
+      const kb = (this.target_w * this.target_h * 3 / 1024 / 8).toFixed(1);
+      const meta = $('crop-result-meta');
+      if (meta) meta.textContent = `输出 ${this.target_w} × ${this.target_h} / ${this.mode} · 缩放 ${this.user_scale.toFixed(2)}x · 约 ${kb}KB（未压缩）`;
+      if (!this.resultCanvas) return;
+      const c = this.resultCanvas, ctx = c.getContext('2d');
+      c.width = this.target_w; c.height = this.target_h;
+      const sw = this.stageImg.naturalWidth, sh = this.stageImg.naturalHeight;
+      if (this.mode === 'crop'){
+        const sx = this.offset_x * Math.max(sw - this.target_w, 0);
+        const sy = this.offset_y * Math.max(sh - this.target_h, 0);
+        ctx.drawImage(this.stageImg, sx, sy, this.target_w, this.target_h, 0, 0, this.target_w, this.target_h);
+      } else {
+        const base_scale = Math.max(this.target_w / sw, this.target_h / sh);
+        const actual = base_scale * this.user_scale;
+        const sample_w = this.target_w / actual;
+        const sample_h = this.target_h / actual;
+        const move_w = Math.max(sw * actual - this.target_w, 0) / actual;
+        const move_h = Math.max(sh * actual - this.target_h, 0) / actual;
+        const sx = this.offset_x * move_w;
+        const sy = this.offset_y * move_h;
+        ctx.drawImage(this.stageImg, sx, sy, sample_w, sample_h, 0, 0, this.target_w, this.target_h);
+      }
+    }
+    bindEvents(){
+      this.scaleInput.addEventListener('input', () => {
+        if (this.mode === 'crop') return;
+        this.user_scale = parseFloat(this.scaleInput.value);
+        this.scaleVal.textContent = this.user_scale.toFixed(2);
+        this.applyTarget();
+        this.renderResult();
+      });
+      $('crop-reset-view').addEventListener('click', () => { this.resetView(); this.applyTarget(); this.renderResult(); });
+      const start = (x, y) => { if (!this.imgLoaded) return; this.dragging = true; this.lastX = x; this.lastY = y; this.stage.style.cursor = 'grabbing'; };
+      const move = (x, y) => {
+        if (!this.dragging) return;
+        const dx = x - this.lastX, dy = y - this.lastY;
+        this.lastX = x; this.lastY = y;
+        const s = this.stageRect();
+        const actual = this.base_scale * this.user_scale;
+        const scaled_w = this.stageImg.naturalWidth * actual;
+        const scaled_h = this.stageImg.naturalHeight * actual;
+        const move_w = Math.max(scaled_w - s.w, 0);
+        const move_h = Math.max(scaled_h - s.h, 0);
+        if (move_w > 0) this.offset_x = Math.max(0, Math.min(1, this.offset_x - dx / move_w));
+        if (move_h > 0) this.offset_y = Math.max(0, Math.min(1, this.offset_y - dy / move_h));
+        this.applyTarget();
+      };
+      const end = () => { this.dragging = false; this.stage.style.cursor = 'grab'; this.renderResult(); };
+      this.stage.addEventListener('mousedown', e => { e.preventDefault(); start(e.clientX, e.clientY); });
+      window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
+      window.addEventListener('mouseup', end);
+      this.stage.addEventListener('touchstart', e => { e.preventDefault(); start(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
+      window.addEventListener('touchmove', e => { if (this.dragging) e.preventDefault(); move(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
+      window.addEventListener('touchend', end);
+      window.addEventListener('resize', () => { if (this.imgLoaded){ this.applyTarget(); this.renderResult(); } });
+    }
+    getParams(){
+      return {
+        target_w: this.target_w, target_h: this.target_h, mode: this.mode,
+        max_size_kb: $('maxkb-crop').value || '0',
+        offset_x: this.offset_x.toFixed(4), offset_y: this.offset_y.toFixed(4),
+        scale: this.user_scale.toFixed(4),
+      };
+    }
+  }
+  cropEditor = new CropEditor();
+  return cropEditor;
+}
+
 bindDrop('drop-crop','file-crop','fname-crop', f => {
   cropFile=f; showFname('fname-crop',f);
+  const ed = initCropEditor();
+  ed.setImage(f);
 });
-$('preset-crop').addEventListener('change', e => {
-  const opt = e.target.selectedOptions[0];
+function applyCropPreset(){
+  if (!cropEditor) return;
+  const opt = $('preset-crop').selectedOptions[0];
   if (opt.dataset.w){ $('w-crop').value=opt.dataset.w; $('h-crop').value=opt.dataset.h; }
   if (opt.dataset.maxkb !== undefined){ $('maxkb-crop').value=opt.dataset.maxkb; }
+  cropEditor.setTarget($('w-crop').value, $('h-crop').value, $('mode-crop').value);
+}
+$('preset-crop').addEventListener('change', applyCropPreset);
+$('mode-crop').addEventListener('change', applyCropPreset);
+['w-crop','h-crop'].forEach(id => {
+  $(id).addEventListener('change', applyCropPreset);
 });
 $('go-crop').addEventListener('click', async () => {
   if (!cropFile){ setStatus('status-crop','请先选择图片','warn'); return; }
@@ -872,18 +1139,17 @@ $('go-crop').addEventListener('click', async () => {
   $('dl-crop').innerHTML = '';
   const fd = new FormData();
   fd.append('file', cropFile);
-  fd.append('target_w', $('w-crop').value);
-  fd.append('target_h', $('h-crop').value);
-  fd.append('mode', $('mode-crop').value);
-  fd.append('max_size_kb', $('maxkb-crop').value || '0');
+  Object.entries(cropEditor.getParams()).forEach(([k,v]) => fd.append(k, v));
   try{
     const r = await fetch('/api/crop', { method:'POST', body: fd });
     const data = await r.json();
     if (!r.ok){ setStatus('status-crop','✗ ' + (data.error || '处理失败'),'err'); return; }
     downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name);
+    const kb = (data.size_kb ?? 0).toFixed(1);
+    const sizeTxt = `${kb}KB${data.within_limit ? ' ✓≤'+(data.max_size_kb||0)+'KB' : (data.max_size_kb ? ' ⚠超出限制' : '')}`;
+    $('crop-result-meta').textContent = `${data.target_w} × ${data.target_h} / ${data.mode} · ${sizeTxt}`;
     $('dl-crop').innerHTML = `<a href="#" id="dlcrop">⬇ ${data.file_name}</a>`;
     $('dlcrop').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.file_b64, data.mime), data.file_name); };
-    const kb = (data.size_kb ?? 0).toFixed(1);
     const extra = ` / ${kb}KB${data.within_limit ? ' ✓≤' + (data.max_size_kb||0) + 'KB' : (data.max_size_kb ? ' ⚠超出限制' : '')}`;
     setStatus('status-crop',`✓ 完成：${data.file_name} 已下载（${data.target_w}×${data.target_h} / ${data.mode}${extra}）`,'ok');
   }catch(err){ setStatus('status-crop','✗ 请求失败：'+err.message,'err'); }
@@ -962,17 +1228,17 @@ $('go-batch').addEventListener('click', async () => {
     downloadBlob(b64toBlob(data.zip_b64,'application/zip'), data.zip_name);
     $('dl-batch').innerHTML = `<a href="#" id="dlbatch">⬇ ${data.zip_name}</a>`;
     $('dlbatch').onclick = e => { e.preventDefault(); downloadBlob(b64toBlob(data.zip_b64,'application/zip'), data.zip_name); };
-    // 预览表
-    const body = $('batch-preview-body');
-    body.innerHTML = data.preview.map(p => `
-      <tr>
-        <td>${escapeHtml(p.name)}</td>
-        <td>${escapeHtml(p.category)}</td>
-        <td class="tags-cell">${escapeHtml(p.tags || '—')}</td>
-        <td>${p.image_matched ? '<span class="match">✓ 匹配</span>' : '<span class="nomatch">✗ 缺失</span>'}</td>
-        <td>${escapeHtml((p.source||'').replace('offline-fallback','回退离线'))}</td>
-      </tr>`).join('');
-    $('batch-preview').style.display = 'block';
+    // 预览填充后的 Excel
+    const thead = $('batch-preview-head');
+    const tbody = $('batch-preview-body');
+    if (data.excel_preview && data.excel_preview.length){
+      const headers = Object.keys(data.excel_preview[0]);
+      thead.innerHTML = '<tr>' + headers.map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr>';
+      tbody.innerHTML = data.excel_preview.map(row =>
+        '<tr>' + headers.map(h => `<td>${escapeHtml(row[h] ?? '')}</td>`).join('') + '</tr>'
+      ).join('');
+      $('batch-preview').style.display = 'block';
+    }
     const s = data.stats;
     setStatus('status-batch',`✓ 完成：${data.zip_name} 已下载\n共 ${s.total_rows} 行 · 图片匹配 ${s.matched} · 缺失 ${s.unmatched} · 引擎 ${s.backend}`,'ok');
   }catch(err){ setStatus('status-batch','✗ 请求失败：'+err.message,'err'); }

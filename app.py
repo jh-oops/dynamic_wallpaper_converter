@@ -222,6 +222,16 @@ def crop():
     if max_size_kb < 0:
         max_size_kb = 0
 
+    try:
+        offset_x = float(request.form.get("offset_x", "0.5"))
+        offset_y = float(request.form.get("offset_y", "0.5"))
+        scale = float(request.form.get("scale", "1.0"))
+    except ValueError:
+        return jsonify(error="offset_x / offset_y / scale 必须是数字"), 400
+    offset_x = max(0.0, min(1.0, offset_x))
+    offset_y = max(0.0, min(1.0, offset_y))
+    scale = max(1.0, scale)
+
     ext = os.path.splitext(f.filename)[1].lower()
     is_image = ext in IMAGE_EXTS
     if not is_image:
@@ -233,14 +243,16 @@ def crop():
     f.save(src)
     try:
         dst = os.path.join(tmp, "cropped.jpg")
-        tz.crop_image(src, dst, target_w, target_h, mode)
+        tz.crop_image(src, dst, target_w, target_h, mode,
+                      offset_x=offset_x, offset_y=offset_y, scale=scale)
         # 大小限制：若超过 max_size_kb，逐步降低 JPEG 质量重试
         within = True
         if max_size_kb > 0:
             limit = max_size_kb * 1024
             q = 88
             while os.path.getsize(dst) > limit and q >= 15:
-                tz.crop_image(src, dst, target_w, target_h, mode, quality=q)
+                tz.crop_image(src, dst, target_w, target_h, mode, quality=q,
+                              offset_x=offset_x, offset_y=offset_y, scale=scale)
                 q -= 8
             within = os.path.getsize(dst) <= limit
         with open(dst, "rb") as fh:
@@ -293,11 +305,12 @@ def put_vision_config():
 # Excel 列名（中/英别名）→ 内部键
 COLUMN_ALIASES = {
     "designer_id": ["设计师id", "设计师ID", "设计师_id", "designer_id", "designerid", "作者id", "author_id"],
-    "name":        ["名称", "name", "壁纸名称", "文件名", "filename"],
-    "desc":        ["简介", "描述", "desc", "description", "introduce"],
-    "price":       ["定价", "价格", "price"],
-    "category":    ["分类", "category", "类型", "type"],
+    "name":        ["英文标题", "名称", "name", "壁纸名称", "文件名", "filename", "title"],
+    "desc":        ["英文描述", "简介", "描述", "desc", "description", "introduce"],
+    "price":       ["资源价格", "价格", "定价", "price", "cost"],
+    "category":    ["二级分类", "分类", "category", "类型", "type"],
     "tags":        ["标签", "tags", "tag"],
+    "quality":     ["质量", "质量标准", "quality", "grade", "等级"],
 }
 
 
@@ -338,6 +351,51 @@ def _pick_top_tags(tag_scores, lib, top_n=5):
     return [n for n, _ in ranked[:top_n]]
 
 
+def _estimate_quality(features):
+    """基于像素特征给出质量等级 A/B/C/D。"""
+    if not features:
+        return "B"
+    score = 50
+    w, h = features.get("size") or (0, 0)
+    # 分辨率
+    if min(w, h) >= 2160:
+        score += 20
+    elif min(w, h) >= 1080:
+        score += 10
+    else:
+        score -= 15
+    # 细节密度
+    edge = features.get("edge_density", 0)
+    if edge > 35:
+        score += 15
+    elif edge > 20:
+        score += 8
+    else:
+        score -= 5
+    # 对比度
+    contrast = features.get("contrast", 0)
+    if contrast > 45:
+        score += 10
+    elif contrast < 20:
+        score -= 10
+    # 色彩丰富度
+    colorfulness = features.get("colorfulness", 0)
+    if colorfulness > 50:
+        score += 10
+    elif colorfulness > 30:
+        score += 5
+    # 饱和度
+    if features.get("mean_sat", 0) > 0.4:
+        score += 5
+    if score >= 85:
+        return "A"
+    if score >= 70:
+        return "B"
+    if score >= 55:
+        return "C"
+    return "D"
+
+
 @app.route("/api/batch_package", methods=["POST"])
 def batch_package():
     """批量静态壁纸打包：
@@ -363,11 +421,12 @@ def batch_package():
     header = [c.value for c in ws[1]]
     colmap = _resolve_columns(header)
     if "name" not in colmap:
-        return jsonify(error="Excel 缺少“名称”列（用于与图片文件名对应）"), 400
+        return jsonify(error="Excel 缺少“英文标题”列（用于与图片文件名对应）"), 400
 
-    # 确保 设计师id / 标签 列存在
+    # 确保 设计师id / 标签 / 质量 列存在
     _ensure_column(ws, colmap, "designer_id", "设计师id")
     _ensure_column(ws, colmap, "tags", "标签")
+    _ensure_column(ws, colmap, "quality", "质量")
 
     lib = tm.load_library(LIBRARY_PATH)
     cfg = va.load_config()
@@ -447,6 +506,12 @@ def batch_package():
         tags = _pick_top_tags(ts, lib, top_n=5)
         ws.cell(r, colmap["tags"]).value = "、".join(tags)
 
+        # 若 质量 列为空，按图像特征自动识别填充
+        if "quality" in colmap:
+            existing_q = ws.cell(r, colmap["quality"]).value
+            if existing_q is None or str(existing_q).strip() == "":
+                ws.cell(r, colmap["quality"]).value = _estimate_quality(feats)
+
         # 若 分类 列为空且识别给出了有效分类，则补全
         if "category" in colmap:
             existing = ws.cell(r, colmap["category"]).value
@@ -479,6 +544,18 @@ def batch_package():
     with open(zip_path, "rb") as fh:
         zip_bytes = fh.read()
 
+    # 生成前端可预览的 Excel 行数据（按表头）
+    excel_preview = []
+    headers = [c.value for c in ws[1]]
+    for r in range(2, ws.max_row + 1):
+        name_val = ws.cell(r, colmap["name"]).value
+        if name_val is None or str(name_val).strip() == "":
+            continue
+        row_dict = {}
+        for c_idx, h in enumerate(headers, start=1):
+            row_dict[str(h) if h is not None else f"列{c_idx}"] = ws.cell(r, c_idx).value or ""
+        excel_preview.append(row_dict)
+
     shutil.rmtree(out, ignore_errors=True)
     return jsonify({
         "ok": True,
@@ -491,6 +568,7 @@ def batch_package():
             "backend": cfg.get("backend", "offline"),
         },
         "preview": preview,
+        "excel_preview": excel_preview,
     })
 
 

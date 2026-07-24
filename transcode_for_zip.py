@@ -117,32 +117,39 @@ def transcode_one(src, dst, keep_audio=False,
     return CRF_STEPS[-1], False
 
 
-def crop_image(src, dst, target_w, target_h, mode="cover", quality=92):
+def crop_image(src, dst, target_w, target_h, mode="cover", quality=92,
+               offset_x=0.5, offset_y=0.5, scale=1.0):
     """用 Pillow 把静态图片裁剪/缩放到目标尺寸，输出 JPEG。
 
-    cover : 等比放大铺满后居中裁剪（无黑边，可能裁掉溢出部分）。
+    cover : 等比放大铺满目标区域后裁剪。默认居中；
+            可通过 offset_x/offset_y（0~1）调整裁剪区域中心，
+            通过 scale（≥1）进一步放大原图以显示更多/更少内容。
     crop  : 优先按目标尺寸从原图中心裁切，不缩放；若原图不够大则等比放大铺满后居中裁剪。
     """
     img = Image.open(src)
     sw, sh = img.size
     if mode == "crop":
         if sw >= target_w and sh >= target_h:
-            left = (sw - target_w) // 2
-            top = (sh - target_h) // 2
+            left = int(round(float(offset_x) * (sw - target_w)))
+            top = int(round(float(offset_y) * (sh - target_h)))
             out = img.crop((left, top, left + target_w, top + target_h))
         else:
-            scale = max(target_w / sw, target_h / sh)
-            nw, nh = int(round(sw * scale)), int(round(sh * scale))
+            s = max(target_w / sw, target_h / sh)
+            nw, nh = int(round(sw * s)), int(round(sh * s))
             img = img.resize((nw, nh), Image.LANCZOS)
-            left = (nw - target_w) // 2
-            top = (nh - target_h) // 2
+            left = int(round(float(offset_x) * (nw - target_w)))
+            top = int(round(float(offset_y) * (nh - target_h)))
             out = img.crop((left, top, left + target_w, top + target_h))
     elif mode == "cover":
-        scale = max(target_w / sw, target_h / sh)
-        nw, nh = int(round(sw * scale)), int(round(sh * scale))
+        scale = max(float(scale), 1.0)
+        base_scale = max(target_w / sw, target_h / sh)
+        actual_scale = base_scale * scale
+        nw, nh = int(round(sw * actual_scale)), int(round(sh * actual_scale))
         img = img.resize((nw, nh), Image.LANCZOS)
-        left = (nw - target_w) // 2
-        top = (nh - target_h) // 2
+        move_w = max(nw - target_w, 0)
+        move_h = max(nh - target_h, 0)
+        left = int(round(float(offset_x) * move_w))
+        top = int(round(float(offset_y) * move_h))
         out = img.crop((left, top, left + target_w, top + target_h))
     else:
         raise ValueError(f"不支持的裁剪模式: {mode}")

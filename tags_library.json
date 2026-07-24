@@ -10,12 +10,7 @@
         "cozy",
         "cheerful",
         "lovely",
-        "kawaii",
-        "萌",
-        "可爱",
-        "治愈",
-        "轻松",
-        "活泼"
+        "kawaii"
       ],
       "name": "Cute",
       "name_zh": "可爱"
@@ -30,10 +25,6 @@
         "clean",
         "flat",
         "simple",
-        "简约",
-        "极简",
-        "留白",
-        "扁平",
         "ins"
       ],
       "name": "Minimal",
@@ -49,12 +40,7 @@
         "professional",
         "sophisticated",
         "premium",
-        "mature",
-        "现代",
-        "都市",
-        "商务",
-        "成熟",
-        "高级"
+        "mature"
       ],
       "name": "Modern",
       "name_zh": "现代"
@@ -72,16 +58,7 @@
         "dynamic",
         "futuristic",
         "neon",
-        "high-impact",
-        "时尚",
-        "潮流",
-        "街头",
-        "酷炫",
-        "流行",
-        "科技",
-        "霓虹",
-        "能量",
-        "动感"
+        "high-impact"
       ],
       "name": "Fashion/Cool",
       "name_zh": "时尚/酷炫"
@@ -96,12 +73,7 @@
         "illustration",
         "painting",
         "abstract",
-        "creative",
-        "艺术",
-        "插画",
-        "绘画",
-        "抽象",
-        "创意"
+        "creative"
       ],
       "name": "Artistic",
       "name_zh": "艺术"
@@ -114,10 +86,7 @@
         "cartoon",
         "comic",
         "anime",
-        "animation",
-        "卡通",
-        "漫画",
-        "动画"
+        "animation"
       ],
       "name": "Cartoon",
       "name_zh": "卡通"
@@ -133,14 +102,7 @@
         "millennial",
         "film grain",
         "faded",
-        "classic",
-        "复古",
-        "港式",
-        "法式",
-        "千禧",
-        "做旧",
-        "胶卷",
-        "颗粒"
+        "classic"
       ],
       "name": "Retro",
       "name_zh": "复古"
@@ -154,14 +116,7 @@
         "holiday",
         "celebration",
         "anniversary",
-        "seasonal",
-        "节日",
-        "纪念日",
-        "庆典",
-        "圣诞",
-        "春节",
-        "新年",
-        "万圣"
+        "seasonal"
       ],
       "name": "Festival",
       "name_zh": "节日"
@@ -174,9 +129,7 @@
         "game",
         "gaming",
         "esports",
-        "game ip",
-        "游戏",
-        "电竞"
+        "game ip"
       ],
       "name": "Games",
       "name_zh": "游戏"
@@ -190,11 +143,7 @@
         "anime character",
         "game character",
         "ip",
-        "fictional",
-        "角色",
-        "动漫角色",
-        "游戏角色",
-        "虚拟人物"
+        "fictional"
       ],
       "name": "Characters",
       "name_zh": "角色"
@@ -207,13 +156,7 @@
         "sport",
         "sports",
         "competition",
-        "athletic",
-        "运动",
-        "体育",
-        "赛事",
-        "篮球",
-        "足球",
-        "跑步"
+        "athletic"
       ],
       "name": "Sports",
       "name_zh": "运动"
@@ -227,12 +170,7 @@
         "scenery",
         "nature",
         "cityscape",
-        "architecture",
-        "风景",
-        "景观",
-        "自然",
-        "城市",
-        "建筑"
+        "architecture"
       ],
       "name": "Landscapes",
       "name_zh": "风景"
@@ -247,10 +185,7 @@
         "wildlife",
         "cat",
         "dog",
-        "bird",
-        "动物",
-        "宠物",
-        "野生动物"
+        "bird"
       ],
       "name": "Animals",
       "name_zh": "动物"
@@ -265,25 +200,18 @@
         "galaxy",
         "star",
         "astronomy",
-        "sci-fi",
-        "宇宙",
-        "星空",
-        "科幻",
-        "天文",
-        "银河"
+        "sci-fi"
       ],
       "name": "Space",
       "name_zh": "宇宙"
     }
   ],
-  "note": "分类与标签库：category 单选，tags 多选 3-5 个。keywords 用于文件名规则匹配（中英混合，大小写不敏感）。",
+  "note": "分类与标签库：category 单选，tags 多选 3-5 个。keywords 用于文件名规则匹配（英文为主，大小写不敏感）。",
   "tags": [
     {
       "group": "Design",
       "keywords": [
-        "neon",
-        "霓虹",
-        "荧光"
+        "neon"
       ],
       "name": "Neon",
       "name_zh": "霓虹"
@@ -293,8 +221,7 @@
       "keywords": [
         "oil painting",
         "oil",
-        "painting",
-        "油画"
+        "painting"
       ],
       "name": "Oil Painting",
       "name_zh": "油画"
@@ -303,9 +230,7 @@
       "group": "Design",
       "keywords": [
         "dimensional",
-        "3d",
-        "立体",
-        "三维"
+        "3d"
       ],
       "name": "Dimensional",
       "name_zh": "立体"
@@ -313,8 +238,7 @@
     {
       "group": "Design",
       "keywords": [
-        "abstract",
-        "抽象"
+        "abstract"
       ],
       "name": "Abstract",
       "name_zh": "抽象"
@@ -323,8 +247,7 @@
       "group": "Design",
       "keywords": [
         "ukiyo-e",
-        "ukiyoe",
-        "浮世绘"
+        "ukiyoe"
       ],
       "name": "Ukiyo-e",
       "name_zh": "浮世绘"
@@ -333,9 +256,7 @@
       "group": "Design",
       "keywords": [
         "metallic",
-        "metal",
-        "金属",
-        "质感"
+        "metal"
       ],
       "name": "Metallic",
       "name_zh": "金属"
@@ -344,9 +265,7 @@
       "group": "Design",
       "keywords": [
         "photography",
-        "photo",
-        "摄影",
-        "实拍"
+        "photo"
       ],
       "name": "Photography",
       "name_zh": "摄影"
@@ -354,8 +273,7 @@
     {
       "group": "Design",
       "keywords": [
-        "graffiti",
-        "涂鸦"
+        "graffiti"
       ],
       "name": "Graffiti",
       "name_zh": "涂鸦"
@@ -363,9 +281,7 @@
     {
       "group": "Design",
       "keywords": [
-        "sketch",
-        "素描",
-        "线稿"
+        "sketch"
       ],
       "name": "Sketch",
       "name_zh": "素描"
@@ -374,8 +290,7 @@
       "group": "Design",
       "keywords": [
         "illustration",
-        "illustrated",
-        "插画"
+        "illustrated"
       ],
       "name": "Illustration",
       "name_zh": "插画"
@@ -383,9 +298,7 @@
     {
       "group": "Design",
       "keywords": [
-        "cartoon",
-        "卡通",
-        "漫画"
+        "cartoon"
       ],
       "name": "Cartoon",
       "name_zh": "卡通"
@@ -393,8 +306,7 @@
     {
       "group": "Design",
       "keywords": [
-        "digital",
-        "数字"
+        "digital"
       ],
       "name": "Digital (Wallpaper)",
       "name_zh": "数字"
@@ -403,9 +315,7 @@
       "group": "Emotion",
       "keywords": [
         "happy",
-        "joy",
-        "快乐",
-        "开心"
+        "joy"
       ],
       "name": "Happy",
       "name_zh": "快乐"
@@ -414,9 +324,7 @@
       "group": "Emotion",
       "keywords": [
         "calm",
-        "peaceful",
-        "平静",
-        "安宁"
+        "peaceful"
       ],
       "name": "Calm",
       "name_zh": "平静"
@@ -425,9 +333,7 @@
       "group": "Emotion",
       "keywords": [
         "relax",
-        "relaxed",
-        "放松",
-        "舒缓"
+        "relaxed"
       ],
       "name": "Relax",
       "name_zh": "放松"
@@ -436,9 +342,7 @@
       "group": "Emotion",
       "keywords": [
         "healing",
-        "heal",
-        "治愈",
-        "疗愈"
+        "heal"
       ],
       "name": "Healing",
       "name_zh": "治愈"
@@ -447,8 +351,7 @@
       "group": "Emotion",
       "keywords": [
         "romantic",
-        "romance",
-        "浪漫"
+        "romance"
       ],
       "name": "Romantic",
       "name_zh": "浪漫"
@@ -457,9 +360,7 @@
       "group": "Emotion",
       "keywords": [
         "warm",
-        "warmth",
-        "温暖",
-        "温馨"
+        "warmth"
       ],
       "name": "Warm",
       "name_zh": "温暖"
@@ -468,9 +369,7 @@
       "group": "Emotion",
       "keywords": [
         "excited",
-        "exciting",
-        "兴奋",
-        "激动"
+        "exciting"
       ],
       "name": "Excited",
       "name_zh": "兴奋"
@@ -479,9 +378,7 @@
       "group": "Emotion",
       "keywords": [
         "inspirational",
-        "inspire",
-        "励志",
-        "鼓舞"
+        "inspire"
       ],
       "name": "Inspirational",
       "name_zh": "励志"
@@ -490,9 +387,7 @@
       "group": "Emotion",
       "keywords": [
         "love",
-        "romantic",
-        "爱",
-        "爱情"
+        "romantic"
       ],
       "name": "Love",
       "name_zh": "爱"
@@ -500,8 +395,7 @@
     {
       "group": "Color",
       "keywords": [
-        "gradient",
-        "渐变"
+        "gradient"
       ],
       "name": "Gradient",
       "name_zh": "渐变"
@@ -509,9 +403,7 @@
     {
       "group": "Color",
       "keywords": [
-        "colorful",
-        "多彩",
-        "缤纷"
+        "colorful"
       ],
       "name": "Colorful",
       "name_zh": "多彩"
@@ -519,9 +411,7 @@
     {
       "group": "Color",
       "keywords": [
-        "silver",
-        "银色",
-        "银"
+        "silver"
       ],
       "name": "Silver",
       "name_zh": "银色"
@@ -530,9 +420,7 @@
       "group": "Color",
       "keywords": [
         "gold",
-        "golden",
-        "金色",
-        "金"
+        "golden"
       ],
       "name": "Gold",
       "name_zh": "金色"
@@ -540,9 +428,7 @@
     {
       "group": "Color",
       "keywords": [
-        "brown",
-        "棕色",
-        "褐"
+        "brown"
       ],
       "name": "Brown",
       "name_zh": "棕色"
@@ -550,9 +436,7 @@
     {
       "group": "Color",
       "keywords": [
-        "pink",
-        "粉色",
-        "粉"
+        "pink"
       ],
       "name": "Pink",
       "name_zh": "粉色"
@@ -560,9 +444,7 @@
     {
       "group": "Color",
       "keywords": [
-        "yellow",
-        "黄色",
-        "黄"
+        "yellow"
       ],
       "name": "Yellow",
       "name_zh": "黄色"
@@ -570,9 +452,7 @@
     {
       "group": "Color",
       "keywords": [
-        "orange",
-        "橙色",
-        "橙"
+        "orange"
       ],
       "name": "Orange",
       "name_zh": "橙色"
@@ -580,9 +460,7 @@
     {
       "group": "Color",
       "keywords": [
-        "red",
-        "红色",
-        "红"
+        "red"
       ],
       "name": "Red",
       "name_zh": "红色"
@@ -590,9 +468,7 @@
     {
       "group": "Color",
       "keywords": [
-        "green",
-        "绿色",
-        "绿"
+        "green"
       ],
       "name": "Green",
       "name_zh": "绿色"
@@ -600,9 +476,7 @@
     {
       "group": "Color",
       "keywords": [
-        "purple",
-        "紫色",
-        "紫"
+        "purple"
       ],
       "name": "Purple",
       "name_zh": "紫色"
@@ -610,9 +484,7 @@
     {
       "group": "Color",
       "keywords": [
-        "blue",
-        "蓝色",
-        "蓝"
+        "blue"
       ],
       "name": "Blue",
       "name_zh": "蓝色"
@@ -621,9 +493,7 @@
       "group": "Color",
       "keywords": [
         "gray",
-        "grey",
-        "灰色",
-        "灰"
+        "grey"
       ],
       "name": "Gray",
       "name_zh": "灰色"
@@ -631,9 +501,7 @@
     {
       "group": "Color",
       "keywords": [
-        "white",
-        "白色",
-        "白"
+        "white"
       ],
       "name": "White",
       "name_zh": "白色"
@@ -641,9 +509,7 @@
     {
       "group": "Color",
       "keywords": [
-        "black",
-        "黑色",
-        "黑"
+        "black"
       ],
       "name": "Black",
       "name_zh": "黑色"
@@ -652,8 +518,7 @@
       "group": "Content",
       "keywords": [
         "character",
-        "characters",
-        "角色"
+        "characters"
       ],
       "name": "Characters",
       "name_zh": "角色"
@@ -661,9 +526,7 @@
     {
       "group": "Content",
       "keywords": [
-        "anime",
-        "动漫",
-        "二次元"
+        "anime"
       ],
       "name": "Anime",
       "name_zh": "动漫"
@@ -674,10 +537,7 @@
         "movie",
         "movies",
         "tv",
-        "film",
-        "影视",
-        "电影",
-        "电视剧"
+        "film"
       ],
       "name": "Movies & TV",
       "name_zh": "影视"
@@ -686,8 +546,7 @@
       "group": "Content",
       "keywords": [
         "game",
-        "games",
-        "游戏"
+        "games"
       ],
       "name": "Games",
       "name_zh": "游戏"
@@ -696,8 +555,7 @@
       "group": "Content",
       "keywords": [
         "festival",
-        "holiday",
-        "节日"
+        "holiday"
       ],
       "name": "Festival",
       "name_zh": "节日"
@@ -706,8 +564,7 @@
       "group": "Content",
       "keywords": [
         "sport",
-        "sports",
-        "运动"
+        "sports"
       ],
       "name": "Sports",
       "name_zh": "运动"
@@ -715,10 +572,7 @@
     {
       "group": "Content",
       "keywords": [
-        "nature",
-        "自然",
-        "森林",
-        "山川"
+        "nature"
       ],
       "name": "Nature",
       "name_zh": "自然"
@@ -727,9 +581,7 @@
       "group": "Content",
       "keywords": [
         "cityscape",
-        "city",
-        "城市",
-        "都市"
+        "city"
       ],
       "name": "Cityscape",
       "name_zh": "城市"
@@ -738,8 +590,7 @@
       "group": "Content",
       "keywords": [
         "animal",
-        "animals",
-        "动物"
+        "animals"
       ],
       "name": "Animals",
       "name_zh": "动物"
@@ -748,10 +599,7 @@
       "group": "Content",
       "keywords": [
         "plant",
-        "plants",
-        "植物",
-        "花",
-        "树"
+        "plants"
       ],
       "name": "Plants",
       "name_zh": "植物"
@@ -759,9 +607,7 @@
     {
       "group": "Content",
       "keywords": [
-        "food",
-        "食物",
-        "美食"
+        "food"
       ],
       "name": "Food",
       "name_zh": "食物"
@@ -772,10 +618,7 @@
         "vehicle",
         "vehicles",
         "car",
-        "bike",
-        "交通工具",
-        "汽车",
-        "摩托车"
+        "bike"
       ],
       "name": "Vehicles",
       "name_zh": "交通工具"
@@ -783,9 +626,7 @@
     {
       "group": "Content",
       "keywords": [
-        "lifestyle",
-        "生活",
-        "日常"
+        "lifestyle"
       ],
       "name": "Lifestyle",
       "name_zh": "生活方式"
@@ -793,8 +634,7 @@
     {
       "group": "Style",
       "keywords": [
-        "cute",
-        "可爱"
+        "cute"
       ],
       "name": "Cute",
       "name_zh": "可爱"
@@ -802,8 +642,7 @@
     {
       "group": "Style",
       "keywords": [
-        "modern",
-        "现代"
+        "modern"
       ],
       "name": "Modern",
       "name_zh": "现代"
@@ -811,8 +650,7 @@
     {
       "group": "Style",
       "keywords": [
-        "minimal",
-        "简约"
+        "minimal"
       ],
       "name": "Minimal",
       "name_zh": "简约"
@@ -820,8 +658,7 @@
     {
       "group": "Style",
       "keywords": [
-        "artistic",
-        "艺术"
+        "artistic"
       ],
       "name": "Artistic",
       "name_zh": "艺术"
@@ -829,9 +666,7 @@
     {
       "group": "Style",
       "keywords": [
-        "cool",
-        "酷炫",
-        "酷"
+        "cool"
       ],
       "name": "Cool",
       "name_zh": "酷炫"
@@ -839,8 +674,7 @@
     {
       "group": "Style",
       "keywords": [
-        "retro",
-        "复古"
+        "retro"
       ],
       "name": "Retro",
       "name_zh": "复古"
@@ -848,9 +682,7 @@
     {
       "group": "Style",
       "keywords": [
-        "traditional",
-        "传统",
-        "中式"
+        "traditional"
       ],
       "name": "Traditional",
       "name_zh": "传统"
@@ -858,9 +690,7 @@
     {
       "group": "Style",
       "keywords": [
-        "funny",
-        "搞笑",
-        "趣味"
+        "funny"
       ],
       "name": "Funny",
       "name_zh": "搞笑"
