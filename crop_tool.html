@@ -102,7 +102,7 @@
   <div class="wrap">
   <div class="topbar">
     <h1>资源位物料快速剪裁</h1>
-    <div class="sub">纯前端 · 离线运行 · 素材不出本机。拖拽取景、滑块缩放，一键裁剪并下载 JPG（自动按大小上限压缩）。</div>
+    <div class="sub">纯前端 · 离线运行 · 素材不出本机。拖拽取景、滑块缩放，一键裁剪，可下载 JPG 或直接复制图片到剪贴板（自动按大小上限压缩）。</div>
   </div>
   <div class="card">
     <div class="card-body">
@@ -154,6 +154,7 @@
       </div>
       <div class="btns">
         <button class="go" id="go-crop">裁剪并下载</button>
+        <button class="secondary" id="copy-crop" type="button" disabled>复制图片</button>
       </div>
       <div class="status" id="status-crop"></div>
       <div class="dl" id="dl-crop"></div>
@@ -182,7 +183,7 @@ function bindDrop(dropId, inputId, fnameId, onPick){
 }
 function showFname(fnameId, f){ $(fnameId).style.display='block'; $(fnameId).textContent='已选择：'+f.name; }
 
-let cropEditor = null, cropFile = null;
+let cropEditor = null, cropFile = null, lastPngBlob = null;
 
 function initCropEditor(){
   if (cropEditor) return cropEditor;
@@ -343,6 +344,7 @@ $('mode-crop').addEventListener('change', applyCropPreset);
 $('go-crop').addEventListener('click', async () => {
   if (!cropFile){ setStatus('status-crop','请先选择图片','warn'); return; }
   const btn = $('go-crop'); btn.disabled = true;
+  $('copy-crop').disabled = true; lastPngBlob = null;
   setStatus('status-crop','<span class="spin"></span>裁剪中…','info');
   $('dl-crop').innerHTML = '';
   try{
@@ -361,13 +363,29 @@ $('go-crop').addEventListener('click', async () => {
     const within = maxkb > 0 ? blob.size <= maxkb * 1024 : true;
     const fn = `${base}_${tw}x${th}_${mode}.jpg`;
     downloadBlob(blob, fn);
+    // 额外生成 PNG 副本用于「复制图片」到剪贴板
+    lastPngBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    $('copy-crop').disabled = false;
     const sizeTxt = `${kb}KB${maxkb ? (within ? ' ✓≤' + maxkb + 'KB' : ' ⚠超出限制') : ''}`;
     $('crop-result-meta').textContent = `${tw} × ${th} / ${mode} · ${sizeTxt}`;
     $('dl-crop').innerHTML = `<a href="#" id="dlcrop">⬇ ${fn}</a>`;
     $('dlcrop').onclick = e => { e.preventDefault(); downloadBlob(blob, fn); };
-    setStatus('status-crop', `✓ 完成：${fn} 已下载（${tw}×${th} / ${mode} · ${sizeTxt}）`, 'ok');
+    setStatus('status-crop', `✓ 完成：${fn} 已下载（${tw}×${th} / ${mode} · ${sizeTxt}）；也可点「复制图片」直接粘贴`, 'ok');
   }catch(err){ setStatus('status-crop','✗ '+err.message,'err'); }
   finally{ btn.disabled = false; }
+});
+
+$('copy-crop').addEventListener('click', async () => {
+  if (!lastPngBlob){ setStatus('status-crop','请先裁剪出结果','warn'); return; }
+  try{
+    if (!navigator.clipboard || typeof window.ClipboardItem === 'undefined'){
+      throw new Error('当前环境不支持图片复制（需 HTTPS 或最新版 Chrome/Edge/Safari）');
+    }
+    await navigator.clipboard.write([ new ClipboardItem({ 'image/png': lastPngBlob }) ]);
+    setStatus('status-crop', '✓ 已复制到剪贴板，可直接粘贴（⌘V / Ctrl+V）', 'ok');
+  }catch(err){
+    setStatus('status-crop', '✗ 复制失败：' + err.message + '（可改用下载后手动粘贴）', 'err');
+  }
 });
 </script>
 </body>
